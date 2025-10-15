@@ -5,7 +5,7 @@
     "lng": 5.773173272609712,
     "name": "",
     "img": "",
-    "standnr": "5",
+    "standnr": "1",
     "websitelink": ""
   },
   {
@@ -33,6 +33,33 @@
     "name": "",
     "img": "",
     "standnr": "4",
+    "websitelink": ""
+  },
+  {
+    "id": 5,
+    "lat": 51.89889623835788,
+    "lng": 5.773489773273468,
+    "name": "",
+    "img": "",
+    "standnr": "5",
+    "websitelink": ""
+  },
+  {
+    "id": 7,
+    "lat": 51.89876745382888,
+    "lng": 5.773261114954949,
+    "name": "",
+    "img": "",
+    "standnr": "7",
+    "websitelink": ""
+  },
+  {
+    "id": 10,
+    "lat": 51.89877055707489,
+    "lng": 5.7731638848781595,
+    "name": "",
+    "img": "",
+    "standnr": "",
     "websitelink": ""
   }
 ]
