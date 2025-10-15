@@ -10,8 +10,9 @@
 <body>
 
   <div id="editModeToggle">
-    <label for="editModeCheckbox" style="cursor:pointer;font-weight:bold;">Edit Mode</label>
-    <input type="checkbox" id="editModeCheckbox" />
+    <button id="editModeToggleBtn" style="font-weight:bold;padding:6px 18px;background:#1976d2;color:white;border:none;border-radius:6px;cursor:pointer;">
+      Bewerk modus
+    </button>
     <button id="saveMarkersBtn" style="margin-left:16px;">Opslaan</button>
     <span id="saveStatus" style="margin-left:8px;color:green;"></span>
   </div>
@@ -38,14 +39,21 @@ esri_WorldImagery.addTo(map);
 
 
 // --- Edit Mode Logic ---
-var editMode = false;
-var editCheckbox = document.getElementById('editModeCheckbox');
-editCheckbox.addEventListener('change', function() {
-  editMode = editCheckbox.checked;
-  markersList.forEach(function(obj) {
-    if(obj.marker) obj.marker.dragging[editMode ? 'enable' : 'disable']();
-    if(obj.handle) obj.handle.dragging[editMode ? 'enable' : 'disable']();
-  });
+var editMode = localStorage.getItem('editMode') === 'true';
+var editModeToggleBtn = document.getElementById('editModeToggleBtn');
+var saveMarkersBtn = document.getElementById('saveMarkersBtn');
+function updateSaveButtonVisibility() {
+  saveMarkersBtn.style.display = editMode ? '' : 'none';
+}
+updateSaveButtonVisibility();
+editModeToggleBtn.textContent = editMode ? 'Switch to read-only' : 'Switch to edit-mode';
+editModeToggleBtn.addEventListener('click', function() {
+  editMode = !editMode;
+  localStorage.setItem('editMode', editMode);
+  editModeToggleBtn.textContent = editMode ? 'Switch to read-only' : 'Switch to edit-mode';
+  updateSaveButtonVisibility();
+  // Herlaad de pagina zodat alle UI en popups correct zijn
+  location.reload();
 });
 
 var markersList = [];
@@ -85,14 +93,33 @@ fetch('markers.json')
 
       marker.on('popupopen', function(ev) {
         var id = markerObj.id;
-        document.getElementById(`save_${id}`).onclick = function() {
-          markerObj.name = document.getElementById(`name_${id}`).value;
-          markerObj.img = document.getElementById(`img_${id}`).value;
-          markerObj.standnr = document.getElementById(`standnr_${id}`).value;
-          markerObj.websitelink = document.getElementById(`web_${id}`).value;
-          marker.setPopupContent(createEditablePopup(markerObj));
-          marker.openPopup();
-        };
+        if (editMode && document.getElementById(`save_${id}`)) {
+          document.getElementById(`save_${id}`).onclick = function() {
+            markerObj.name = document.getElementById(`name_${id}`).value;
+            markerObj.img = document.getElementById(`img_${id}`).value;
+            markerObj.standnr = document.getElementById(`standnr_${id}`).value;
+            markerObj.websitelink = document.getElementById(`web_${id}`).value;
+            // Direct opslaan na save-button click
+            var data = markersList.map(function(obj) {
+              return {
+                id: obj.id,
+                lat: obj.marker.getLatLng().lat,
+                lng: obj.marker.getLatLng().lng,
+                name: obj.name,
+                img: obj.img,
+                standnr: obj.standnr,
+                websitelink: obj.websitelink,
+                angle: obj.angle || 0
+              };
+            });
+            fetch('/save-markers', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify(data)
+            });
+            marker.closePopup();
+          };
+        }
       });
 
       marker.on('drag', function(e) {
@@ -143,17 +170,18 @@ function createEditablePopup(markerObj) {
   var img = markerObj.img || "";
   var standnr = markerObj.standnr || "";
   var websitelink = markerObj.websitelink || "";
-  // id en coords niet bewerkbaar, rest wel
+  var disabled = editMode ? "" : "disabled";
+  var saveBtn = editMode ? `<button id="save_${id}" style="margin-top:6px">Opslaan</button>` : "";
   return `
     <div style="min-width:220px">
       <div><b>ID:</b> <span>${id}</span></div>
       <div><b>Lat:</b> <span>${lat}</span></div>
       <div><b>Lng:</b> <span>${lng}</span></div>
-      <div><b>Naam:</b> <input type="text" id="name_${id}" value="${name}" style="width:140px"/></div>
-      <div><b>Afbeelding:</b> <input type="text" id="img_${id}" value="${img}" style="width:140px" placeholder="URL"/></div>
-      <div><b>Standnr:</b> <input type="number" id="standnr_${id}" value="${standnr}" style="width:60px"/></div>
-      <div><b>Website:</b> <input type="text" id="web_${id}" value="${websitelink}" style="width:140px" placeholder="https://..."/></div>
-      <button id="save_${id}" style="margin-top:6px">Opslaan</button>
+      <div><b>Naam:</b> <input type="text" id="name_${id}" value="${name}" style="width:140px" ${disabled}/></div>
+      <div><b>Afbeelding:</b> <input type="text" id="img_${id}" value="${img}" style="width:140px" placeholder="URL" ${disabled}/></div>
+      <div><b>Standnr:</b> <input type="number" id="standnr_${id}" value="${standnr}" style="width:60px" ${disabled}/></div>
+      <div><b>Website:</b> <input type="text" id="web_${id}" value="${websitelink}" style="width:140px" placeholder="https://..." ${disabled}/></div>
+      ${saveBtn}
     </div>
   `;
 }
@@ -190,14 +218,42 @@ map.on('click', function(e) {
 
   marker.on('popupopen', function(ev) {
     var id = markerObj.id;
-    document.getElementById(`save_${id}`).onclick = function() {
-      markerObj.name = document.getElementById(`name_${id}`).value;
-      markerObj.img = document.getElementById(`img_${id}`).value;
-      markerObj.standnr = document.getElementById(`standnr_${id}`).value;
-      markerObj.websitelink = document.getElementById(`web_${id}`).value;
+    // Altijd popup hertekenen met actuele editMode status
+    setTimeout(function() {
       marker.setPopupContent(createEditablePopup(markerObj));
-      marker.openPopup();
-    };
+      // Save-button alleen in edit mode
+      if (editMode) {
+        document.getElementById(`save_${id}`).onclick = function() {
+          markerObj.name = document.getElementById(`name_${id}`).value;
+          markerObj.img = document.getElementById(`img_${id}`).value;
+          markerObj.standnr = document.getElementById(`standnr_${id}`).value;
+          markerObj.websitelink = document.getElementById(`web_${id}`).value;
+          // Herteken popup zodat disabled/save-knop direct klopt
+          setTimeout(function() {
+            marker.setPopupContent(createEditablePopup(markerObj));
+            marker.openPopup();
+          }, 0);
+          // Direct opslaan na save-button click
+          var data = markersList.map(function(obj) {
+            return {
+              id: obj.id,
+              lat: obj.marker.getLatLng().lat,
+              lng: obj.marker.getLatLng().lng,
+              name: obj.name,
+              img: obj.img,
+              standnr: obj.standnr,
+              websitelink: obj.websitelink,
+              angle: obj.angle || 0
+            };
+          });
+          fetch('/save-markers', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data)
+          });
+        };
+      }
+    }, 0);
   });
 
   marker.on('drag', function(e) {
