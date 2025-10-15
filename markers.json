@@ -1,0 +1,16 @@
+[
+  {
+    "type": "marker",
+    "lat": 51.898819,
+    "lng": 5.773250,
+    "popup": "Welcome to the map!"
+  },
+  {
+    "type": "rectangle",
+    "center": [51.898819, 5.773250],
+    "width": 6,
+    "height": 6,
+    "angle": 0,
+    "popup": "Editable rectangle"
+  }
+]
