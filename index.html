@@ -2,45 +2,58 @@
 <html>
 <head>
   <meta charset="utf-8"/>
-  <title>Leaflet Map Marker & Rectangle Editor</title>
   <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
   <style>
     #map { height: 100vh; width: 100vw; }
-    .mode-toggle { position: fixed; top: 10px; left: 10px; z-index: 1000; }
     .rotate-handle {
       background: #3388ff;
       border-radius: 50%;
-      width: 14px;
-      height: 14px;
+      width: 10px;
+      height: 10px;
       box-shadow: 0 0 2px #222;
-      border: none;
+    }
+    #editModeToggle {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      z-index: 999;
+      background: white;
+      padding: 8px 16px;
+      border-radius: 4px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+      font-family: sans-serif;
+      display: flex;
+      align-items: center;
+      gap: 8px;
     }
   </style>
 </head>
 <body>
-<button class="mode-toggle">Switch to Edit Mode</button>
+<div id="editModeToggle">
+  <label for="editModeCheckbox" style="cursor:pointer;font-weight:bold;">Edit Mode</label>
+  <input type="checkbox" id="editModeCheckbox" />
+</div>
 <div id="map"></div>
 <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 <script>
-let editMode = false;
-const modeToggle = document.querySelector('.mode-toggle');
-const map = L.map('map').setView([51.898819375615844, 5.7732504428013165], 18);
+var map = L.map('map', {
+  minZoom: 16,
+  maxZoom: 22
+}).setView([51.898819375615844, 5.7732504428013165], 18);
 
-L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager_nolabels/{z}/{x}/{y}{r}.png', {
-  attribution: '&copy; OpenStreetMap &copy; CARTO',
+var terrainMap = L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager_nolabels/{z}/{x}/{y}{r}.png', {
+  attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
   subdomains: 'abcd',
   minZoom: 16,
   maxZoom: 22
-}).addTo(map);
+});
+terrainMap.addTo(map);
+var esri_WorldImagery = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+  attribution: 'Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community'
+});
+esri_WorldImagery.addTo(map);
 
-L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
-  attribution: 'Tiles &copy; Esri'
-}).addTo(map);
-
-let markerData = [];
-let mapObjects = [];
-
-// Rectangle math from your original code:
+// Utility: meters <-> lat/lng
 function metersToLatLng(centerLatLng, dx, dy) {
   var R = 6378137;
   var dLat = dy / R;
@@ -50,6 +63,7 @@ function metersToLatLng(centerLatLng, dx, dy) {
     centerLatLng.lng + dLng * 180 / Math.PI
   ];
 }
+
 function getRectangleCornersMeters(centerLatLng, width_m, height_m, angleDeg) {
   var hw = width_m / 2;
   var hh = height_m / 2;
@@ -68,154 +82,139 @@ function getRectangleCornersMeters(centerLatLng, width_m, height_m, angleDeg) {
   });
 }
 
-// Load markers & rectangles from backend
-async function loadMarkers() {
-  const res = await fetch('/markers.json');
-  if (res.ok) {
-    markerData = await res.json();
-    addObjectsToMap();
-  }
+// Initial rectangle properties
+var center = L.latLng(51.898819375615844, 5.7732504428013165);
+var width = 6;    // meters
+var height = 6;   // meters
+var angle = 0;    // degrees
+
+var corners = getRectangleCornersMeters(center, width, height, angle);
+var rect = L.polygon(corners, {color: "blue", weight: 2}).addTo(map);
+
+// Center marker (built-in Leaflet marker)
+var centerMarker = L.marker(center, {
+  draggable: true
+}).addTo(map);
+
+// Rotation handle (NE corner, custom blue dot NO border)
+var handleMarker = L.marker(corners[2], {
+  draggable: true,
+  icon: L.divIcon({
+    className: 'rotate-handle',
+    iconSize: [10, 10]
+  })
+}).addTo(map);
+
+// Helper function: show popup with coords and angle
+function showMarkerPopup(latlng, angle) {
+  var lat = latlng.lat.toFixed(8);
+  var lng = latlng.lng.toFixed(8);
+  var angleText = angle.toFixed(2);
+  centerMarker.bindPopup(
+    "Lat: " + lat + "<br>Lng: " + lng + "<br>Angle: " + angleText + "°"
+  ).openPopup();
 }
 
-function addObjectsToMap() {
-  // Remove previous objects
-  mapObjects.forEach(obj => map.removeLayer(obj));
-  mapObjects = [];
-
-  markerData.forEach(data => {
-    if (data.type === 'marker') {
-      const marker = L.marker([data.lat, data.lng], { draggable: false })
-        .addTo(map)
-        .bindPopup(data.popup || '');
-      mapObjects.push(marker);
-    }
-    if (data.type === 'rectangle') {
-      addRectangle(data, false);
-    }
-  });
-}
-
-// Rectangle logic: add to map, optionally editable
-function addRectangle(rectData, editable=true) {
-  let { center, width, height, angle, popup } = rectData;
-  let centerLatLng = L.latLng(center[0], center[1]);
-  let corners = getRectangleCornersMeters(centerLatLng, width, height, angle);
-  let rect = L.polygon(corners, { color: "blue", weight: 2 }).addTo(map);
-  if (popup) rect.bindPopup(popup);
-
-  let centerMarker, handleMarker;
-  if (editable && editMode) {
-    centerMarker = L.marker(centerLatLng, { draggable: true }).addTo(map);
-    handleMarker = L.marker(corners[2], {
-      draggable: true,
-      icon: L.divIcon({ className: 'rotate-handle', iconSize: [14, 14] })
-    }).addTo(map);
-
-    // Center drag: move rectangle
-    centerMarker.on('drag', function(e) {
-      centerLatLng = e.latlng;
-      rectData.center = [centerLatLng.lat, centerLatLng.lng];
-      corners = getRectangleCornersMeters(centerLatLng, width, height, angle);
-      rect.setLatLngs(corners);
-      handleMarker.setLatLng(corners[2]);
-      autoSaveMarkers();
-    });
-
-    // Handle drag: rotate rectangle
-    handleMarker.on('drag', function(e) {
-      const handleLatLng = e.latlng;
-      const dx = (handleLatLng.lng - centerLatLng.lng) * Math.cos(centerLatLng.lat * Math.PI / 180) * 6378137 * Math.PI / 180;
-      const dy = (handleLatLng.lat - centerLatLng.lat) * 6378137 * Math.PI / 180;
-      const newAngle = Math.atan2(dy, dx) * 180 / Math.PI - 45;
-      angle = newAngle;
-      rectData.angle = angle;
-      corners = getRectangleCornersMeters(centerLatLng, width, height, angle);
-      rect.setLatLngs(corners);
-      handleMarker.setLatLng(corners[2]);
-      autoSaveMarkers();
-    });
-
-    // Popup for rectangle info
-    centerMarker.on('click', function(e) {
-      centerMarker.bindPopup('<textarea placeholder="Enter info">'+(rectData.popup||'')+'</textarea><br><button class="save-popup">Save</button>').openPopup();
-      setTimeout(()=>{
-        document.querySelector('.save-popup').onclick = function() {
-          const info = document.querySelector('textarea').value;
-          rectData.popup = info;
-          rect.bindPopup(info);
-          centerMarker.closePopup();
-          autoSaveMarkers();
-        };
-      }, 150);
-    });
-
-    mapObjects.push(rect, centerMarker, handleMarker);
-  } else {
-    mapObjects.push(rect);
-  }
-}
-
-// Add marker/rectangle on click (edit mode only)
-map.on('click', function(e) {
-  if (!editMode) return;
-
-  // Simple prompt for marker or rectangle
-  const type = window.prompt("Type 'marker' or 'rect' to add");
-  if (type === 'marker') {
-    const marker = L.marker(e.latlng, { draggable: true }).addTo(map);
-    marker.bindPopup('<textarea placeholder="Enter info"></textarea><br><button class="save-popup">Save</button>').openPopup();
-    marker.on('popupopen', function() {
-      document.querySelector('.save-popup').onclick = function() {
-        const info = document.querySelector('textarea').value;
-        markerData.push({ type: 'marker', lat: marker.getLatLng().lat, lng: marker.getLatLng().lng, popup: info });
-        marker.closePopup();
-        autoSaveMarkers();
-        addObjectsToMap();
-      };
-    });
-    marker.on('dragend', function() {
-      let m = markerData.find(m => m.lat === marker.getLatLng().lat && m.lng === marker.getLatLng().lng);
-      if (m) {
-        m.lat = marker.getLatLng().lat;
-        m.lng = marker.getLatLng().lng;
-        autoSaveMarkers();
-      }
-    });
-  } else if (type === 'rect') {
-    // Prompt user for dimensions
-    let width = parseFloat(window.prompt("Rectangle width (meters)", "6")) || 6;
-    let height = parseFloat(window.prompt("Rectangle height (meters)", "6")) || 6;
-    let rectData = {
-      type: 'rectangle',
-      center: [e.latlng.lat, e.latlng.lng],
-      width,
-      height,
-      angle: 0,
-      popup: ""
-    };
-    markerData.push(rectData);
-    addRectangle(rectData, true);
-    autoSaveMarkers();
-  }
+// --- Edit Mode Logic ---
+var editMode = false;
+var editCheckbox = document.getElementById('editModeCheckbox');
+editCheckbox.addEventListener('change', function() {
+  editMode = editCheckbox.checked;
+  // Enable/disable dragging based on edit mode
+  centerMarker.dragging[editMode ? 'enable' : 'disable']();
+  handleMarker.dragging[editMode ? 'enable' : 'disable']();
 });
 
-// Toggle mode
-modeToggle.onclick = function() {
-  editMode = !editMode;
-  modeToggle.textContent = editMode ? "Switch to Read-Only Mode" : "Switch to Edit Mode";
-  addObjectsToMap();
-};
+// Set initial dragging state
+centerMarker.dragging.disable();
+handleMarker.dragging.disable();
 
-function autoSaveMarkers() {
-  fetch('/save-markers', {
-    method: 'POST',
-    headers: {'Content-Type': 'application/json'},
-    body: JSON.stringify(markerData)
+// Drag center marker to move rectangle and handle (only in edit mode)
+centerMarker.on('drag', function(e) {
+  if (!editMode) return;
+  center = e.latlng;
+  corners = getRectangleCornersMeters(center, width, height, angle);
+  rect.setLatLngs(corners);
+  handleMarker.setLatLng(corners[2]);
+});
+
+// Drag rotation handle to rotate rectangle (only in edit mode)
+handleMarker.on('drag', function(e) {
+  if (!editMode) return;
+  var handleLatLng = e.latlng;
+  var dx = (handleLatLng.lng - center.lng) * Math.cos(center.lat * Math.PI / 180) * 6378137 * Math.PI / 180;
+  var dy = (handleLatLng.lat - center.lat) * 6378137 * Math.PI / 180;
+  var newAngle = Math.atan2(dy, dx) * 180 / Math.PI - 45;
+  angle = newAngle;
+  corners = getRectangleCornersMeters(center, width, height, angle);
+  rect.setLatLngs(corners);
+  handleMarker.setLatLng(corners[2]);
+});
+
+// Show popup with coordinates + angle when the marker is clicked
+centerMarker.on('click', function(e) {
+  showMarkerPopup(e.latlng, angle);
+});
+
+// Show popup when dragging ends
+centerMarker.on('dragend', function(e) {
+  if (!editMode) return;
+  showMarkerPopup(e.target.getLatLng(), angle);
+  handleMarker.setLatLng(getRectangleCornersMeters(center, width, height, angle)[2]);
+});
+handleMarker.on('dragend', function() {
+  if (!editMode) return;
+  handleMarker.setLatLng(getRectangleCornersMeters(center, width, height, angle)[2]);
+  showMarkerPopup(center, angle);
+});
+// --- Toevoegen: klik op kaart in edit-modus voegt marker + rechthoek + popup toe ---
+map.on('click', function(e) {
+  if (!editMode) return;
+  var newCenter = e.latlng;
+  var newWidth = 6; // meters
+  var newHeight = 6; // meters
+  var newAngle = 0; // graden
+  var newCorners = getRectangleCornersMeters(newCenter, newWidth, newHeight, newAngle);
+  var newRect = L.polygon(newCorners, {color: "red", weight: 2}).addTo(map);
+  var newMarker = L.marker(newCenter, {draggable: true}).addTo(map);
+  var newHandle = L.marker(newCorners[2], {
+    draggable: true,
+    icon: L.divIcon({
+      className: 'rotate-handle',
+      iconSize: [10, 10]
+    })
+  }).addTo(map);
+
+  function updateRectangle() {
+    var corners = getRectangleCornersMeters(newCenter, newWidth, newHeight, newAngle);
+    newRect.setLatLngs(corners);
+    newHandle.setLatLng(corners[2]);
+  }
+
+  newMarker.on('drag', function(e) {
+    newCenter = e.latlng;
+    updateRectangle();
   });
-}
 
-// Initial load
-loadMarkers();
+  newHandle.on('drag', function(e) {
+    var handleLatLng = e.latlng;
+    var dx = (handleLatLng.lng - newCenter.lng) * Math.cos(newCenter.lat * Math.PI / 180) * 6378137 * Math.PI / 180;
+    var dy = (handleLatLng.lat - newCenter.lat) * 6378137 * Math.PI / 180;
+    var newAngleCalc = Math.atan2(dy, dx) * 180 / Math.PI - 45;
+    newAngle = newAngleCalc;
+    updateRectangle();
+  });
+
+  newMarker.on('click', function(e) {
+    newMarker.bindPopup(
+      "Lat: " + newCenter.lat.toFixed(8) + "<br>Lng: " + newCenter.lng.toFixed(8) + "<br>Angle: " + newAngle.toFixed(2) + "°"
+    ).openPopup();
+  });
+
+  newMarker.bindPopup(
+    "Lat: " + newCenter.lat.toFixed(8) + "<br>Lng: " + newCenter.lng.toFixed(8) + "<br>Angle: " + newAngle.toFixed(2) + "°"
+  ).openPopup();
+});
 </script>
 </body>
 </html>
