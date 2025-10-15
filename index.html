@@ -191,6 +191,42 @@ map.on('click', function(e) {
     })
   }).addTo(map);
 
+  // Min-icoon als verwijderknop
+  var offsetLatLng = L.latLng(newCenter.lat, newCenter.lng + 0.00008); // kleine offset naar rechts
+  var minusIcon = L.divIcon({
+    className: 'delete-marker-icon',
+    html: '<div style="background:#fff;border-radius:50%;border:1px solid #3388ff;width:18px;height:18px;display:flex;align-items:center;justify-content:center;color:#3388ff;font-weight:bold;cursor:pointer;">-</div>',
+    iconSize: [18, 18],
+    iconAnchor: [9, 9]
+  });
+  var deleteBtn = L.marker(offsetLatLng, {icon: minusIcon, interactive: true}).addTo(map);
+
+  // Verwijder marker/rechthoek/handle/minus bij klik op min-icoon
+  deleteBtn.on('click', function() {
+    map.removeLayer(newMarker);
+    map.removeLayer(newRect);
+    map.removeLayer(newHandle);
+    map.removeLayer(deleteBtn);
+    markersList = markersList.filter(function(obj) {
+      return obj.marker !== newMarker;
+    });
+  });
+
+  // Toon/verberg min-icoon afhankelijk van editMode
+  function updateDeleteBtnVisibility() {
+    if (editMode) {
+      deleteBtn.setOpacity(1);
+      deleteBtn._icon.style.pointerEvents = '';
+    } else {
+      deleteBtn.setOpacity(0);
+      deleteBtn._icon.style.pointerEvents = 'none';
+    }
+  }
+  updateDeleteBtnVisibility();
+
+  // Update min-icoon bij editMode toggle
+  editCheckbox.addEventListener('change', updateDeleteBtnVisibility);
+
   function updateRectangle() {
     var corners = getRectangleCornersMeters(newCenter, newWidth, newHeight, newAngle);
     newRect.setLatLngs(corners);
@@ -201,12 +237,26 @@ map.on('click', function(e) {
     if (!editMode) return;
     newCenter = e.latlng;
     updateRectangle();
+    // Update positie van min-icoon
+    var offsetLatLng = L.latLng(newCenter.lat, newCenter.lng + 0.00008);
+    deleteBtn.setLatLng(offsetLatLng);
   });
 
   newHandle.on('drag', function(e) {
     if (!editMode) return;
     var handleLatLng = e.latlng;
     var dx = (handleLatLng.lng - newCenter.lng) * Math.cos(newCenter.lat * Math.PI / 180) * 6378137 * Math.PI / 180;
+  // Verwijder marker/rechthoek/handle bij rechtermuisklik in edit-modus
+  newMarker.on('contextmenu', function(e) {
+    if (!editMode) return;
+    map.removeLayer(newMarker);
+    map.removeLayer(newRect);
+    map.removeLayer(newHandle);
+    // Verwijder uit markersList
+    markersList = markersList.filter(function(obj) {
+      return obj.marker !== newMarker;
+    });
+  });
     var dy = (handleLatLng.lat - newCenter.lat) * 6378137 * Math.PI / 180;
     var newAngleCalc = Math.atan2(dy, dx) * 180 / Math.PI - 45;
     newAngle = newAngleCalc;
@@ -225,6 +275,7 @@ map.on('click', function(e) {
   ).openPopup();
 
   markersList.push({marker: newMarker, rect: newRect, handle: newHandle});
+  markersList[markersList.length-1].deleteBtn = deleteBtn;
 });
 </script>
 </body>
