@@ -19,7 +19,24 @@ app.use(express.json());
 app.use(express.static(__dirname)); // Serve index.html and markers.json
 
 app.post('/save-markers', async (req, res) => {
+  // Opruimen: maximaal 100 backups bewaren
+  const backupFiles = fs.readdirSync(__dirname)
+    .filter(f => f.startsWith('markers-backup-') && f.endsWith('.json'))
+    .sort(); // alfabetisch = chronologisch door tijdstempel in naam
+  if (backupFiles.length > 100) {
+    const toDelete = backupFiles.slice(0, backupFiles.length - 100);
+    toDelete.forEach(f => {
+      try { fs.unlinkSync(path.join(__dirname, f)); } catch(e) { /* negeer fout */ }
+    });
+  }
   const jsonPath = path.join(__dirname, 'markers.json');
+  // Backup markers.json met tijdstempel vóór overschrijven
+  const now = new Date();
+  const ts = now.toISOString().replace(/[-:T]/g, '').slice(0, 15); // YYYYMMDDHHMMSS
+  const backupPath = path.join(__dirname, `markers-backup-${ts}.json`);
+  if (fs.existsSync(jsonPath)) {
+    fs.copyFileSync(jsonPath, backupPath);
+  }
   fs.writeFileSync(jsonPath, JSON.stringify(req.body, null, 2));
   try {
     // Push to GitHub
