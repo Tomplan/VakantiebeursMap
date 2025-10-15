@@ -64,19 +64,22 @@ fetch('markers.json')
   .then(res => res.json())
   .then(data => {
     data.forEach(function(m) {
-  var width = 6, height = 6, angle = typeof m.angle === 'number' ? m.angle : 0;
-  var center = L.latLng(m.lat, m.lng);
-  var corners = getRectangleCornersMeters(center, width, height, angle);
-  var rect = L.polygon(corners, {color: "blue", weight: 2}).addTo(map);
-  var marker = L.marker(center, {draggable: true}).addTo(map);
-  var handle = L.marker(corners[2], {
+      var width = 6, height = 6, angle = typeof m.angle === 'number' ? m.angle : 0;
+      var center = L.latLng(m.lat, m.lng);
+      var corners = getRectangleCornersMeters(center, width, height, angle);
+      var rect = L.polygon(corners, {color: "blue", weight: 2});
+      var handle = L.marker(corners[2], {
         draggable: true,
-            icon: L.divIcon({
-              className: 'rotate-handle',
-              iconSize: [8, 8],
-              html: `<div style="width:8px;height:8px;border-radius:50%;background:#3388ff;"></div>`
-            })
-      }).addTo(map);
+        icon: L.divIcon({
+          className: 'rotate-handle',
+          iconSize: [8, 8],
+          html: `<div style=\"width:8px;height:8px;border-radius:50%;background:#3388ff;\"></div>`
+        })
+      });
+      var marker = L.marker(center, {draggable: true}).addTo(map);
+      // Rechthoek en handle altijd zichtbaar, ongeacht editMode
+      rect.addTo(map);
+      handle.addTo(map);
       var markerObj = {
         id: m.id,
         marker: marker,
@@ -187,11 +190,11 @@ fetch('markers.json')
       });
 
       marker.on('contextmenu', function(ev) {
-        if (!editMode) return;
-        map.removeLayer(marker);
-        map.removeLayer(rect);
-        map.removeLayer(handle);
-        markersList = markersList.filter(function(obj) { return obj.id !== markerObj.id; });
+  if (!editMode) return;
+  map.removeLayer(marker);
+  map.removeLayer(rect);
+  map.removeLayer(handle);
+  markersList = markersList.filter(function(obj) { return obj.id !== markerObj.id; });
       });
 
       marker.dragging[editMode ? 'enable' : 'disable']();
