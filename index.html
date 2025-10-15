@@ -130,6 +130,25 @@ fetch('markers.json')
       });
       marker.on('dragend', function(ev) {
         marker.setPopupContent(createEditablePopup(markerObj));
+        if (editMode) {
+          var data = markersList.map(function(obj) {
+            return {
+              id: obj.id,
+              lat: obj.marker.getLatLng().lat,
+              lng: obj.marker.getLatLng().lng,
+              name: obj.name,
+              img: obj.img,
+              standnr: obj.standnr,
+              websitelink: obj.websitelink,
+              angle: obj.angle || 0
+            };
+          });
+          fetch('/save-markers', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data)
+          });
+        }
       });
 
       handle.on('drag', function(e) {
@@ -145,6 +164,25 @@ fetch('markers.json')
       });
       handle.on('dragend', function(e) {
         marker.setPopupContent(createEditablePopup(markerObj));
+        if (editMode) {
+          var data = markersList.map(function(obj) {
+            return {
+              id: obj.id,
+              lat: obj.marker.getLatLng().lat,
+              lng: obj.marker.getLatLng().lng,
+              name: obj.name,
+              img: obj.img,
+              standnr: obj.standnr,
+              websitelink: obj.websitelink,
+              angle: obj.angle || 0
+            };
+          });
+          fetch('/save-markers', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data)
+          });
+        }
       });
 
       marker.on('contextmenu', function(ev) {
