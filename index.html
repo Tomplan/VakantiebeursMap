@@ -6,16 +6,33 @@
   <style>
     #map { height: 100vh; width: 100vw; }
     .rotate-handle {
-      background: #3388ff; /* Leaflet blue */
+      background: #3388ff;
       border-radius: 50%;
       width: 10px;
       height: 10px;
       box-shadow: 0 0 2px #222;
-      /* No border! */
+    }
+    #editModeToggle {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      z-index: 999;
+      background: white;
+      padding: 8px 16px;
+      border-radius: 4px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+      font-family: sans-serif;
+      display: flex;
+      align-items: center;
+      gap: 8px;
     }
   </style>
 </head>
 <body>
+<div id="editModeToggle">
+  <label for="editModeCheckbox" style="cursor:pointer;font-weight:bold;">Edit Mode</label>
+  <input type="checkbox" id="editModeCheckbox" />
+</div>
 <div id="map"></div>
 <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 <script>
@@ -24,18 +41,18 @@ var map = L.map('map', {
   maxZoom: 22
 }).setView([51.898819375615844, 5.7732504428013165], 18);
 
- var terrainMap = L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager_nolabels/{z}/{x}/{y}{r}.png', {
-	attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
-	subdomains: 'abcd',
-	minZoom: 16,
+var terrainMap = L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager_nolabels/{z}/{x}/{y}{r}.png', {
+  attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
+  subdomains: 'abcd',
+  minZoom: 16,
   maxZoom: 22
 });
-terrainMap.addTo(map); 
+terrainMap.addTo(map);
 var esri_WorldImagery = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
-	attribution: 'Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community'
+  attribution: 'Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community'
 });
-	esri_WorldImagery.addTo(map);
-	
+esri_WorldImagery.addTo(map);
+
 // Utility: meters <-> lat/lng
 function metersToLatLng(centerLatLng, dx, dy) {
   var R = 6378137;
@@ -98,16 +115,32 @@ function showMarkerPopup(latlng, angle) {
   ).openPopup();
 }
 
-// Drag center marker to move rectangle and handle
+// --- Edit Mode Logic ---
+var editMode = false;
+var editCheckbox = document.getElementById('editModeCheckbox');
+editCheckbox.addEventListener('change', function() {
+  editMode = editCheckbox.checked;
+  // Enable/disable dragging based on edit mode
+  centerMarker.dragging[editMode ? 'enable' : 'disable']();
+  handleMarker.dragging[editMode ? 'enable' : 'disable']();
+});
+
+// Set initial dragging state
+centerMarker.dragging.disable();
+handleMarker.dragging.disable();
+
+// Drag center marker to move rectangle and handle (only in edit mode)
 centerMarker.on('drag', function(e) {
+  if (!editMode) return;
   center = e.latlng;
   corners = getRectangleCornersMeters(center, width, height, angle);
   rect.setLatLngs(corners);
   handleMarker.setLatLng(corners[2]);
 });
 
-// Drag rotation handle to rotate rectangle
+// Drag rotation handle to rotate rectangle (only in edit mode)
 handleMarker.on('drag', function(e) {
+  if (!editMode) return;
   var handleLatLng = e.latlng;
   var dx = (handleLatLng.lng - center.lng) * Math.cos(center.lat * Math.PI / 180) * 6378137 * Math.PI / 180;
   var dy = (handleLatLng.lat - center.lat) * 6378137 * Math.PI / 180;
@@ -125,12 +158,62 @@ centerMarker.on('click', function(e) {
 
 // Show popup when dragging ends
 centerMarker.on('dragend', function(e) {
+  if (!editMode) return;
   showMarkerPopup(e.target.getLatLng(), angle);
   handleMarker.setLatLng(getRectangleCornersMeters(center, width, height, angle)[2]);
 });
 handleMarker.on('dragend', function() {
+  if (!editMode) return;
   handleMarker.setLatLng(getRectangleCornersMeters(center, width, height, angle)[2]);
   showMarkerPopup(center, angle);
+});
+// --- Toevoegen: klik op kaart in edit-modus voegt marker + rechthoek + popup toe ---
+map.on('click', function(e) {
+  if (!editMode) return;
+  var newCenter = e.latlng;
+  var newWidth = 6; // meters
+  var newHeight = 6; // meters
+  var newAngle = 0; // graden
+  var newCorners = getRectangleCornersMeters(newCenter, newWidth, newHeight, newAngle);
+  var newRect = L.polygon(newCorners, {color: "red", weight: 2}).addTo(map);
+  var newMarker = L.marker(newCenter, {draggable: true}).addTo(map);
+  var newHandle = L.marker(newCorners[2], {
+    draggable: true,
+    icon: L.divIcon({
+      className: 'rotate-handle',
+      iconSize: [10, 10]
+    })
+  }).addTo(map);
+
+  function updateRectangle() {
+    var corners = getRectangleCornersMeters(newCenter, newWidth, newHeight, newAngle);
+    newRect.setLatLngs(corners);
+    newHandle.setLatLng(corners[2]);
+  }
+
+  newMarker.on('drag', function(e) {
+    newCenter = e.latlng;
+    updateRectangle();
+  });
+
+  newHandle.on('drag', function(e) {
+    var handleLatLng = e.latlng;
+    var dx = (handleLatLng.lng - newCenter.lng) * Math.cos(newCenter.lat * Math.PI / 180) * 6378137 * Math.PI / 180;
+    var dy = (handleLatLng.lat - newCenter.lat) * 6378137 * Math.PI / 180;
+    var newAngleCalc = Math.atan2(dy, dx) * 180 / Math.PI - 45;
+    newAngle = newAngleCalc;
+    updateRectangle();
+  });
+
+  newMarker.on('click', function(e) {
+    newMarker.bindPopup(
+      "Lat: " + newCenter.lat.toFixed(8) + "<br>Lng: " + newCenter.lng.toFixed(8) + "<br>Angle: " + newAngle.toFixed(2) + "°"
+    ).openPopup();
+  });
+
+  newMarker.bindPopup(
+    "Lat: " + newCenter.lat.toFixed(8) + "<br>Lng: " + newCenter.lng.toFixed(8) + "<br>Angle: " + newAngle.toFixed(2) + "°"
+  ).openPopup();
 });
 </script>
 </body>
