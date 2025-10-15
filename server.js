@@ -1,5 +1,6 @@
 // Node.js/Express backend with GitHub push (octokit)
 // Save as server.js
+require('dotenv').config();
 const express = require('express');
 const fs = require('fs');
 const path = require('path');
