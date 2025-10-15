@@ -167,6 +167,54 @@ handleMarker.on('dragend', function() {
   handleMarker.setLatLng(getRectangleCornersMeters(center, width, height, angle)[2]);
   showMarkerPopup(center, angle);
 });
+// --- Toevoegen: klik op kaart in edit-modus voegt marker + rechthoek + popup toe ---
+map.on('click', function(e) {
+  if (!editMode) return;
+  var newCenter = e.latlng;
+  var newWidth = 6; // meters
+  var newHeight = 6; // meters
+  var newAngle = 0; // graden
+  var newCorners = getRectangleCornersMeters(newCenter, newWidth, newHeight, newAngle);
+  var newRect = L.polygon(newCorners, {color: "red", weight: 2}).addTo(map);
+  var newMarker = L.marker(newCenter, {draggable: true}).addTo(map);
+  var newHandle = L.marker(newCorners[2], {
+    draggable: true,
+    icon: L.divIcon({
+      className: 'rotate-handle',
+      iconSize: [10, 10]
+    })
+  }).addTo(map);
+
+  function updateRectangle() {
+    var corners = getRectangleCornersMeters(newCenter, newWidth, newHeight, newAngle);
+    newRect.setLatLngs(corners);
+    newHandle.setLatLng(corners[2]);
+  }
+
+  newMarker.on('drag', function(e) {
+    newCenter = e.latlng;
+    updateRectangle();
+  });
+
+  newHandle.on('drag', function(e) {
+    var handleLatLng = e.latlng;
+    var dx = (handleLatLng.lng - newCenter.lng) * Math.cos(newCenter.lat * Math.PI / 180) * 6378137 * Math.PI / 180;
+    var dy = (handleLatLng.lat - newCenter.lat) * 6378137 * Math.PI / 180;
+    var newAngleCalc = Math.atan2(dy, dx) * 180 / Math.PI - 45;
+    newAngle = newAngleCalc;
+    updateRectangle();
+  });
+
+  newMarker.on('click', function(e) {
+    newMarker.bindPopup(
+      "Lat: " + newCenter.lat.toFixed(8) + "<br>Lng: " + newCenter.lng.toFixed(8) + "<br>Angle: " + newAngle.toFixed(2) + "°"
+    ).openPopup();
+  });
+
+  newMarker.bindPopup(
+    "Lat: " + newCenter.lat.toFixed(8) + "<br>Lng: " + newCenter.lng.toFixed(8) + "<br>Angle: " + newAngle.toFixed(2) + "°"
+  ).openPopup();
+});
 </script>
 </body>
 </html>
