@@ -6,7 +6,8 @@
     "name": "",
     "img": "",
     "standnr": "1",
-    "websitelink": ""
+    "websitelink": "",
+    "angle": 8.130092713634674
   },
   {
     "id": 2,
@@ -15,7 +16,8 @@
     "name": "",
     "img": "",
     "standnr": "2",
-    "websitelink": ""
+    "websitelink": "",
+    "angle": 0
   },
   {
     "id": 3,
@@ -24,7 +26,8 @@
     "name": "",
     "img": "",
     "standnr": "3",
-    "websitelink": ""
+    "websitelink": "",
+    "angle": 0
   },
   {
     "id": 4,
@@ -33,16 +36,18 @@
     "name": "",
     "img": "",
     "standnr": "4",
-    "websitelink": ""
+    "websitelink": "",
+    "angle": 0
   },
   {
     "id": 5,
-    "lat": 51.89889623835788,
-    "lng": 5.773489773273468,
+    "lat": 51.898871309012,
+    "lng": 5.773591697216035,
     "name": "",
     "img": "",
     "standnr": "5",
-    "websitelink": ""
+    "websitelink": "",
+    "angle": -21.571310933684675
   },
   {
     "id": 7,
@@ -51,7 +56,8 @@
     "name": "",
     "img": "",
     "standnr": "7",
-    "websitelink": ""
+    "websitelink": "",
+    "angle": 15.255109149507241
   },
   {
     "id": 10,
@@ -60,6 +66,7 @@
     "name": "",
     "img": "",
     "standnr": "",
-    "websitelink": ""
+    "websitelink": "",
+    "angle": 0
   }
 ]
