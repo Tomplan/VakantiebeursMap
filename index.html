@@ -44,6 +44,7 @@ editCheckbox.addEventListener('change', function() {
   editMode = editCheckbox.checked;
   markersList.forEach(function(obj) {
     if(obj.marker) obj.marker.dragging[editMode ? 'enable' : 'disable']();
+    if(obj.handle) obj.handle.dragging[editMode ? 'enable' : 'disable']();
   });
 });
 
@@ -55,41 +56,81 @@ fetch('markers.json')
   .then(res => res.json())
   .then(data => {
     data.forEach(function(m) {
+  var width = 6, height = 6, angle = typeof m.angle === 'number' ? m.angle : 0;
+  var center = L.latLng(m.lat, m.lng);
+  var corners = getRectangleCornersMeters(center, width, height, angle);
+  var rect = L.polygon(corners, {color: "blue", weight: 2}).addTo(map);
+  var marker = L.marker(center, {draggable: true}).addTo(map);
+  var handle = L.marker(corners[2], {
+        draggable: true,
+        icon: L.divIcon({
+          className: 'rotate-handle',
+          iconSize: [10, 10]
+        })
+      }).addTo(map);
       var markerObj = {
         id: m.id,
-        marker: L.marker([m.lat, m.lng], {draggable: true}).addTo(map),
+        marker: marker,
+        rect: rect,
+        handle: handle,
         name: m.name || "",
         img: m.img || "",
         standnr: m.standnr || "",
-        websitelink: m.websitelink || ""
+        websitelink: m.websitelink || "",
+        width: width,
+        height: height,
+        angle: angle
       };
-      markerObj.marker.bindPopup(createEditablePopup(markerObj));
+      marker.bindPopup(createEditablePopup(markerObj));
 
-      markerObj.marker.on('popupopen', function(ev) {
+      marker.on('popupopen', function(ev) {
         var id = markerObj.id;
         document.getElementById(`save_${id}`).onclick = function() {
           markerObj.name = document.getElementById(`name_${id}`).value;
           markerObj.img = document.getElementById(`img_${id}`).value;
           markerObj.standnr = document.getElementById(`standnr_${id}`).value;
           markerObj.websitelink = document.getElementById(`web_${id}`).value;
-          markerObj.marker.setPopupContent(createEditablePopup(markerObj));
-          markerObj.marker.openPopup();
+          marker.setPopupContent(createEditablePopup(markerObj));
+          marker.openPopup();
         };
       });
 
-      markerObj.marker.on('dragend', function(ev) {
-        markerObj.marker.setPopupContent(createEditablePopup(markerObj));
+      marker.on('drag', function(e) {
+        if (!editMode) return;
+        var center = e.latlng;
+        markerObj.rect.setLatLngs(getRectangleCornersMeters(center, markerObj.width, markerObj.height, markerObj.angle));
+        markerObj.handle.setLatLng(getRectangleCornersMeters(center, markerObj.width, markerObj.height, markerObj.angle)[2]);
+      });
+      marker.on('dragend', function(ev) {
+        marker.setPopupContent(createEditablePopup(markerObj));
       });
 
-      markerObj.marker.on('contextmenu', function(ev) {
+      handle.on('drag', function(e) {
         if (!editMode) return;
-        map.removeLayer(markerObj.marker);
+        var center = marker.getLatLng();
+        var handleLatLng = e.latlng;
+        var dx = (handleLatLng.lng - center.lng) * Math.cos(center.lat * Math.PI / 180) * 6378137 * Math.PI / 180;
+        var dy = (handleLatLng.lat - center.lat) * 6378137 * Math.PI / 180;
+        var newAngle = Math.atan2(dy, dx) * 180 / Math.PI - 45;
+        markerObj.angle = newAngle;
+        markerObj.rect.setLatLngs(getRectangleCornersMeters(center, markerObj.width, markerObj.height, markerObj.angle));
+        markerObj.handle.setLatLng(getRectangleCornersMeters(center, markerObj.width, markerObj.height, markerObj.angle)[2]);
+      });
+      handle.on('dragend', function(e) {
+        marker.setPopupContent(createEditablePopup(markerObj));
+      });
+
+      marker.on('contextmenu', function(ev) {
+        if (!editMode) return;
+        map.removeLayer(marker);
+        map.removeLayer(rect);
+        map.removeLayer(handle);
         markersList = markersList.filter(function(obj) { return obj.id !== markerObj.id; });
       });
 
-      markerObj.marker.dragging[editMode ? 'enable' : 'disable']();
+      marker.dragging[editMode ? 'enable' : 'disable']();
+      handle.dragging[editMode ? 'enable' : 'disable']();
       markersList.push(markerObj);
-      // Zorg dat nextMarkerId altijd hoger is dan bestaande
       if (markerObj.id >= nextMarkerId) nextMarkerId = markerObj.id + 1;
     });
   });
@@ -119,51 +160,113 @@ function createEditablePopup(markerObj) {
 
 map.on('click', function(e) {
   if (!editMode) return;
+  var width = 6, height = 6, angle = 0;
+  var center = e.latlng;
+  var corners = getRectangleCornersMeters(center, width, height, angle);
+  var rect = L.polygon(corners, {color: "blue", weight: 2}).addTo(map);
+  var marker = L.marker(center, {draggable: true}).addTo(map);
+  var handle = L.marker(corners[2], {
+    draggable: true,
+    icon: L.divIcon({
+      className: 'rotate-handle',
+      iconSize: [10, 10]
+    })
+  }).addTo(map);
   var markerId = nextMarkerId++;
   var markerObj = {
     id: markerId,
-    marker: L.marker(e.latlng, {draggable: true}).addTo(map),
+    marker: marker,
+    rect: rect,
+    handle: handle,
     name: "",
     img: "",
     standnr: "",
-    websitelink: ""
+    websitelink: "",
+    width: width,
+    height: height,
+    angle: angle
   };
-  markerObj.marker.bindPopup(createEditablePopup(markerObj));
+  marker.bindPopup(createEditablePopup(markerObj));
 
-  markerObj.marker.on('popupopen', function(ev) {
-    // id, lat, lng niet bewerkbaar
+  marker.on('popupopen', function(ev) {
     var id = markerObj.id;
     document.getElementById(`save_${id}`).onclick = function() {
       markerObj.name = document.getElementById(`name_${id}`).value;
       markerObj.img = document.getElementById(`img_${id}`).value;
       markerObj.standnr = document.getElementById(`standnr_${id}`).value;
       markerObj.websitelink = document.getElementById(`web_${id}`).value;
-      markerObj.marker.setPopupContent(createEditablePopup(markerObj));
-      markerObj.marker.openPopup();
+      marker.setPopupContent(createEditablePopup(markerObj));
+      marker.openPopup();
     };
   });
 
-  markerObj.marker.on('dragend', function(ev) {
-    // Update popup met nieuwe coords
-    markerObj.marker.setPopupContent(createEditablePopup(markerObj));
+  marker.on('drag', function(e) {
+    var center = e.latlng;
+    markerObj.rect.setLatLngs(getRectangleCornersMeters(center, markerObj.width, markerObj.height, markerObj.angle));
+    markerObj.handle.setLatLng(getRectangleCornersMeters(center, markerObj.width, markerObj.height, markerObj.angle)[2]);
+  });
+  marker.on('dragend', function(ev) {
+    marker.setPopupContent(createEditablePopup(markerObj));
   });
 
-  // Verwijder marker bij rechtermuisklik in edit-modus
-  markerObj.marker.on('contextmenu', function(ev) {
+  handle.on('drag', function(e) {
+    var center = marker.getLatLng();
+    var handleLatLng = e.latlng;
+    var dx = (handleLatLng.lng - center.lng) * Math.cos(center.lat * Math.PI / 180) * 6378137 * Math.PI / 180;
+    var dy = (handleLatLng.lat - center.lat) * 6378137 * Math.PI / 180;
+    var newAngle = Math.atan2(dy, dx) * 180 / Math.PI - 45;
+    markerObj.angle = newAngle;
+    markerObj.rect.setLatLngs(getRectangleCornersMeters(center, markerObj.width, markerObj.height, markerObj.angle));
+    markerObj.handle.setLatLng(getRectangleCornersMeters(center, markerObj.width, markerObj.height, markerObj.angle)[2]);
+  });
+  handle.on('dragend', function(e) {
+    marker.setPopupContent(createEditablePopup(markerObj));
+  });
+
+  marker.on('contextmenu', function(ev) {
     if (!editMode) return;
-    map.removeLayer(markerObj.marker);
+    map.removeLayer(marker);
+    map.removeLayer(rect);
+    map.removeLayer(handle);
     markersList = markersList.filter(function(obj) { return obj.id !== markerId; });
   });
 
-  // Zet drag state bij aanmaken
-  markerObj.marker.dragging[editMode ? 'enable' : 'disable']();
-
+  marker.dragging[editMode ? 'enable' : 'disable']();
+  handle.dragging[editMode ? 'enable' : 'disable']();
   markersList.push(markerObj);
 });
+// Helper: meters <-> lat/lng
+function metersToLatLng(centerLatLng, dx, dy) {
+  var R = 6378137;
+  var dLat = dy / R;
+  var dLng = dx / (R * Math.cos(Math.PI * centerLatLng.lat / 180));
+  return [
+    centerLatLng.lat + dLat * 180 / Math.PI,
+    centerLatLng.lng + dLng * 180 / Math.PI
+  ];
+}
+
+function getRectangleCornersMeters(centerLatLng, width_m, height_m, angleDeg) {
+  var hw = width_m / 2;
+  var hh = height_m / 2;
+  var angleRad = angleDeg * Math.PI / 180;
+  var localCorners = [
+    [-hw, -hh], // SW
+    [ hw, -hh], // SE
+    [ hw,  hh], // NE
+    [-hw,  hh]  // NW
+  ];
+  return localCorners.map(function(p) {
+    var x = p[0], y = p[1];
+    var xr = x * Math.cos(angleRad) - y * Math.sin(angleRad);
+    var yr = x * Math.sin(angleRad) + y * Math.cos(angleRad);
+    return metersToLatLng(centerLatLng, xr, yr);
+  });
+}
 
 // Opslaan knop functionaliteit
 document.getElementById('saveMarkersBtn').onclick = function() {
-  // markersList naar JSON, alleen relevante data
+  // markersList naar JSON, inclusief rotatiehoek
   var data = markersList.map(function(obj) {
     return {
       id: obj.id,
@@ -172,7 +275,8 @@ document.getElementById('saveMarkersBtn').onclick = function() {
       name: obj.name,
       img: obj.img,
       standnr: obj.standnr,
-      websitelink: obj.websitelink
+      websitelink: obj.websitelink,
+      angle: obj.angle || 0
     };
   });
   fetch('/save-markers', {
