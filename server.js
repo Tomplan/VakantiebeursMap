@@ -42,6 +42,30 @@ app.get('/list-backups', (req, res) => {
   }
 });
 
+// GET /load-backup/:filename - Load a specific backup file
+app.get('/load-backup/:filename', (req, res) => {
+  const filename = req.params.filename;
+  const backupsDir = path.join(__dirname, 'markers-backups');
+  const backupPath = path.join(backupsDir, filename);
+  
+  // Security: only allow files that match the expected pattern
+  if (!filename.startsWith('markers-backup-') || !filename.endsWith('.json')) {
+    return res.status(400).json({ error: 'Invalid backup filename' });
+  }
+  
+  try {
+    if (!fs.existsSync(backupPath)) {
+      return res.status(404).json({ error: 'Backup file not found' });
+    }
+    
+    const backupData = fs.readFileSync(backupPath, 'utf8');
+    const markers = JSON.parse(backupData);
+    res.json(markers);
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to load backup' });
+  }
+});
+
 // POST /save-markers
 // Purpose: receive the serialized markers array from the client, persist it to disk (markers.json),
 // keep a rotating backup set on disk, and attempt to push the change to GitHub.
