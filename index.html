@@ -108,6 +108,12 @@ function updateSaveButtonVisibility() {
   backupBtn.style.display = editMode ? '' : 'none';
   // Show the edit legend only in edit mode to help users understand the interface
   document.getElementById('editLegend').style.display = editMode ? '' : 'none';
+  // Control ESRI layer visibility - only show in edit mode
+  if (editMode) {
+    if (!map.hasLayer(esri_WorldImagery)) map.addLayer(esri_WorldImagery);
+  } else {
+    if (map.hasLayer(esri_WorldImagery)) map.removeLayer(esri_WorldImagery);
+  }
 }
 updateSaveButtonVisibility();
 editModeToggleBtn.addEventListener('click', function() {
