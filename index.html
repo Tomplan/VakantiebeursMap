@@ -119,6 +119,11 @@ function updateSaveButtonVisibility() {
   backupBtn.style.display = editMode ? '' : 'none';
   // Show the edit legend icon only in edit mode
   document.getElementById('editLegendIcon').style.display = editMode ? 'flex' : 'none';
+  // Control layer control visibility - only show in edit mode
+  var layerControlContainer = layerControl.getContainer();
+  if (layerControlContainer) {
+    layerControlContainer.style.display = editMode ? '' : 'none';
+  }
   // Control ESRI layer visibility - only show in edit mode
   if (editMode) {
     if (!map.hasLayer(esri_WorldImagery)) map.addLayer(esri_WorldImagery);
