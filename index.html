@@ -31,7 +31,7 @@
       ✏️
     </button>
     <button id="saveMarkersBtn" class="control-btn save-btn" title="Save Changes">💾</button>
-    <button id="backupsBtn" class="control-btn backup-btn" title="View Backups">📁</button>
+    <button id="backupsBtn" class="control-btn backup-btn" title="View Backups">⏰</button>
     <span id="saveStatus" style="margin-top:4px;color:green;font-size:12px;"></span>
   </div>
 
@@ -116,12 +116,10 @@ function updateSaveButtonVisibility() {
   document.getElementById('editLegend').style.display = editMode ? '' : 'none';
 }
 updateSaveButtonVisibility();
-editModeToggleBtn.textContent = editMode ? 'Switch to read-only' : 'Switch to edit-mode';
 editModeToggleBtn.addEventListener('click', function() {
   // Toggle edit mode, persist choice and reload to ensure UI/popup consistency.
   editMode = !editMode;
   localStorage.setItem('editMode', editMode);
-  editModeToggleBtn.textContent = editMode ? 'Switch to read-only' : 'Switch to edit-mode';
   updateSaveButtonVisibility();
   // Reload: forces popups and Leaflet handlers to be reconstructed according to the new mode.
   location.reload();
