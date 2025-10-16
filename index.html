@@ -32,8 +32,13 @@
     <button id="backupsBtn" class="control-btn backup-btn" title="View Backups">⏰</button>
   </div>
 
-  <!-- Edit mode legend (shown only in edit mode) -->
-  <div id="editLegend" style="display:none;">
+  <!-- Edit mode legend icon (shown only in edit mode) -->
+  <div id="editLegendIcon" style="display:none; position:fixed; top:75px; right:10px; z-index:1000; width:34px; height:34px; background:rgba(255,255,255,0.9); border:2px solid #666; border-radius:4px; cursor:pointer; display:flex; align-items:center; justify-content:center; font-size:16px; color:#666;" title="Edit Mode Guide">
+    ℹ️
+  </div>
+  
+  <!-- Edit mode legend content (hidden popup) -->
+  <div id="editLegendContent" style="display:none; position:fixed; top:115px; right:10px; z-index:1000; background:rgba(255,255,255,0.95); padding:12px; border-radius:6px; font-size:12px; line-height:1.4; box-shadow:0 2px 8px rgba(0,0,0,0.2); min-width:250px;">
     <h4>📝 Edit Mode Guide</h4>
     <ul>
       <li>🖱️ <strong>Right-click map:</strong> Add new marker</li>
@@ -92,6 +97,13 @@ var esri_WorldImagery = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest
 terrainMap.addTo(map);
 esri_WorldImagery.addTo(map);
 
+// Add layer control
+var baseLayers = {
+  "Terrain": terrainMap,
+  "Satellite": esri_WorldImagery
+};
+var layerControl = L.control.layers(baseLayers).addTo(map);
+
 
 // --- Edit mode logic ---
 // Purpose: track whether the UI is in editor mode (allow moving markers, rotating rectangles and showing save buttons)
@@ -106,8 +118,8 @@ var backupBtn = document.getElementById('backupsBtn');
 function updateSaveButtonVisibility() {
   // Show the backup button only in edit mode
   backupBtn.style.display = editMode ? '' : 'none';
-  // Show the edit legend only in edit mode to help users understand the interface
-  document.getElementById('editLegend').style.display = editMode ? '' : 'none';
+  // Show the edit legend icon only in edit mode
+  document.getElementById('editLegendIcon').style.display = editMode ? 'flex' : 'none';
   // Control ESRI layer visibility - only show in edit mode
   if (editMode) {
     if (!map.hasLayer(esri_WorldImagery)) map.addLayer(esri_WorldImagery);
@@ -582,6 +594,16 @@ document.getElementById('restoreSelectedBtn').addEventListener('click', async fu
   } catch (err) {
     statusEl.style.color = 'red';
     statusEl.textContent = 'Error: ' + err.message;
+  }
+});
+
+// Edit legend icon click handler
+document.getElementById('editLegendIcon').addEventListener('click', function() {
+  var content = document.getElementById('editLegendContent');
+  if (content.style.display === 'none' || content.style.display === '') {
+    content.style.display = 'block';
+  } else {
+    content.style.display = 'none';
   }
 });
 </script>
