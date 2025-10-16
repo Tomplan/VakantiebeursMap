@@ -8,40 +8,54 @@ const { Octokit } = require("@octokit/rest");
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// Set these:
+// Configuration and environment
+// GITHUB_TOKEN (required): an OAuth personal access token (PAT) with repo permissions set in the environment.
+// GITHUB_OWNER / GITHUB_REPO: repository owner and name where markers.json will be pushed.
+// GITHUB_FILEPATH / GITHUB_BRANCH: file path inside the repo and branch where we write markers.
 const GITHUB_TOKEN = process.env.GITHUB_TOKEN; // Set your PAT in env
 const GITHUB_OWNER = "Tomplan";
 const GITHUB_REPO = "VakantiebeursMap";
 const GITHUB_FILEPATH = "markers.json";
 const GITHUB_BRANCH = "development";
 
+// Middleware: accept JSON and serve the client static files from repo root
 app.use(express.json());
 app.use(express.static(__dirname)); // Serve index.html and markers.json
 
+// POST /save-markers
+// Purpose: receive the serialized markers array from the client, persist it to disk (markers.json),
+// keep a rotating backup set on disk, and attempt to push the change to GitHub.
+// Input: request body must be an array of marker objects. Expected shape is described in markers.json (id, lat, lng, name, img, standnr, websitelink, angle).
+// Output: JSON response { status: 'saved' } on success, or { status: 'error', error: '...' } on failure (500).
+// Side-effects: writes files to disk and makes network calls to GitHub.
 app.post('/save-markers', async (req, res) => {
-  // Opruimen: maximaal 100 backups bewaren
+  // Maintain a small on-disk backup history. We keep the most recent 100 backups and remove older ones to avoid disk growth.
   const backupFiles = fs.readdirSync(__dirname)
     .filter(f => f.startsWith('markers-backup-') && f.endsWith('.json'))
-    .sort(); // alfabetisch = chronologisch door tijdstempel in naam
+    .sort(); // alphabetical sorting works because filenames include a timestamp prefix
   if (backupFiles.length > 100) {
     const toDelete = backupFiles.slice(0, backupFiles.length - 100);
     toDelete.forEach(f => {
-      try { fs.unlinkSync(path.join(__dirname, f)); } catch(e) { /* negeer fout */ }
+      try { fs.unlinkSync(path.join(__dirname, f)); } catch(e) { /* ignore unlink errors */ }
     });
   }
+
   const jsonPath = path.join(__dirname, 'markers.json');
-  // Backup markers.json met tijdstempel vóór overschrijven
+  // Create a timestamped backup before overwriting the canonical markers.json
   const now = new Date();
   const ts = now.toISOString().replace(/[-:T]/g, '').slice(0, 15); // YYYYMMDDHHMMSS
   const backupPath = path.join(__dirname, `markers-backup-${ts}.json`);
   if (fs.existsSync(jsonPath)) {
     fs.copyFileSync(jsonPath, backupPath);
   }
+
+  // Persist the new markers file locally with pretty printing to ease diffs when reviewing backups.
   fs.writeFileSync(jsonPath, JSON.stringify(req.body, null, 2));
+
   try {
-    // Push to GitHub
+    // Push to GitHub using octokit. This requires a valid token in GITHUB_TOKEN.
     const octokit = new Octokit({ auth: GITHUB_TOKEN });
-    // Get current file SHA
+    // Retrieve the existing file to obtain its SHA; necessary for updates on GitHub.
     const { data } = await octokit.repos.getContent({
       owner: GITHUB_OWNER,
       repo: GITHUB_REPO,
@@ -49,7 +63,7 @@ app.post('/save-markers', async (req, res) => {
       ref: GITHUB_BRANCH
     });
     const sha = data.sha;
-    // Commit new content
+    // Create or update the file contents on the specified branch.
     await octokit.repos.createOrUpdateFileContents({
       owner: GITHUB_OWNER,
       repo: GITHUB_REPO,
@@ -61,9 +75,11 @@ app.post('/save-markers', async (req, res) => {
     });
     res.json({ status: 'saved' });
   } catch (err) {
+    // If GitHub push fails, we still return an error but keep the local markers.json and backup intact for manual recovery.
     console.error("GitHub push error:", err.message);
     res.status(500).json({ status: 'error', error: err.message });
   }
 });
 
+// Start the HTTP server. The application uses simple static file serving and one POST API for saving markers.
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
