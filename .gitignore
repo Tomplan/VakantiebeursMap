@@ -1,3 +1,6 @@
 .env
 node_modules/
 *.log
+
+# Ignore automatic marker backups directory (kept locally, not committed by default)
+markers-backups/
