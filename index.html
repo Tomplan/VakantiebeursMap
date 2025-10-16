@@ -16,7 +16,6 @@
     .control-btn { width: 30px; height: 30px; border: none; border-radius: 4px; cursor: pointer; font-size: 14px; display: flex; align-items: center; justify-content: center; }
     .edit-btn { background: #1976d2; color: white; }
     .backup-btn { background: #424242; color: white; }
-    .save-btn { background: #4caf50; color: white; }
     /* Edit mode legend */
     #editLegend { position: fixed; top: 10px; right: 10px; z-index: 1000; background: rgba(255,255,255,0.95); padding: 12px; border-radius: 6px; font-size: 12px; line-height: 1.4; box-shadow: 0 2px 8px rgba(0,0,0,0.2); min-width: 250px; }
     #editLegend h4 { margin: 0 0 8px 0; font-size: 13px; color: #333; }
@@ -30,9 +29,7 @@
     <button id="editModeToggleBtn" class="control-btn edit-btn" title="Toggle Edit Mode">
       ✏️
     </button>
-    <button id="saveMarkersBtn" class="control-btn save-btn" title="Save Changes">💾</button>
     <button id="backupsBtn" class="control-btn backup-btn" title="View Backups">⏰</button>
-    <span id="saveStatus" style="margin-top:4px;color:green;font-size:12px;"></span>
   </div>
 
   <!-- Edit mode legend (shown only in edit mode) -->
@@ -105,11 +102,8 @@ esri_WorldImagery.addTo(map);
 // avoids subtle state bugs where popup content or input `disabled` attributes are stale after switching modes.
 var editMode = localStorage.getItem('editMode') === 'true';
 var editModeToggleBtn = document.getElementById('editModeToggleBtn');
-var saveMarkersBtn = document.getElementById('saveMarkersBtn');
 var backupBtn = document.getElementById('backupsBtn');
 function updateSaveButtonVisibility() {
-  // Show the global save button only in edit mode because saving should only be possible when editing.
-  saveMarkersBtn.style.display = editMode ? '' : 'none';
   // Show the backup button only in edit mode
   backupBtn.style.display = editMode ? '' : 'none';
   // Show the edit legend only in edit mode to help users understand the interface
@@ -506,40 +500,6 @@ function getRectangleCornersMeters(centerLatLng, width_m, height_m, angleDeg) {
     return metersToLatLng(centerLatLng, xr, yr);
   });
 }
-
-// Opslaan knop functionaliteit
-document.getElementById('saveMarkersBtn').onclick = function() {
-  // Global save handler: serializes the in-memory `markersList` into a JSON array and POSTs to the server endpoint `/save-markers`.
-  // Inputs: none (reads from `markersList`)
-  // Outputs: network POST request; UI feedback in the `#saveStatus` element showing success or error
-  // Error handling: minimal — network errors show a brief message. For production we should handle retries and optimistic UI.
-  var data = markersList.map(function(obj) {
-    return {
-      id: obj.id,
-      lat: obj.marker.getLatLng().lat,
-      lng: obj.marker.getLatLng().lng,
-      name: obj.name,
-      img: obj.img,
-      standnr: obj.standnr,
-      websitelink: obj.websitelink,
-      angle: obj.angle || 0
-    };
-  });
-  fetch('/save-markers', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(data)
-  })
-  .then(res => res.json())
-  .then(result => {
-    document.getElementById('saveStatus').textContent = result.status === 'saved' ? 'Opgeslagen!' : 'Fout bij opslaan';
-    setTimeout(function() { document.getElementById('saveStatus').textContent = ''; }, 2000);
-  })
-  .catch(err => {
-    document.getElementById('saveStatus').textContent = 'Fout bij opslaan';
-    setTimeout(function() { document.getElementById('saveStatus').textContent = ''; }, 2000);
-  });
-};
 
 // Backups UI: list available backups and trigger server-side restore
 document.getElementById('backupsBtn').addEventListener('click', async function() {
