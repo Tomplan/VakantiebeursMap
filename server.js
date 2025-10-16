@@ -29,22 +29,27 @@ app.use(express.static(__dirname)); // Serve index.html and markers.json
 // Output: JSON response { status: 'saved' } on success, or { status: 'error', error: '...' } on failure (500).
 // Side-effects: writes files to disk and makes network calls to GitHub.
 app.post('/save-markers', async (req, res) => {
-  // Maintain a small on-disk backup history. We keep the most recent 100 backups and remove older ones to avoid disk growth.
-  const backupFiles = fs.readdirSync(__dirname)
+  // Maintain a small on-disk backup history inside the `markers-backups/` folder.
+  // Benefits: keeps repository root clean and avoids accidental commits of stray files.
+  const backupsDir = path.join(__dirname, 'markers-backups');
+  if (!fs.existsSync(backupsDir)) {
+    try { fs.mkdirSync(backupsDir); } catch (e) { /* ignore mkdir errors */ }
+  }
+  const backupFiles = fs.readdirSync(backupsDir)
     .filter(f => f.startsWith('markers-backup-') && f.endsWith('.json'))
     .sort(); // alphabetical sorting works because filenames include a timestamp prefix
   if (backupFiles.length > 100) {
     const toDelete = backupFiles.slice(0, backupFiles.length - 100);
     toDelete.forEach(f => {
-      try { fs.unlinkSync(path.join(__dirname, f)); } catch(e) { /* ignore unlink errors */ }
+      try { fs.unlinkSync(path.join(backupsDir, f)); } catch(e) { /* ignore unlink errors */ }
     });
   }
 
   const jsonPath = path.join(__dirname, 'markers.json');
-  // Create a timestamped backup before overwriting the canonical markers.json
+  // Create a timestamped backup inside markers-backups before overwriting the canonical markers.json
   const now = new Date();
   const ts = now.toISOString().replace(/[-:T]/g, '').slice(0, 15); // YYYYMMDDHHMMSS
-  const backupPath = path.join(__dirname, `markers-backup-${ts}.json`);
+  const backupPath = path.join(backupsDir, `markers-backup-${ts}.json`);
   if (fs.existsSync(jsonPath)) {
     fs.copyFileSync(jsonPath, backupPath);
   }
