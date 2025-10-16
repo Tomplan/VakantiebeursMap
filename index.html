@@ -290,6 +290,8 @@ fetch('markers.json')
               layer.openPopup();
             }
           });
+          // Collapse the search control after finding the marker
+          this.collapse();
         }
       });
       
