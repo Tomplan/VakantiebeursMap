@@ -8,9 +8,9 @@
     body, html { margin: 0; padding: 0; overflow: hidden; }
     #map { height: 100vh; width: 100vw; position: relative; z-index: 1; }
     /* Modal styling for backups UI */
-    .modal { position: fixed; z-index: 9999; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0,0,0,0.4); display:flex;align-items:center;justify-content:center; }
+    .modal { position: fixed; z-index: 9999; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0,0,0,0.4); display: flex; align-items: center; justify-content: center; }
     .modal-content { background: white; padding: 16px; border-radius: 8px; width: 520px; max-width: 95%; box-shadow: 0 6px 24px rgba(0,0,0,0.2); }
-    .modal-close { cursor:pointer; float:right; font-size:20px }
+    .modal-close { cursor: pointer; float: right; font-size: 20px; }
     /* Control buttons repositioned to top right */
     #editModeToggle { position: fixed; top: 10px; right: 10px; z-index: 1000; background: rgba(255,255,255,0.9); padding: 4px; border-radius: 6px; display: flex; flex-direction: column; gap: 2px; align-items: center; }
     /* Ensure all controls in container have consistent sizing */
@@ -46,12 +46,27 @@
     #editLegendIcon:not([style*="display: none"]) {
       display: flex !important;
     }
+    /* Common button styling */
+    .control-button {
+      width: 36px;
+      height: 36px;
+      border: 2px solid rgba(0,0,0,0.3);
+      border-radius: 4px;
+      background-color: #fff;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background-position: center;
+      background-repeat: no-repeat;
+      background-size: 20px 20px;
+    }
   </style>
 </head>
 <body>
 
   <div id="editModeToggle">
-    <button id="editModeToggleBtn" title="Toggle Edit Mode" style="background-image:url('icons/pencil-icon.png'); background-position:center; background-repeat:no-repeat; background-size:20px 20px; width:36px; height:36px; border:2px solid rgba(0,0,0,0.3); border-radius:4px; background-color:#fff; cursor:pointer; display:flex; align-items:center; justify-content:center;">
+    <button id="editModeToggleBtn" title="Toggle Edit Mode" class="control-button" style="background-image:url('icons/pencil-icon.png');">
     </button>
     <button id="backupsBtn" title="View Backups" style="background-image:url('icons/backup-icon.png'); background-position:center; background-repeat:no-repeat; background-size:20px 20px; width:36px; height:36px; border:2px solid rgba(0,0,0,0.3); border-radius:4px; background-color:#fff; cursor:pointer; display:flex; align-items:center; justify-content:center;">
     </button>
