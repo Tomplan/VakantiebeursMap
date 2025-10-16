@@ -161,6 +161,15 @@ setTimeout(function() {
 var editMode = localStorage.getItem('editMode') === 'true';
 var editModeToggleBtn = document.getElementById('editModeToggleBtn');
 var backupBtn = document.getElementById('backupsBtn');
+
+// Initialize edit elements layer visibility based on current edit mode
+function updateLayerVisibility() {
+  if (editMode) {
+    if (!map.hasLayer(editElements)) map.addLayer(editElements);
+  } else {
+    if (map.hasLayer(editElements)) map.removeLayer(editElements);
+  }
+}
 function updateSaveButtonVisibility() {
   // Toggle the edit mode button icon based on current mode
   editModeToggleBtn.style.backgroundImage = editMode ? "url('icons/read-icon.png')" : "url('icons/pencil-icon.png')";
@@ -178,6 +187,10 @@ function updateSaveButtonVisibility() {
     if (!map.hasLayer(esri_WorldImagery)) map.addLayer(esri_WorldImagery);
   } else {
     if (map.hasLayer(esri_WorldImagery)) map.removeLayer(esri_WorldImagery);
+  }
+  // Update edit elements layer visibility (only if editElements exists)
+  if (typeof editElements !== 'undefined') {
+    updateLayerVisibility();
   }
 }
 updateSaveButtonVisibility();
@@ -245,8 +258,9 @@ function deleteMarker(marker, rect, handle, markerId) {
   saveMarkers();
 }
 
-// Create a layer group to hold all markers for the search control
-var searchableMarkers = L.layerGroup().addTo(map);
+// Create layer groups for different types of elements
+var searchableMarkers = L.layerGroup().addTo(map); // Markers - always visible
+var editElements = L.layerGroup(); // Rectangles and handles - only visible in edit mode
 
 // Load markers from `markers.json` and recreate the visual elements for each marker.
 // Inputs: `markers.json` file on the same server — an array of marker objects (id, lat, lng, name, img, standnr, websitelink, angle)
@@ -277,9 +291,9 @@ fetch('markers.json')
       var marker = L.marker(center, {draggable: true, title: m.name || m.standnr || 'Unnamed'}).addTo(map);
       // Add marker to searchable layer for search control
       searchableMarkers.addLayer(marker);
-      // Add rectangle and handle to the map so they are visible; earlier versions hid them in read-only which created confusion.
-      rect.addTo(map);
-      handle.addTo(map);
+      // Add rectangle and handle to edit elements layer (only visible in edit mode)
+      editElements.addLayer(rect);
+      editElements.addLayer(handle);
       // Store the full marker object in our in-memory registry for later updates/saves
       var markerObj = {
         id: m.id,
@@ -366,7 +380,9 @@ fetch('markers.json')
       });
 
       marker.dragging[editMode ? 'enable' : 'disable']();
-      handle.dragging[editMode ? 'enable' : 'disable']();
+      if (handle && handle.dragging) {
+        handle.dragging[editMode ? 'enable' : 'disable']();
+      }
       markersList.push(markerObj);
       if (markerObj.id >= nextMarkerId) nextMarkerId = markerObj.id + 1;
     });
@@ -403,6 +419,9 @@ fetch('markers.json')
       
       // Add the search control to the map UI (defaults to top right)
       map.addControl(searchControl);
+      
+      // Initialize layer visibility after all markers are loaded
+      updateLayerVisibility();
       
       // Search control positioning complete - buttons positioned via CSS only
   });
@@ -447,7 +466,7 @@ map.on('contextmenu', function(e) {
   var width = 6, height = 6, angle = 0;
   var center = e.latlng;
   var corners = getRectangleCornersMeters(center, width, height, angle);
-  var rect = L.polygon(corners, {color: "blue", weight: 2}).addTo(map);
+  var rect = L.polygon(corners, {color: "blue", weight: 2});
   var marker = L.marker(center, {draggable: true, title: 'New Booth'}).addTo(map);
   // Add to searchable layer
   searchableMarkers.addLayer(marker);
@@ -458,7 +477,10 @@ map.on('contextmenu', function(e) {
       iconSize: [8, 8],
       html: `<div style="width:8px;height:8px;border-radius:50%;background:#3388ff;"></div>`
     })
-  }).addTo(map);
+  });
+  // Add rectangle and handle to edit elements layer
+  editElements.addLayer(rect);
+  editElements.addLayer(handle);
   var markerId = nextMarkerId++;
   var markerObj = {
     id: markerId,

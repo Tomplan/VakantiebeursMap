@@ -147,7 +147,7 @@
     "img": "",
     "standnr": "699",
     "websitelink": "",
-    "angle": 0
+    "angle": -70.14479029214397
   },
   {
     "id": 20,
@@ -168,5 +168,15 @@
     "standnr": "21",
     "websitelink": "",
     "angle": -56.30993391711483
+  },
+  {
+    "id": 22,
+    "lat": 51.89940175285623,
+    "lng": 5.775117874145509,
+    "name": "Naam_22",
+    "img": "",
+    "standnr": "22",
+    "websitelink": "",
+    "angle": 45
   }
 ]
