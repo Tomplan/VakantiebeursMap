@@ -317,6 +317,15 @@ fetch('markers.json')
               saveMarkers();
               marker.closePopup();
             };
+            
+            // Cancel button handler - restore original values
+            document.getElementById(`cancel_${id}`).onclick = function() {
+              document.getElementById(`name_${id}`).value = markerObj.name || "";
+              document.getElementById(`img_${id}`).value = markerObj.img || "";
+              document.getElementById(`standnr_${id}`).value = markerObj.standnr || "";
+              document.getElementById(`web_${id}`).value = markerObj.websitelink || "";
+              marker.closePopup();
+            };
           }
         }, 0);
       });
@@ -411,7 +420,7 @@ function createEditablePopup(markerObj) {
   var standnr = markerObj.standnr || "";
   var websitelink = markerObj.websitelink || "";
   var disabled = editMode ? "" : "disabled";
-  var saveBtn = editMode ? `<button id="save_${id}" style="margin-top:6px">Opslaan</button>` : "";
+  var saveBtn = editMode ? `<button id="save_${id}" style="margin-top:6px; margin-right:6px">Save</button><button id="cancel_${id}" style="margin-top:6px">Cancel</button>` : "";
   var idLatLngBlock = editMode ?
     `<div><b>ID:</b> <span>${id}</span></div>
      <div><b>Lat:</b> <span>${lat}</span></div>
@@ -489,6 +498,15 @@ map.on('contextmenu', function(e) {
           
           // Direct opslaan na save-button click
           saveMarkers();
+          marker.closePopup();
+        };
+        
+        // Cancel button handler - restore original values
+        document.getElementById(`cancel_${id}`).onclick = function() {
+          document.getElementById(`name_${id}`).value = markerObj.name || "";
+          document.getElementById(`img_${id}`).value = markerObj.img || "";
+          document.getElementById(`standnr_${id}`).value = markerObj.standnr || "";
+          document.getElementById(`web_${id}`).value = markerObj.websitelink || "";
           marker.closePopup();
         };
       }

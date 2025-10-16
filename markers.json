@@ -3,7 +3,7 @@
     "id": 1,
     "lat": 51.8988804118453,
     "lng": 5.772957354784013,
-    "name": "test234",
+    "name": "Naam_1",
     "img": "",
     "standnr": "1",
     "websitelink": "",
@@ -113,9 +113,9 @@
     "id": 16,
     "lat": 51.89865118539083,
     "lng": 5.774538516998292,
-    "name": "new123",
+    "name": "Naam_16",
     "img": "",
-    "standnr": "8800",
+    "standnr": "16",
     "websitelink": "",
     "angle": -22.963776179672674
   },
@@ -153,10 +153,20 @@
     "id": 20,
     "lat": 51.8993396887674,
     "lng": 5.774366855621339,
-    "name": "ikk",
+    "name": "ikke",
     "img": "",
-    "standnr": "-6",
+    "standnr": "-4",
     "websitelink": "",
     "angle": 0
+  },
+  {
+    "id": 21,
+    "lat": 51.899250316328875,
+    "lng": 5.773610472679139,
+    "name": "Naam_21",
+    "img": "",
+    "standnr": "21",
+    "websitelink": "",
+    "angle": -56.30993391711483
   }
 ]
