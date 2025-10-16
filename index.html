@@ -343,14 +343,15 @@ map.on('click', function(e) {
   var center = e.latlng;
   var corners = getRectangleCornersMeters(center, width, height, angle);
   var rect = L.polygon(corners, {color: "blue", weight: 2}).addTo(map);
-  var marker = L.marker(center, {draggable: true, title: name || standnr || 'New Booth'}).addTo(map);
+  var marker = L.marker(center, {draggable: true, title: 'New Booth'}).addTo(map);
   // Add to searchable layer
   searchableMarkers.addLayer(marker);
   var handle = L.marker(corners[2], {
     draggable: true,
     icon: L.divIcon({
       className: 'rotate-handle',
-      iconSize: [10, 10]
+      iconSize: [8, 8],
+      html: `<div style="width:8px;height:8px;border-radius:50%;background:#3388ff;"></div>`
     })
   }).addTo(map);
   var markerId = nextMarkerId++;
