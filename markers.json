@@ -158,5 +158,15 @@
     "standnr": "-4",
     "websitelink": "",
     "angle": 0
+  },
+  {
+    "id": 21,
+    "lat": 51.89931982824087,
+    "lng": 5.77334761619568,
+    "name": "",
+    "img": "",
+    "standnr": "",
+    "websitelink": "",
+    "angle": 0
   }
 ]
