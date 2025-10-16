@@ -22,6 +22,26 @@ const GITHUB_BRANCH = "development";
 app.use(express.json());
 app.use(express.static(__dirname)); // Serve index.html and markers.json
 
+// GET /list-backups - Return list of available backup files
+app.get('/list-backups', (req, res) => {
+  const backupsDir = path.join(__dirname, 'markers-backups');
+  
+  if (!fs.existsSync(backupsDir)) {
+    return res.json({ backups: [] });
+  }
+  
+  try {
+    const files = fs.readdirSync(backupsDir)
+      .filter(f => f.startsWith('markers-backup-') && f.endsWith('.json'))
+      .sort()
+      .reverse(); // Most recent first
+    
+    res.json({ backups: files });
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to list backups' });
+  }
+});
+
 // POST /save-markers
 // Purpose: receive the serialized markers array from the client, persist it to disk (markers.json),
 // keep a rotating backup set on disk, and attempt to push the change to GitHub.
