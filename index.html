@@ -13,6 +13,11 @@
     .modal-close { cursor:pointer; float:right; font-size:20px }
     /* Simple fix to keep buttons visible */
     #editModeToggle { position: fixed; top: 10px; left: 10px; z-index: 1000; background: rgba(255,255,255,0.9); padding: 8px; border-radius: 6px; }
+    /* Edit mode legend */
+    #editLegend { position: fixed; top: 10px; right: 10px; z-index: 1000; background: rgba(255,255,255,0.95); padding: 12px; border-radius: 6px; font-size: 12px; line-height: 1.4; box-shadow: 0 2px 8px rgba(0,0,0,0.2); min-width: 250px; }
+    #editLegend h4 { margin: 0 0 8px 0; font-size: 13px; color: #333; }
+    #editLegend ul { margin: 0; padding-left: 16px; }
+    #editLegend li { margin-bottom: 4px; }
   </style>
 </head>
 <body>
@@ -24,6 +29,19 @@
   <button id="saveMarkersBtn" style="margin-left:16px;">Save</button>
   <button id="backupsBtn" style="margin-left:8px;">Backups</button>
     <span id="saveStatus" style="margin-left:8px;color:green;"></span>
+  </div>
+
+  <!-- Edit mode legend (shown only in edit mode) -->
+  <div id="editLegend" style="display:none;">
+    <h4>📝 Edit Mode Guide</h4>
+    <ul>
+      <li>🖱️ <strong>Right-click map:</strong> Add new marker</li>
+      <li>👆 <strong>Drag marker:</strong> Move position</li>
+      <li>🔵 <strong>Drag blue dot:</strong> Rotate rectangle</li>
+      <li>✏️ <strong>Click marker:</strong> Edit details</li>
+      <li>❌ <strong>Right-click marker:</strong> Delete</li>
+      <li>🔍 <strong>Search:</strong> Find markers</li>
+    </ul>
   </div>
   <!-- Backups modal (hidden by default). Will be populated by JS when user opens Backups. -->
   <div id="backupsModal" class="modal" style="display:none;">
@@ -87,6 +105,8 @@ var saveMarkersBtn = document.getElementById('saveMarkersBtn');
 function updateSaveButtonVisibility() {
   // Show the global save button only in edit mode because saving should only be possible when editing.
   saveMarkersBtn.style.display = editMode ? '' : 'none';
+  // Show the edit legend only in edit mode to help users understand the interface
+  document.getElementById('editLegend').style.display = editMode ? '' : 'none';
 }
 updateSaveButtonVisibility();
 editModeToggleBtn.textContent = editMode ? 'Switch to read-only' : 'Switch to edit-mode';
@@ -333,9 +353,9 @@ function createEditablePopup(markerObj) {
   `;
 }
 
-map.on('click', function(e) {
-  // Handler for clicking on the map to create a NEW marker (only active in edit mode).
-  // Inputs: Leaflet click event (contains latlng)
+map.on('contextmenu', function(e) {
+  // Handler for right-clicking on the map to create a NEW marker (only active in edit mode).
+  // Inputs: Leaflet contextmenu event (contains latlng)
   // Outputs: new marker, rectangle and handle added to map and registered in `markersList`
   // Side-effects: increments `nextMarkerId` for client-side unique IDs.
   if (!editMode) return;
