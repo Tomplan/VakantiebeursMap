@@ -16,8 +16,8 @@
     .control-btn { width: 30px; height: 30px; border: none; border-radius: 4px; cursor: pointer; font-size: 14px; display: flex; align-items: center; justify-content: center; }
     .edit-btn { background: #1976d2; color: white; }
     .backup-btn { background: #424242; color: white; }
-    /* Edit mode legend */
-    #editLegend { position: fixed; top: 10px; right: 10px; z-index: 1000; background: rgba(255,255,255,0.95); padding: 12px; border-radius: 6px; font-size: 12px; line-height: 1.4; box-shadow: 0 2px 8px rgba(0,0,0,0.2); min-width: 250px; }
+  /* Edit mode legend */
+  #editLegend { position: fixed; top: 10px; right: 10px; z-index: 1000; background: rgba(255,255,255,0.95); padding: 12px; border-radius: 6px; font-size: 12px; line-height: 1.4; box-shadow: 0 2px 8px rgba(0,0,0,0.2); min-width: 250px; border:2px solid rgba(0,0,0,0.4); }
     #editLegend h4 { margin: 0 0 8px 0; font-size: 13px; color: #333; }
     #editLegend ul { margin: 0; padding-left: 16px; }
     #editLegend li { margin-bottom: 4px; }
@@ -33,12 +33,11 @@
   </div>
 
   <!-- Edit mode legend icon (shown only in edit mode) -->
-  <div id="editLegendIcon" style="display:none; position:fixed; top:78px; right:10px; z-index:1000; width:44px; height:44px; background:#fff; border:2px solid rgba(0,0,0,0.2); border-radius:4px; cursor:pointer; background-position:50% 50%; background-repeat:no-repeat; font-family:'Helvetica Neue', Arial, Helvetica, sans-serif; font-size:26px; color:#0078A8; text-decoration:none; pointer-events:auto; -webkit-tap-highlight-color:rgba(51, 181, 229, 0.4); display:flex; align-items:center; justify-content:center;" title="Edit Mode Guide">
-    ℹ️
+  <div id="editLegendIcon" style="display:none; position:fixed; top:78px; right:10px; z-index:1000; width:44px; height:44px; background:#fff; border:2px solid rgba(0,0,0,0.4); border-radius:4px; cursor:pointer; background-image:url('info-icon.png'); background-position:center; background-repeat:no-repeat; background-size:30px 30px; text-decoration:none; pointer-events:auto; -webkit-tap-highlight-color:rgba(51, 181, 229, 0.4); display:flex; align-items:center; justify-content:center;" title="Edit Mode Guide">
   </div>
   
   <!-- Edit mode legend content (hidden popup) -->
-  <div id="editLegendContent" style="display:none; position:fixed; top:115px; right:10px; z-index:1000; background:rgba(255,255,255,0.95); padding:12px; border-radius:6px; font-size:12px; line-height:1.4; box-shadow:0 2px 8px rgba(0,0,0,0.2); min-width:250px;">
+  <div id="editLegendContent" style="display:none; position:fixed; top:115px; right:10px; z-index:1000; background:rgba(255,255,255,0.95); padding:12px; border-radius:6px; font-size:12px; line-height:1.4; box-shadow:0 2px 8px rgba(0,0,0,0.2); min-width:250px; border:2px solid rgba(0,0,0,0.4);">
     <h4>📝 Edit Mode Guide</h4>
     <ul>
       <li>🖱️ <strong>Right-click map:</strong> Add new marker</li>
