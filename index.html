@@ -66,12 +66,13 @@
     </button>
     <button id="backupsBtn" title="View Backups" style="background-image:url('icons/backup-icon.png'); background-position:center; background-repeat:no-repeat; background-size:20px 20px; width:36px; height:36px; border:2px solid rgba(0,0,0,0.3); border-radius:4px; background-color:#fff; cursor:pointer; display:flex; align-items:center; justify-content:center;">
     </button>
-    <!-- Layer control will be moved here by JavaScript -->
-    <div id="layerControlContainer" style="width:36px; height:36px; display:flex; align-items:center; justify-content:center;"></div>
     <!-- Legend icon moved inside container -->
     <div id="editLegendIcon" style="display:none; width:36px; height:36px; background:#fff; border:2px solid rgba(0,0,0,0.3); border-radius:4px; cursor:pointer; background-image:url('icons/info-icon.png'); background-position:center; background-repeat:no-repeat; background-size:20px 20px; text-decoration:none; pointer-events:auto; -webkit-tap-highlight-color:rgba(51, 181, 229, 0.4); display:flex; align-items:center; justify-content:center;" title="Edit Mode Guide">
     </div>
   </div>
+  
+  <!-- Layer control positioned on left side -->
+  <div id="layerControlContainer" style="position: fixed; top: 200px; left: 10px; z-index: 1000; width:36px; height:36px; display:flex; align-items:center; justify-content:center;"></div>
   
   <!-- Edit mode legend content (hidden popup) -->
   <div id="editLegendContent" style="display:none; position:fixed; top:10px; right:60px; z-index:1000; background:rgba(255,255,255,0.95); padding:12px; border-radius:6px; font-size:12px; line-height:1.4; box-shadow:0 2px 8px rgba(0,0,0,0.2); min-width:250px; border:2px solid rgba(0,0,0,0.3);">
