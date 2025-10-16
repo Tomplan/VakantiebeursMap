@@ -282,8 +282,8 @@ fetch('markers.json')
         textPlaceholder: 'Search booths, stands, names...',
         zoom: 20,
         moveToLocation: function(latlng, title, map) {
-          // First zoom to the location
-          map.setView(latlng, 20);
+          // First smoothly fly to the location
+          map.flyTo(latlng, 20);
           // Then find and open the popup for the found marker
           searchableMarkers.eachLayer(function(layer) {
             if (layer.getLatLng().equals(latlng)) {
