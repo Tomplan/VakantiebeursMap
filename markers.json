@@ -98,5 +98,35 @@
     "standnr": "",
     "websitelink": "",
     "angle": 0
+  },
+  {
+    "id": 14,
+    "lat": 51.898657805665835,
+    "lng": 5.7749247550964355,
+    "name": "",
+    "img": "",
+    "standnr": "",
+    "websitelink": "",
+    "angle": 0
+  },
+  {
+    "id": 16,
+    "lat": 51.89865118539083,
+    "lng": 5.774538516998292,
+    "name": "blablabla",
+    "img": "",
+    "standnr": "",
+    "websitelink": "",
+    "angle": -22.963776179672674
+  },
+  {
+    "id": 17,
+    "lat": 51.898432715768095,
+    "lng": 5.774908661842347,
+    "name": "hhhh",
+    "img": "",
+    "standnr": "-1",
+    "websitelink": "",
+    "angle": 0
   }
 ]

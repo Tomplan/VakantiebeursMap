@@ -197,6 +197,37 @@ editModeToggleBtn.addEventListener('click', function() {
 var markersList = [];
 var nextMarkerId = 1;
 
+// Helper function to save markers to server
+function saveMarkers() {
+  var data = markersList.map(function(obj) {
+    return {
+      id: obj.id,
+      lat: obj.marker.getLatLng().lat,
+      lng: obj.marker.getLatLng().lng,
+      name: obj.name,
+      img: obj.img,
+      standnr: obj.standnr,
+      websitelink: obj.websitelink,
+      angle: obj.angle || 0
+    };
+  });
+  fetch('/save-markers', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(data)
+  });
+}
+
+// Helper function to delete a marker
+function deleteMarker(marker, rect, handle, markerId) {
+  if (!editMode) return;
+  map.removeLayer(marker);
+  map.removeLayer(rect);
+  map.removeLayer(handle);
+  markersList = markersList.filter(function(obj) { return obj.id !== markerId; });
+  saveMarkers();
+}
+
 // Create a layer group to hold all markers for the search control
 var searchableMarkers = L.layerGroup().addTo(map);
 
@@ -259,23 +290,7 @@ fetch('markers.json')
             // Update marker title for search
             markerObj.marker.options.title = markerObj.name || markerObj.standnr || 'Unnamed';
             // Direct opslaan na save-button click
-            var data = markersList.map(function(obj) {
-              return {
-                id: obj.id,
-                lat: obj.marker.getLatLng().lat,
-                lng: obj.marker.getLatLng().lng,
-                name: obj.name,
-                img: obj.img,
-                standnr: obj.standnr,
-                websitelink: obj.websitelink,
-                angle: obj.angle || 0
-              };
-            });
-            fetch('/save-markers', {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify(data)
-            });
+            saveMarkers();
             marker.closePopup();
           };
         }
@@ -290,23 +305,7 @@ fetch('markers.json')
       marker.on('dragend', function(ev) {
         marker.setPopupContent(createEditablePopup(markerObj));
         if (editMode) {
-          var data = markersList.map(function(obj) {
-            return {
-              id: obj.id,
-              lat: obj.marker.getLatLng().lat,
-              lng: obj.marker.getLatLng().lng,
-              name: obj.name,
-              img: obj.img,
-              standnr: obj.standnr,
-              websitelink: obj.websitelink,
-              angle: obj.angle || 0
-            };
-          });
-          fetch('/save-markers', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(data)
-          });
+          saveMarkers();
         }
       });
 
@@ -324,32 +323,12 @@ fetch('markers.json')
       handle.on('dragend', function(e) {
         marker.setPopupContent(createEditablePopup(markerObj));
         if (editMode) {
-          var data = markersList.map(function(obj) {
-            return {
-              id: obj.id,
-              lat: obj.marker.getLatLng().lat,
-              lng: obj.marker.getLatLng().lng,
-              name: obj.name,
-              img: obj.img,
-              standnr: obj.standnr,
-              websitelink: obj.websitelink,
-              angle: obj.angle || 0
-            };
-          });
-          fetch('/save-markers', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(data)
-          });
+          saveMarkers();
         }
       });
 
       marker.on('contextmenu', function(ev) {
-  if (!editMode) return;
-  map.removeLayer(marker);
-  map.removeLayer(rect);
-  map.removeLayer(handle);
-  markersList = markersList.filter(function(obj) { return obj.id !== markerObj.id; });
+        deleteMarker(marker, rect, handle, markerObj.id);
       });
 
       marker.dragging[editMode ? 'enable' : 'disable']();
@@ -476,29 +455,9 @@ map.on('contextmenu', function(e) {
           markerObj.websitelink = document.getElementById(`web_${id}`).value;
           // Update marker title for search
           markerObj.marker.options.title = markerObj.name || markerObj.standnr || 'Unnamed';
-          // Herteken popup zodat disabled/save-knop direct klopt
-          setTimeout(function() {
-            marker.setPopupContent(createEditablePopup(markerObj));
-            marker.openPopup();
-          }, 0);
           // Direct opslaan na save-button click
-          var data = markersList.map(function(obj) {
-            return {
-              id: obj.id,
-              lat: obj.marker.getLatLng().lat,
-              lng: obj.marker.getLatLng().lng,
-              name: obj.name,
-              img: obj.img,
-              standnr: obj.standnr,
-              websitelink: obj.websitelink,
-              angle: obj.angle || 0
-            };
-          });
-          fetch('/save-markers', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(data)
-          });
+          saveMarkers();
+          marker.closePopup();
         };
       }
     }, 0);
@@ -528,16 +487,15 @@ map.on('contextmenu', function(e) {
   });
 
   marker.on('contextmenu', function(ev) {
-    if (!editMode) return;
-    map.removeLayer(marker);
-    map.removeLayer(rect);
-    map.removeLayer(handle);
-    markersList = markersList.filter(function(obj) { return obj.id !== markerId; });
+    deleteMarker(marker, rect, handle, markerId);
   });
 
   marker.dragging[editMode ? 'enable' : 'disable']();
   handle.dragging[editMode ? 'enable' : 'disable']();
   markersList.push(markerObj);
+  
+  // Auto-save new marker immediately
+  saveMarkers();
 });
 // Helper: meters <-> lat/lng
 function metersToLatLng(centerLatLng, dx, dy) {
