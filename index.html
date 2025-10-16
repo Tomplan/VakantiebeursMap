@@ -43,6 +43,9 @@
       align-items: center !important;
       justify-content: center !important;
     }
+    #editLegendIcon {
+      display: none;
+    }
     #editLegendIcon:not([style*="display: none"]) {
       display: flex !important;
     }
@@ -68,10 +71,10 @@
   <div id="editModeToggle">
     <button id="editModeToggleBtn" title="Toggle Edit Mode" class="control-button" style="background-image:url('icons/pencil-icon.png');">
     </button>
-    <button id="backupsBtn" title="View Backups" style="background-image:url('icons/backup-icon.png'); background-position:center; background-repeat:no-repeat; background-size:20px 20px; width:36px; height:36px; border:2px solid rgba(0,0,0,0.3); border-radius:4px; background-color:#fff; cursor:pointer; display:flex; align-items:center; justify-content:center;">
+    <button id="backupsBtn" title="View Backups" class="control-button" style="background-image:url('icons/backup-icon.png');">
     </button>
     <!-- Legend icon moved inside container -->
-    <div id="editLegendIcon" style="display:none; width:36px; height:36px; background:#fff; border:2px solid rgba(0,0,0,0.3); border-radius:4px; cursor:pointer; background-image:url('icons/info-icon.png'); background-position:center; background-repeat:no-repeat; background-size:20px 20px; text-decoration:none; pointer-events:auto; -webkit-tap-highlight-color:rgba(51, 181, 229, 0.4); display:flex; align-items:center; justify-content:center;" title="Edit Mode Guide">
+    <div id="editLegendIcon" class="control-button" style="background-image:url('icons/info-icon.png'); text-decoration:none; pointer-events:auto; -webkit-tap-highlight-color:rgba(51, 181, 229, 0.4);" title="Edit Mode Guide">
     </div>
   </div>
   
