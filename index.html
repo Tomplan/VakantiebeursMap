@@ -20,11 +20,22 @@
 
 <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 <script>
+// Map initialization
+// Inputs: HTML element with id 'map'
+// Outputs: global `map` Leaflet map instance used throughout the file
+// Side-effects: sets initial view and zoom limits to match the event grounds; other code reads `map` to add layers/markers
+// Rationale: keep a single shared Leaflet instance so markers, rectangles and controls operate on the same map object.
 var map = L.map('map', {
   minZoom: 16,
   maxZoom: 22
 }).setView([51.898819375615844, 5.7732504428013165], 18);
 
+// Basemap layers (tile layers)
+// Purpose: provide two complementary basemaps: a neutral raster map and an imagery layer. Both are added so maintainers can
+// easily switch or overlay them for debugging. We currently add both to ensure consistent visual context.
+// Inputs: tile URL template and metadata (attribution, zoom limits)
+// Outputs: two L.TileLayer objects attached to `map`
+// Side-effects: these layers affect performance/network usage; choose low-resolution or cached tiles for production if needed.
 var terrainMap = L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager_nolabels/{z}/{x}/{y}{r}.png', {
   attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
   subdomains: 'abcd',
@@ -38,48 +49,70 @@ var esri_WorldImagery = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest
 esri_WorldImagery.addTo(map);
 
 
-// --- Edit Mode Logic ---
+// --- Edit mode logic ---
+// Purpose: track whether the UI is in editor mode (allow moving markers, rotating rectangles and showing save buttons)
+// Data model: `editMode` is a boolean persisted in localStorage so page reloads keep the selected mode.
+// Inputs: user clicking the toggle button
+// Outputs/Side-effects: toggles visibility of the save button, stores new mode in localStorage, and reloads the page
+// Rationale: we reload the page on mode change to force Leaflet to rebuild popups and drawing layers consistently. This
+// avoids subtle state bugs where popup content or input `disabled` attributes are stale after switching modes.
 var editMode = localStorage.getItem('editMode') === 'true';
 var editModeToggleBtn = document.getElementById('editModeToggleBtn');
 var saveMarkersBtn = document.getElementById('saveMarkersBtn');
 function updateSaveButtonVisibility() {
+  // Show the global save button only in edit mode because saving should only be possible when editing.
   saveMarkersBtn.style.display = editMode ? '' : 'none';
 }
 updateSaveButtonVisibility();
 editModeToggleBtn.textContent = editMode ? 'Switch to read-only' : 'Switch to edit-mode';
 editModeToggleBtn.addEventListener('click', function() {
+  // Toggle edit mode, persist choice and reload to ensure UI/popup consistency.
   editMode = !editMode;
   localStorage.setItem('editMode', editMode);
   editModeToggleBtn.textContent = editMode ? 'Switch to read-only' : 'Switch to edit-mode';
   updateSaveButtonVisibility();
-  // Herlaad de pagina zodat alle UI en popups correct zijn
+  // Reload: forces popups and Leaflet handlers to be reconstructed according to the new mode.
   location.reload();
 });
 
+// In-memory marker registry
+// `markersList` holds objects representing each marker and its associated rectangle and rotate-handle.
+// Each entry shape: { id, marker: L.Marker, rect: L.Polygon, handle: L.Marker, name, img, standnr, websitelink, width, height, angle }
+// `nextMarkerId` is used only when creating new markers client-side to provide a temporary unique id until saved.
 var markersList = [];
 var nextMarkerId = 1;
 
-// Markers inladen bij openen pagina
+// Load markers from `markers.json` and recreate the visual elements for each marker.
+// Inputs: `markers.json` file on the same server — an array of marker objects (id, lat, lng, name, img, standnr, websitelink, angle)
+// Outputs: for each JSON entry we create a Leaflet marker, a rectangle polygon (width x height), and a rotate handle marker.
+// Side-effects: these objects are added to `markersList` so other UI actions (drag/rotate/save) can reference them.
+// Notes: rectangles are by default added to the map; previously we used conditional display logic — keep this behaviour consistent
+// with the rest of the app when toggling modes.
 fetch('markers.json')
   .then(res => res.json())
   .then(data => {
     data.forEach(function(m) {
+      // rectangle size and initial angle come from JSON or defaults
       var width = 6, height = 6, angle = typeof m.angle === 'number' ? m.angle : 0;
       var center = L.latLng(m.lat, m.lng);
       var corners = getRectangleCornersMeters(center, width, height, angle);
+      // Create the rectangle polygon that represents the footprint of the marker (in meters)
       var rect = L.polygon(corners, {color: "blue", weight: 2});
+      // Create a small draggable handle used to visually rotate the rectangle. We use L.divIcon so we can fully control appearance.
       var handle = L.marker(corners[2], {
         draggable: true,
         icon: L.divIcon({
           className: 'rotate-handle',
           iconSize: [8, 8],
-          html: `<div style=\"width:8px;height:8px;border-radius:50%;background:#3388ff;\"></div>`
+          html: `<div style=\\"width:8px;height:8px;border-radius:50%;background:#3388ff;\\"></div>`
         })
       });
+      // Always add the marker itself to the map so markers remain visible even in read-only mode. The rect/handle provide editing affordances.
       var marker = L.marker(center, {draggable: true}).addTo(map);
-      // Rechthoek en handle altijd zichtbaar, ongeacht editMode
+      // Add rectangle and handle to the map so they are visible; earlier versions hid them in read-only which created confusion.
       rect.addTo(map);
       handle.addTo(map);
+      // Store the full marker object in our in-memory registry for later updates/saves
       var markerObj = {
         id: m.id,
         marker: marker,
@@ -205,6 +238,10 @@ fetch('markers.json')
   });
 
 function createEditablePopup(markerObj) {
+  // Build popup HTML for a marker. This function is called when binding/opening a popup.
+  // Inputs: markerObj (see markersList shape above)
+  // Output: HTML string inserted into Leaflet popup
+  // Side-effects: none — it only returns markup. Event handlers for the save button are attached in the popupopen handler.
   var lat = markerObj.marker.getLatLng().lat.toFixed(8);
   var lng = markerObj.marker.getLatLng().lng.toFixed(8);
   var id = markerObj.id;
@@ -232,6 +269,10 @@ function createEditablePopup(markerObj) {
 }
 
 map.on('click', function(e) {
+  // Handler for clicking on the map to create a NEW marker (only active in edit mode).
+  // Inputs: Leaflet click event (contains latlng)
+  // Outputs: new marker, rectangle and handle added to map and registered in `markersList`
+  // Side-effects: increments `nextMarkerId` for client-side unique IDs.
   if (!editMode) return;
   var width = 6, height = 6, angle = 0;
   var center = e.latlng;
@@ -338,6 +379,10 @@ map.on('click', function(e) {
 });
 // Helper: meters <-> lat/lng
 function metersToLatLng(centerLatLng, dx, dy) {
+  // Helper: converts local meter offsets (dx east, dy north) into lat/lng around a given center point.
+  // Inputs: centerLatLng (Leaflet LatLng), dx (meters east), dy (meters north)
+  // Output: [lat, lng] tuple suitable for Leaflet polygons/markers
+  // Notes: This uses a simple equirectangular approximation suitable for small distances (a few tens of meters).
   var R = 6378137;
   var dLat = dy / R;
   var dLng = dx / (R * Math.cos(Math.PI * centerLatLng.lat / 180));
@@ -367,7 +412,10 @@ function getRectangleCornersMeters(centerLatLng, width_m, height_m, angleDeg) {
 
 // Opslaan knop functionaliteit
 document.getElementById('saveMarkersBtn').onclick = function() {
-  // markersList naar JSON, inclusief rotatiehoek
+  // Global save handler: serializes the in-memory `markersList` into a JSON array and POSTs to the server endpoint `/save-markers`.
+  // Inputs: none (reads from `markersList`)
+  // Outputs: network POST request; UI feedback in the `#saveStatus` element showing success or error
+  // Error handling: minimal — network errors show a brief message. For production we should handle retries and optimistic UI.
   var data = markersList.map(function(obj) {
     return {
       id: obj.id,
