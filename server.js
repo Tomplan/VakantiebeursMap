@@ -86,5 +86,65 @@ app.post('/save-markers', async (req, res) => {
   }
 });
 
+// GET /backups
+// Returns a JSON array of available backup filenames (sorted newest first)
+app.get('/backups', (req, res) => {
+  const backupsDir = path.join(__dirname, 'markers-backups');
+  if (!fs.existsSync(backupsDir)) return res.json([]);
+  const files = fs.readdirSync(backupsDir)
+    .filter(f => f.startsWith('markers-backup-') && f.endsWith('.json'))
+    .sort()
+    .reverse();
+  res.json(files);
+});
+
+// POST /restore-backup
+// Body: { filename: "markers-backup-YYYY...json" }
+// Server will copy the chosen backup file over markers.json, create its own timestamped backup of the current markers.json,
+// and then attempt to push the restored markers.json to GitHub (same flow as save-markers).
+app.post('/restore-backup', async (req, res) => {
+  try {
+    const backupsDir = path.join(__dirname, 'markers-backups');
+    const filename = req.body && req.body.filename;
+    if (!filename) return res.status(400).json({ status: 'error', error: 'filename required' });
+    const src = path.join(backupsDir, filename);
+    if (!fs.existsSync(src)) return res.status(404).json({ status: 'error', error: 'backup not found' });
+
+    const jsonPath = path.join(__dirname, 'markers.json');
+    // create a timestamped backup of current markers.json
+    const now = new Date();
+    const ts = now.toISOString().replace(/[-:T]/g, '').slice(0, 15);
+    const newBackupPath = path.join(backupsDir, `markers-backup-${ts}.json`);
+    if (fs.existsSync(jsonPath)) fs.copyFileSync(jsonPath, newBackupPath);
+
+    // copy chosen backup into place
+    fs.copyFileSync(src, jsonPath);
+
+    // attempt to push to GitHub (same logic as in save-markers)
+    const octokit = new Octokit({ auth: GITHUB_TOKEN });
+    const { data } = await octokit.repos.getContent({
+      owner: GITHUB_OWNER,
+      repo: GITHUB_REPO,
+      path: GITHUB_FILEPATH,
+      ref: GITHUB_BRANCH
+    });
+    const sha = data.sha;
+    await octokit.repos.createOrUpdateFileContents({
+      owner: GITHUB_OWNER,
+      repo: GITHUB_REPO,
+      path: GITHUB_FILEPATH,
+      message: `Restore markers.json from backup ${filename}`,
+      content: Buffer.from(fs.readFileSync(jsonPath)).toString('base64'),
+      branch: GITHUB_BRANCH,
+      sha: sha
+    });
+
+    res.json({ status: 'restored' });
+  } catch (err) {
+    console.error('Restore error:', err.message);
+    res.status(500).json({ status: 'error', error: err.message });
+  }
+});
+
 // Start the HTTP server. The application uses simple static file serving and one POST API for saving markers.
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
