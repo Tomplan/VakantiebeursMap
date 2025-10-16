@@ -278,7 +278,9 @@ fetch('markers.json')
         layer: searchableMarkers,
         propertyName: 'title', // Use the title property we set on markers
         initial: false,
-        collapsed: true
+        collapsed: true,
+        textPlaceholder: 'Search booths, stands, names...',
+        zoom: 20
       });
       
       // Add the search control to the map UI (defaults to top right)
