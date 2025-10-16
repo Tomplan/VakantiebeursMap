@@ -211,10 +211,27 @@ function saveMarkers() {
       angle: obj.angle || 0
     };
   });
+  
+  // Debug: check what we're saving
+  console.log('Saving data:', data);
+  console.log('First few items:', data.slice(0, 3).map(function(item) { 
+    return { id: item.id, name: item.name, standnr: item.standnr }; 
+  }));
+  
   fetch('/save-markers', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(data)
+  })
+  .then(response => {
+    console.log('Save response status:', response.status);
+    return response.text();
+  })
+  .then(text => {
+    console.log('Save response:', text);
+  })
+  .catch(error => {
+    console.error('Save error:', error);
   });
 }
 
@@ -281,19 +298,27 @@ fetch('markers.json')
 
       marker.on('popupopen', function(ev) {
         var id = markerObj.id;
-        if (editMode && document.getElementById(`save_${id}`)) {
-          document.getElementById(`save_${id}`).onclick = function() {
-            markerObj.name = document.getElementById(`name_${id}`).value;
-            markerObj.img = document.getElementById(`img_${id}`).value;
-            markerObj.standnr = document.getElementById(`standnr_${id}`).value;
-            markerObj.websitelink = document.getElementById(`web_${id}`).value;
-            // Update marker title for search
-            markerObj.marker.options.title = markerObj.name || markerObj.standnr || 'Unnamed';
-            // Direct opslaan na save-button click
-            saveMarkers();
-            marker.closePopup();
-          };
-        }
+        // Altijd popup hertekenen met actuele data
+        setTimeout(function() {
+          marker.setPopupContent(createEditablePopup(markerObj));
+          if (editMode && document.getElementById(`save_${id}`)) {
+            document.getElementById(`save_${id}`).onclick = function() {
+              markerObj.name = document.getElementById(`name_${id}`).value;
+              markerObj.img = document.getElementById(`img_${id}`).value;
+              markerObj.standnr = document.getElementById(`standnr_${id}`).value;
+              markerObj.websitelink = document.getElementById(`web_${id}`).value;
+              // Update marker title for search
+              markerObj.marker.options.title = markerObj.name || markerObj.standnr || 'Unnamed';
+              
+              // Debug: check if markerObj is updated
+              console.log('Updated markerObj:', markerObj.name, markerObj.standnr);
+              
+              // Save using the helper function (markerObj is same object reference as in markersList)
+              saveMarkers();
+              marker.closePopup();
+            };
+          }
+        }, 0);
       });
 
       marker.on('drag', function(e) {
@@ -455,6 +480,13 @@ map.on('contextmenu', function(e) {
           markerObj.websitelink = document.getElementById(`web_${id}`).value;
           // Update marker title for search
           markerObj.marker.options.title = markerObj.name || markerObj.standnr || 'Unnamed';
+          
+          // Debug: check if markerObj is updated
+          console.log('Updated markerObj:', markerObj.name, markerObj.standnr);
+          
+          // Update popup content with new data
+          marker.setPopupContent(createEditablePopup(markerObj));
+          
           // Direct opslaan na save-button click
           saveMarkers();
           marker.closePopup();

@@ -29,6 +29,9 @@ app.use(express.static(__dirname)); // Serve index.html and markers.json
 // Output: JSON response { status: 'saved' } on success, or { status: 'error', error: '...' } on failure (500).
 // Side-effects: writes files to disk and makes network calls to GitHub.
 app.post('/save-markers', async (req, res) => {
+  console.log('Received save request with', req.body.length, 'markers');
+  console.log('First marker data:', req.body[0]);
+  
   // Maintain a small on-disk backup history inside the `markers-backups/` folder.
   // Benefits: keeps repository root clean and avoids accidental commits of stray files.
   const backupsDir = path.join(__dirname, 'markers-backups');

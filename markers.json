@@ -3,7 +3,7 @@
     "id": 1,
     "lat": 51.8988804118453,
     "lng": 5.772957354784013,
-    "name": "naam122",
+    "name": "test234",
     "img": "",
     "standnr": "1",
     "websitelink": "",
@@ -43,9 +43,9 @@
     "id": 5,
     "lat": 51.898871309012,
     "lng": 5.773591697216035,
-    "name": "naam5",
+    "name": "naam5jjj",
     "img": "",
-    "standnr": "5",
+    "standnr": "599",
     "websitelink": "",
     "angle": 13.27638406894065
   },
@@ -105,7 +105,7 @@
     "lng": 5.7749247550964355,
     "name": "",
     "img": "",
-    "standnr": "",
+    "standnr": "87",
     "websitelink": "",
     "angle": 0
   },
@@ -113,9 +113,9 @@
     "id": 16,
     "lat": 51.89865118539083,
     "lng": 5.774538516998292,
-    "name": "blablabla",
+    "name": "new123",
     "img": "",
-    "standnr": "",
+    "standnr": "8800",
     "websitelink": "",
     "angle": -22.963776179672674
   },
@@ -126,6 +126,36 @@
     "name": "hhhh",
     "img": "",
     "standnr": "-1",
+    "websitelink": "",
+    "angle": 0
+  },
+  {
+    "id": 18,
+    "lat": 51.89886634382943,
+    "lng": 5.774916708469392,
+    "name": "hhhjjjj",
+    "img": "",
+    "standnr": "9978",
+    "websitelink": "",
+    "angle": 0
+  },
+  {
+    "id": 19,
+    "lat": 51.8993396887674,
+    "lng": 5.774881839752197,
+    "name": "kkkk",
+    "img": "",
+    "standnr": "699",
+    "websitelink": "",
+    "angle": 0
+  },
+  {
+    "id": 20,
+    "lat": 51.8993396887674,
+    "lng": 5.774366855621339,
+    "name": "ikk",
+    "img": "",
+    "standnr": "-6",
     "websitelink": "",
     "angle": 0
   }
