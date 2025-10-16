@@ -66,7 +66,7 @@
   </button>
   
   <!-- Layer control positioned under legend button -->
-  <div id="layerControlContainer" style="position: fixed; top: 150px; right: 10px; z-index: 1000; display:flex; align-items:center; justify-content:center;"></div>
+  <div id="layerControlContainer" style="position: fixed; top: 210px; right: 10px; z-index: 1000; display:flex; align-items:center; justify-content:center;"></div>
   
   <!-- Edit mode legend content (hidden popup) -->
   <div id="editLegendContent" style="display:none; position:fixed; top:10px; right:60px; z-index:1000; background:rgba(255,255,255,0.95); padding:12px; border-radius:6px; font-size:12px; line-height:1.4; box-shadow:0 2px 8px rgba(0,0,0,0.2); min-width:250px; border:2px solid rgba(0,0,0,0.3);">
@@ -226,10 +226,10 @@ function saveMarkers() {
   });
   
   // Debug: check what we're saving
-  console.log('Saving data:', data);
-  console.log('First few items:', data.slice(0, 3).map(function(item) { 
-    return { id: item.id, name: item.name, standnr: item.standnr }; 
-  }));
+  // console.log('Saving data:', data);
+  // console.log('First few items:', data.slice(0, 3).map(function(item) { 
+  //   return { id: item.id, name: item.name, standnr: item.standnr }; 
+  // }));
   
   fetch('/save-markers', {
     method: 'POST',
@@ -237,11 +237,11 @@ function saveMarkers() {
     body: JSON.stringify(data)
   })
   .then(response => {
-    console.log('Save response status:', response.status);
+    // console.log('Save response status:', response.status);
     return response.text();
   })
   .then(text => {
-    console.log('Save response:', text);
+    // console.log('Save response:', text);
   })
   .catch(error => {
     console.error('Save error:', error);
@@ -261,6 +261,29 @@ function deleteMarker(marker, rect, handle, markerId) {
 // Create layer groups for different types of elements
 var searchableMarkers = L.layerGroup().addTo(map); // Markers - always visible
 var editElements = L.layerGroup(); // Rectangles and handles - only visible in edit mode
+
+// Function to create a custom marker icon with stand number
+function createStandNumberIcon(standnr) {
+  return L.divIcon({
+    className: 'stand-number-marker',
+    html: `<div style="
+      width: 30px; 
+      height: 30px; 
+      border-radius: 50%; 
+      background: white; 
+      border: 2px solid #333; 
+      display: flex; 
+      align-items: center; 
+      justify-content: center; 
+      font-weight: bold; 
+      font-size: 12px; 
+      color: #333;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+    ">${standnr || '?'}</div>`,
+    iconSize: [30, 30],
+    iconAnchor: [15, 15]
+  });
+}
 
 // Load markers from `markers.json` and recreate the visual elements for each marker.
 // Inputs: `markers.json` file on the same server — an array of marker objects (id, lat, lng, name, img, standnr, websitelink, angle)
@@ -288,7 +311,11 @@ fetch('markers.json')
         })
       });
       // Always add the marker itself to the map so markers remain visible even in read-only mode. The rect/handle provide editing affordances.
-      var marker = L.marker(center, {draggable: true, title: m.name || m.standnr || 'Unnamed'}).addTo(map);
+      var marker = L.marker(center, {
+        draggable: true, 
+        title: m.name || m.standnr || 'Unnamed',
+        icon: createStandNumberIcon(m.standnr)
+      }).addTo(map);
       // Add marker to searchable layer for search control
       searchableMarkers.addLayer(marker);
       // Add rectangle and handle to edit elements layer (only visible in edit mode)
@@ -323,9 +350,11 @@ fetch('markers.json')
               markerObj.websitelink = document.getElementById(`web_${id}`).value;
               // Update marker title for search
               markerObj.marker.options.title = markerObj.name || markerObj.standnr || 'Unnamed';
+              // Update marker icon with new stand number
+              markerObj.marker.setIcon(createStandNumberIcon(markerObj.standnr));
               
               // Debug: check if markerObj is updated
-              console.log('Updated markerObj:', markerObj.name, markerObj.standnr);
+              // console.log('Updated markerObj:', markerObj.name, markerObj.standnr);
               
               // Save using the helper function (markerObj is same object reference as in markersList)
               saveMarkers();
@@ -385,6 +414,7 @@ fetch('markers.json')
       }
       markersList.push(markerObj);
       if (markerObj.id >= nextMarkerId) nextMarkerId = markerObj.id + 1;
+      // console.log('Updated nextMarkerId to:', nextMarkerId, 'based on marker ID:', markerObj.id);
     });
     
     // ============================================================
@@ -467,7 +497,11 @@ map.on('contextmenu', function(e) {
   var center = e.latlng;
   var corners = getRectangleCornersMeters(center, width, height, angle);
   var rect = L.polygon(corners, {color: "blue", weight: 2});
-  var marker = L.marker(center, {draggable: true, title: 'New Booth'}).addTo(map);
+  var marker = L.marker(center, {
+    draggable: true, 
+    title: 'New Booth',
+    icon: createStandNumberIcon(nextMarkerId)
+  }).addTo(map);
   // Add to searchable layer
   searchableMarkers.addLayer(marker);
   var handle = L.marker(corners[2], {
@@ -489,7 +523,7 @@ map.on('contextmenu', function(e) {
     handle: handle,
     name: "",
     img: "",
-    standnr: "",
+    standnr: markerId.toString(),
     websitelink: "",
     width: width,
     height: height,
@@ -511,9 +545,11 @@ map.on('contextmenu', function(e) {
           markerObj.websitelink = document.getElementById(`web_${id}`).value;
           // Update marker title for search
           markerObj.marker.options.title = markerObj.name || markerObj.standnr || 'Unnamed';
+          // Update marker icon with new stand number
+          markerObj.marker.setIcon(createStandNumberIcon(markerObj.standnr));
           
           // Debug: check if markerObj is updated
-          console.log('Updated markerObj:', markerObj.name, markerObj.standnr);
+          // console.log('Updated markerObj:', markerObj.name, markerObj.standnr);
           
           // Update popup content with new data
           marker.setPopupContent(createEditablePopup(markerObj));
@@ -689,6 +725,8 @@ document.getElementById('editLegendIcon').addEventListener('click', function() {
     content.style.display = 'none';
   }
 });
+
+// Undo functionality - load previous backup
 </script>
 </script>
 </body>
