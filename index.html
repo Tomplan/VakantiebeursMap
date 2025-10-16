@@ -13,20 +13,13 @@
     .modal-close { cursor: pointer; float: right; font-size: 20px; }
     /* Control buttons repositioned to top right */
     #editModeToggle { position: fixed; top: 10px; right: 10px; z-index: 1000; background: rgba(255,255,255,0.9); padding: 4px; border-radius: 6px; display: flex; flex-direction: column; gap: 2px; align-items: center; }
-    /* Ensure all controls in container have consistent sizing */
-    #editModeToggle > * {
-      width: 36px !important;
-      height: 36px !important;
-      margin: 0 !important;
-      flex-shrink: 0;
-    }
     /* Style the layer control to match our buttons */
     #layerControlContainer .leaflet-control-layers { 
-      width: 36px !important; 
-      height: 36px !important; 
-      border: 2px solid rgba(0,0,0,0.3) !important; 
+      min-width: 36px; 
+      min-height: 36px; 
+      border: 2px solid rgba(0,0,0,0.3); 
       border-radius: 4px; 
-      background: #fff !important;
+      background: #fff;
       box-shadow: none;
       display: flex;
       align-items: center;
@@ -34,15 +27,11 @@
       margin: 0;
     }
     #layerControlContainer .leaflet-control-layers-toggle {
-      width: 20px !important;
-      height: 20px !important;
-      background-size: 20px 20px !important;
+      width: 20px;
+      height: 20px;
+      background-size: 20px 20px;
     }
-    /* Legend icon specific styling */
-    #editLegendIcon {
-      align-items: center !important;
-      justify-content: center !important;
-    }
+    /* Legend icon display control */
     #editLegendIcon {
       display: none;
     }
@@ -68,18 +57,16 @@
 </head>
 <body>
 
-  <div id="editModeToggle">
-    <button id="editModeToggleBtn" title="Toggle Edit Mode" class="control-button" style="background-image:url('icons/pencil-icon.png');">
-    </button>
-    <button id="backupsBtn" title="View Backups" class="control-button" style="background-image:url('icons/backup-icon.png');">
-    </button>
-    <!-- Legend icon moved inside container -->
-    <div id="editLegendIcon" class="control-button" style="background-image:url('icons/info-icon.png'); text-decoration:none; pointer-events:auto; -webkit-tap-highlight-color:rgba(51, 181, 229, 0.4);" title="Edit Mode Guide">
-    </div>
-  </div>
+  <button id="editModeToggleBtn" title="Toggle Edit Mode" class="control-button" style="background-image:url('icons/pencil-icon.png'); position: fixed; top: 10px; right: 10px; z-index: 1000;">
+  </button>
+  <button id="backupsBtn" title="View Backups" class="control-button" style="background-image:url('icons/backup-icon.png'); position: fixed; top: 50px; right: 10px; z-index: 1000;">
+  </button>
+  <button id="editLegendIcon" class="control-button" style="position: fixed; top: 90px; right: 10px; z-index: 1000;" title="Edit Mode Guide">
+    i
+  </button>
   
-  <!-- Layer control positioned on left side -->
-  <div id="layerControlContainer" style="position: fixed; top: 200px; left: 10px; z-index: 1000; width:36px; height:36px; display:flex; align-items:center; justify-content:center;"></div>
+  <!-- Layer control positioned under legend button -->
+  <div id="layerControlContainer" style="position: fixed; top: 150px; right: 10px; z-index: 1000; display:flex; align-items:center; justify-content:center;"></div>
   
   <!-- Edit mode legend content (hidden popup) -->
   <div id="editLegendContent" style="display:none; position:fixed; top:10px; right:60px; z-index:1000; background:rgba(255,255,255,0.95); padding:12px; border-radius:6px; font-size:12px; line-height:1.4; box-shadow:0 2px 8px rgba(0,0,0,0.2); min-width:250px; border:2px solid rgba(0,0,0,0.3);">
