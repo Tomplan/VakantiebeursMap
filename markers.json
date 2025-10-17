@@ -1,1 +1,13 @@
-[]
+[
+  {
+    "id": 1,
+    "lat": 51.898841517908345,
+    "lng": 5.773189365863801,
+    "name": "",
+    "img": "icons/4x4Vakantiebeurs.png",
+    "standnr": "1",
+    "websitelink": "",
+    "info": "Ontdek de wereld van de 4x4 vakanties op de 4x4 Vakantiebeurs. De grootste beurs in de BeNeLux op het gebied van 4x4 vakanties, reizen en alles wat ermee gemoeid is.",
+    "angle": 0
+  }
+]
