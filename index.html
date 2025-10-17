@@ -584,6 +584,11 @@ function updateSaveButtonVisibility() {
   if (typeof editElements !== 'undefined') {
     updateLayerVisibility();
   }
+    // Upload-knop alleen zichtbaar in edit mode
+    var uploadLabel = document.getElementById('uploadExcelLabel');
+    if (uploadLabel) {
+      uploadLabel.style.display = editMode ? 'flex' : 'none';
+    }
 }
 updateSaveButtonVisibility();
 editModeToggleBtn.addEventListener('click', function() {
