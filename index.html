@@ -4,6 +4,43 @@
   <meta charset="utf-8"/>
   <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
   <link rel="stylesheet" href="https://unpkg.com/leaflet-search/dist/leaflet-search.min.css"/>
+  
+
+  <link rel="stylesheet" media="screen" href="https://fontlibrary.org/face/xolonium" type="text/css"/>
+  <link href="https://cdn.materialdesignicons.com/1.3.41/css/materialdesignicons.min.css" rel="stylesheet" type="text/css" />
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css" integrity="sha512-dTfge/zgoMYpP7QbHy4gWMEGsbsdZeCXz7irItjcC3sPUFtf0kuFbDz/ixG7ArTxmDjLXDmezHubeNikyKGVyQ==" crossorigin="anonymous">
+	<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.1/css/all.css" integrity="sha384-gfdkjb5BdAXd+lj+gudLWI+BXq4IuLW5IT+brZEZsLFm++aCMlF1V92rMkPaX4PP" crossorigin="anonymous">
+	<link rel="stylesheet" href="https://cdn.rawgit.com/olton/Metro-UI-CSS/master/build/css/metro-icons.min.css">
+<!-- 	Octicons (from GitHub) -->
+	<link rel="stylesheet" href="https://cdn.rawgit.com/github/octicons/master/octicons/octicons.css" type="text/css">
+<!-- 	Iconic Open -->
+	<link rel="stylesheet" href="https://cdn.rawgit.com/iconic/open-iconic/master/font/css/open-iconic-bootstrap.css" type="text/css">
+<!-- 	Mapkey Icons -->
+	<link rel="stylesheet" href="https://cdn.rawgit.com/mapshakers/mapkeyicons/master/dist/MapkeyIcons.css" type="text/css">
+
+
+<!-- Xolonium typeface -->
+<link rel="stylesheet" media="screen" href="https://fontlibrary.org/face/xolonium" type="text/css"/>
+
+	<style>
+	.map {
+		width:600px;
+		height:400px;
+		margin: 0;
+	}
+
+	.leaflet-marker-icon.sans-serif {
+		font-weight: bold;
+		font-family: Sans Serif;
+	}
+
+	.leaflet-marker-icon.xolonium {
+		font-weight: bold;
+		font-family: Xolonium;
+	}
+	</style>
+	<style>.leaflet-map-pane div { box-shadow: none; }</style>
+
   <style>
     body, html { margin: 0; padding: 0; overflow: hidden; }
     #map { height: 100vh; width: 100vw; position: relative; z-index: 1; }
@@ -98,6 +135,7 @@
   <div id="map"></div>
 
 <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+<script src="Leaflet.Icon.Glyph.js"></script>
 <script src="https://unpkg.com/leaflet-search/dist/leaflet-search.min.js"></script>
 <script>
 // Map initialization
@@ -311,10 +349,21 @@ fetch('markers.json')
         })
       });
       // Always add the marker itself to the map so markers remain visible even in read-only mode. The rect/handle provide editing affordances.
-      var marker = L.marker(center, {
-        draggable: true, 
-        title: m.name || m.standnr || 'Unnamed',
-        icon: createStandNumberIcon(m.standnr)
+      var marker = L.marker(center, {draggable: true, title: m.name || m.standnr || 'Unnamed',
+        icon: L.icon.glyph({
+          prefix: '',
+          glyph: m.standnr,
+          glyphColor: 'white',
+          glyphSize: '12px',
+          iconUrl: 'icons/glyph-marker-icon.png',
+          shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
+          className: 'xolonium glyph-marker-icon',
+          glyphAnchor: [0, -6],
+          iconSize: [25, 41],
+          iconAnchor: [12, 41],
+          shadowSize: [41, 41],
+          shadowAnchor: [-12, -41]
+        })
       }).addTo(map);
       // Add marker to searchable layer for search control
       searchableMarkers.addLayer(marker);
@@ -497,10 +546,20 @@ map.on('contextmenu', function(e) {
   var center = e.latlng;
   var corners = getRectangleCornersMeters(center, width, height, angle);
   var rect = L.polygon(corners, {color: "blue", weight: 2});
-  var marker = L.marker(center, {
-    draggable: true, 
-    title: 'New Booth',
-    icon: createStandNumberIcon(nextMarkerId)
+  var marker = L.marker(center, {draggable: true, title: 'New Booth', icon: L.icon.glyph({
+    prefix: '',
+    glyph: '?',
+    glyphColor: 'white',
+    glyphSize: '12px',
+    iconUrl: 'icons/glyph-marker-icon.png',
+    shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
+    className: 'xolonium glyph-marker-icon',
+    glyphAnchor: [0, -6],
+    iconSize: [25, 41],
+    iconAnchor: [12, 41],
+    shadowSize: [41, 41],
+    shadowAnchor: [-12, -41]
+  })
   }).addTo(map);
   // Add to searchable layer
   searchableMarkers.addLayer(marker);
