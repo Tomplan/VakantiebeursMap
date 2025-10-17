@@ -150,6 +150,217 @@
 <script src="https://unpkg.com/leaflet-search/dist/leaflet-search.min.js"></script>
 <script>
 window.addEventListener('DOMContentLoaded', function() {
+  // Upload functionaliteit: bestand inlezen en preview tonen
+  var uploadInput = document.getElementById('uploadExcelInput');
+  uploadInput.addEventListener('change', function(e) {
+    const file = e.target.files[0];
+    if (!file) return;
+    const ext = file.name.split('.').pop().toLowerCase();
+    if (ext === 'xlsx') {
+      const reader = new FileReader();
+      reader.onload = function(evt) {
+        const buffer = evt.target.result;
+        const workbook = new ExcelJS.Workbook();
+        workbook.xlsx.load(buffer).then(function() {
+          const worksheet = workbook.worksheets[0];
+          const previewData = [];
+          worksheet.eachRow({ includeEmpty: false }, function(row, rowNumber) {
+            previewData.push(row.values.slice(1)); // ExcelJS rows zijn 1-based
+          });
+          showPreviewModal(previewData, file.name);
+        });
+      };
+      reader.readAsArrayBuffer(file);
+    } else if (ext === 'csv') {
+      const reader = new FileReader();
+      reader.onload = function(evt) {
+        const text = evt.target.result;
+        const rows = text.split(/\r?\n/).map(line => line.split(','));
+        showPreviewModal(rows, file.name);
+      };
+      reader.readAsText(file);
+    } else {
+      alert('Bestandstype niet ondersteund. Kies een .xlsx of .csv bestand.');
+    }
+    // Reset input zodat je opnieuw kunt uploaden
+    e.target.value = '';
+  });
+
+  // Preview modal tonen
+  function showPreviewModal(data, filename) {
+    // Kolomvalidatie: controleer headers
+    var expectedHeaders = ['id','standnr','name','websitelink','info'];
+    var headerOk = false;
+    if (data.length > 0) {
+      var actual = data[0].map(function(h){return h.replace(/\s+/g,'').toLowerCase();});
+      var expected = expectedHeaders.map(function(h){return h.replace(/\s+/g,'').toLowerCase();});
+      headerOk = actual.length === expected.length && actual.every(function(h,i){return h === expected[i];});
+    }
+    // Verwijder oude modal als die bestaat
+    var old = document.getElementById('previewModal');
+    if (old) old.remove();
+    // Maak modal
+    var modal = document.createElement('div');
+    modal.id = 'previewModal';
+    modal.style.position = 'fixed';
+    modal.style.top = '0';
+    modal.style.left = '0';
+    modal.style.width = '100vw';
+    modal.style.height = '100vh';
+    modal.style.background = 'rgba(0,0,0,0.4)';
+    modal.style.zIndex = '99999';
+    modal.style.display = 'flex';
+    modal.style.alignItems = 'center';
+    modal.style.justifyContent = 'center';
+    // Content
+    var content = document.createElement('div');
+    content.style.background = '#fff';
+    content.style.padding = '24px';
+    content.style.borderRadius = '10px';
+    content.style.maxWidth = '90vw';
+    content.style.maxHeight = '80vh';
+    content.style.overflow = 'auto';
+    content.innerHTML = '<h3>Preview: ' + filename + '</h3>';
+    if (!headerOk) {
+      var warn = document.createElement('div');
+      warn.style.background = '#fff3cd';
+      warn.style.color = '#856404';
+      warn.style.border = '1px solid #ffeeba';
+      warn.style.padding = '10px 16px';
+      warn.style.marginBottom = '12px';
+      warn.style.borderRadius = '6px';
+      warn.innerHTML = '<b>Warning:</b> The column headers do not match the required format.<br>Expected: <code>' + expectedHeaders.join(', ') + '</code><br><span style="color:#b71c1c;font-weight:bold;">Import is disabled until the headers are correct.</span>';
+      content.appendChild(warn);
+    }
+    // Tabel
+    const table = document.createElement('table');
+    table.style.borderCollapse = 'collapse';
+    table.style.width = '100%';
+    table.style.marginBottom = '16px';
+    // Validatie: unieke en verplichte id's, markeer lege cellen
+    var idSet = new Set();
+    var duplicateIds = new Set();
+    data.forEach(function(row, i) {
+      var tr = document.createElement('tr');
+      var indices = [0,1,2,3,4];
+      indices.forEach(function(idx) {
+        var td = document.createElement(i === 0 ? 'th' : 'td');
+        var val = row[idx] !== undefined ? row[idx] : '';
+        var valStr = String(val);
+        td.textContent = valStr;
+        td.style.border = '1px solid #1976D2';
+        td.style.padding = '6px 10px';
+        td.style.background = i === 0 ? '#1976D2' : (i % 2 === 0 ? '#E3F2FD' : '#fff');
+        td.style.color = i === 0 ? '#fff' : '#222';
+        td.style.fontWeight = i === 0 ? 'bold' : 'normal';
+        // Markeer lege cellen (behalve header)
+        if (i > 0 && valStr.trim() === '') {
+          td.style.background = '#ffcdd2';
+          td.title = 'Required field is empty';
+        }
+        // Markeer duplicate id's
+        if (i > 0 && idx === 0) {
+          if (idSet.has(valStr)) {
+            td.style.background = '#ff9800';
+            td.title = 'Duplicate id';
+            duplicateIds.add(valStr);
+          } else if (valStr.trim() !== '') {
+            idSet.add(valStr);
+          }
+        }
+        tr.appendChild(td);
+      });
+      table.appendChild(tr);
+    });
+    content.appendChild(table);
+    // Buttons
+    const btnRow = document.createElement('div');
+    btnRow.style.display = 'flex';
+    btnRow.style.justifyContent = 'flex-end';
+    btnRow.style.gap = '12px';
+    // Sluiten
+    const closeBtn = document.createElement('button');
+    closeBtn.textContent = 'Sluiten';
+    closeBtn.style.padding = '8px 18px';
+    closeBtn.style.background = '#eee';
+    closeBtn.style.border = '1px solid #bbb';
+    closeBtn.style.borderRadius = '6px';
+    closeBtn.onclick = () => modal.remove();
+    btnRow.appendChild(closeBtn);
+    // Importeren
+    var importBtn = document.createElement('button');
+    importBtn.textContent = 'Importeren';
+    importBtn.style.padding = '8px 18px';
+    importBtn.style.background = '#1976D2';
+    importBtn.style.color = '#fff';
+    importBtn.style.border = 'none';
+    importBtn.style.borderRadius = '6px';
+    importBtn.style.fontWeight = 'bold';
+    // Import-knop alleen actief als headers kloppen én alle id's uniek en niet leeg zijn
+    var allIds = [];
+    for (var i = 1; i < data.length; i++) {
+      var idVal = String(data[i][0] !== undefined ? data[i][0] : '').trim();
+      if (idVal !== '') allIds.push(idVal);
+    }
+    var uniqueIds = new Set(allIds);
+    var allIdsValid = (allIds.length === uniqueIds.size) && (allIds.length === data.length-1);
+    importBtn.disabled = !(headerOk && allIdsValid);
+    importBtn.onclick = async function() {
+      // Fetch existing markers from markers.json
+      let response = await fetch('markers.json');
+      let existingMarkers = await response.json();
+      // Create a map of existing markers by id
+      let markerMap = {};
+      existingMarkers.forEach(m => { markerMap[m.id] = m; });
+      // Update only editable fields for matching ids
+      let updatedMarkers = [];
+      let updatedCount = 0;
+      for (var i = 1; i < data.length; i++) {
+        var row = data[i];
+        var id = String(row[0] !== undefined ? row[0] : '').trim();
+        if (id && markerMap[id]) {
+          markerMap[id].standnr = String(row[1] !== undefined ? row[1] : markerMap[id].standnr).trim();
+          markerMap[id].name = String(row[2] !== undefined ? row[2] : markerMap[id].name).trim();
+          markerMap[id].websitelink = String(row[3] !== undefined ? row[3] : markerMap[id].websitelink).trim();
+          markerMap[id].info = String(row[4] !== undefined ? row[4] : markerMap[id].info).trim();
+          updatedMarkers.push(markerMap[id]);
+          updatedCount++;
+        }
+      }
+      // Update markersList and backupMarkers
+      markersList = existingMarkers.map(m => markerMap[m.id] || m);
+      window.backupMarkers = JSON.parse(JSON.stringify(markersList));
+      // Save to server
+      await new Promise(resolve => { saveMarkers(); setTimeout(resolve, 400); });
+      // Check if everything is updated
+      let saveCheck = true; // hier kun je eventueel een fetch check toevoegen
+      let backupCheck = Array.isArray(window.backupMarkers) && window.backupMarkers.length === markersList.length;
+      modal.remove();
+      if (typeof refreshMarkersOnMap === 'function') refreshMarkersOnMap();
+      // Show feedback popup only if all checks are true
+      if (saveCheck && backupCheck) {
+        var popup = document.createElement('div');
+        popup.textContent = updatedCount + ' markers updated successfully!';
+        popup.style.position = 'fixed';
+        popup.style.top = '50%';
+        popup.style.left = '50%';
+        popup.style.transform = 'translate(-50%, -50%)';
+        popup.style.background = '#1976D2';
+        popup.style.color = '#fff';
+        popup.style.padding = '18px 32px';
+        popup.style.borderRadius = '10px';
+        popup.style.fontSize = '1.3em';
+        popup.style.zIndex = '999999';
+        popup.style.boxShadow = '0 4px 24px rgba(0,0,0,0.18)';
+        document.body.appendChild(popup);
+        setTimeout(function(){ popup.remove(); }, 2200);
+      }
+    };
+    btnRow.appendChild(importBtn);
+    content.appendChild(btnRow);
+    modal.appendChild(content);
+    document.body.appendChild(modal);
+  }
   // Download Excel event handler
   var excelBtn = document.getElementById('downloadExcelBtn');
   if (excelBtn) {
@@ -188,13 +399,12 @@ window.addEventListener('DOMContentLoaded', function() {
       fill: { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF1976D2' } }
     };
     // Kolomheaders: id (niet aanpassen!), name, img, standnr, websitelink, info
-    var header = ['id (niet aanpassen!)','name','img','standnr','websitelink','info'];
+    var header = ['id','standnr','name','websitelink','info'];
     var rows = markersList.map(function(m) {
       return [
         m.id,
-        m.name,
-        m.img,
         m.standnr,
+        m.name,
         m.websitelink,
         m.info
       ];
@@ -389,15 +599,79 @@ editModeToggleBtn.addEventListener('click', function() {
 // Each entry shape: { id, marker: L.Marker, rect: L.Polygon, handle: L.Marker, name, img, standnr, websitelink, width, height, angle }
 // `nextMarkerId` is used only when creating new markers client-side to provide a temporary unique id until saved.
 var markersList = [];
+// Ververst alle markers op de kaart na import of wijziging van markersList
+function refreshMarkersOnMap() {
+  // Verwijder alle bestaande markers, rechthoeken en handles
+  if (typeof searchableMarkers !== 'undefined') {
+    searchableMarkers.clearLayers();
+  }
+  if (typeof editElements !== 'undefined') {
+    editElements.clearLayers();
+  }
+  // Voeg alle markers uit markersList opnieuw toe
+  markersList.forEach(function(m) {
+    // Bepaal positie en eigenschappen
+    var center = m.marker && m.marker.getLatLng ? m.marker.getLatLng() : (m.lat && m.lng ? L.latLng(m.lat, m.lng) : null);
+    if (!center) return;
+    var width = m.width || 6;
+    var height = m.height || 6;
+    var angle = typeof m.angle === 'number' ? m.angle : 0;
+    var corners = getRectangleCornersMeters(center, width, height, angle);
+    // Maak rechthoek en handle
+    var rect = L.polygon(corners, {color: "blue", weight: 2});
+    var handle = L.marker(corners[2], {
+      draggable: true,
+      icon: L.divIcon({
+        className: 'rotate-handle',
+        iconSize: [8, 8],
+        html: `<div style=\"width:8px;height:8px;border-radius:50%;background:#3388ff;\"></div>`
+      })
+    });
+    // Maak marker
+    var marker = L.marker(center, {draggable: true, title: m.name || m.standnr || 'Unnamed',
+      icon: L.icon.glyph({
+        prefix: '',
+        glyph: m.standnr,
+        glyphColor: 'white',
+        glyphSize: '12px',
+        iconUrl: 'icons/glyph-marker-icon.png',
+        shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
+        className: 'xolonium glyph-marker-icon',
+        glyphAnchor: [0, -6],
+        iconSize: [25, 41],
+        iconAnchor: [12, 41],
+        shadowSize: [41, 41],
+        shadowAnchor: [-12, -41]
+      })
+    });
+    searchableMarkers.addLayer(marker);
+    editElements.addLayer(rect);
+    editElements.addLayer(handle);
+    // Update markerObj in markersList
+    m.marker = marker;
+    m.rect = rect;
+    m.handle = handle;
+    marker.bindPopup(createEditablePopup(m));
+  });
+  updateLayerVisibility();
+}
 var nextMarkerId = 1;
 
 // Helper function to save markers to server
 function saveMarkers() {
   var data = markersList.map(function(obj) {
+    let lat, lng;
+    if (obj.marker && typeof obj.marker.getLatLng === 'function') {
+      lat = obj.marker.getLatLng().lat;
+      lng = obj.marker.getLatLng().lng;
+    } else {
+      lat = obj.lat;
+      lng = obj.lng;
+    }
     return {
       id: obj.id,
-      lat: obj.marker.getLatLng().lat,
-      lng: obj.marker.getLatLng().lng,
+      lat: lat,
+      lng: lng,
       name: obj.name,
       img: obj.img,
       standnr: obj.standnr,
@@ -524,7 +798,7 @@ fetch('markers.json')
         img: (typeof m.img === 'string' && m.img.trim() !== "") ? m.img : "icons/4x4Vakantiebeurs.png",
         standnr: m.standnr || "",
         websitelink: m.websitelink || "",
-  info: (typeof m.info === 'string' && m.info.trim() !== "") ? m.info : "Ontdek de wereld van de 4x4 vakanties op de 4x4 Vakantiebeurs. De grootste beurs in de BeNeLux op het gebied van 4x4 vakanties, reizen en alles wat ermee gemoeid is.",
+        info: (typeof m.info === 'string' ? m.info : ""),
         width: width,
         height: height,
         angle: angle
