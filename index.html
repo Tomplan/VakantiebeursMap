@@ -98,7 +98,9 @@
 
   <!-- Flexbox container voor alle control knoppen -->
   <div id="controlButtonColumn" style="position:fixed;top:10px;right:10px;z-index:1000;display:flex;flex-direction:column;align-items:center;gap:10px;background:rgba(255,255,255,0.95);box-shadow:0 2px 8px rgba(0,0,0,0.2);border-radius:8px;padding:8px;">
-    <button id="editModeToggleBtn" title="Toggle Edit Mode" class="control-button" style="background-image:url('icons/pencil-icon.png');"></button>
+    <button id="editModeToggleBtn" title="Toggle Edit Mode" class="control-button">
+      <span id="editModeIcon" class="mdi" style="font-size:22px;"></span>
+    </button>
     <button id="backupsBtn" title="View Backups" class="control-button" style="background-image:url('icons/backup-icon.png');"></button>
   <button id="downloadExcelBtn" style="width:36px;height:36px;border:2px solid rgba(0,0,0,0.3);border-radius:4px;background-color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;" title="Download markers als Excel/CSV">
   <span class="mdi mdi-download" style="font-size:20px;" title="Download Markers Excel"></span>
@@ -564,7 +566,13 @@ function updateLayerVisibility() {
 }
 function updateSaveButtonVisibility() {
   // Toggle the edit mode button icon based on current mode
-  editModeToggleBtn.style.backgroundImage = editMode ? "url('icons/read-icon.png')" : "url('icons/pencil-icon.png')";
+  var iconSpan = document.getElementById('editModeIcon');
+  if (iconSpan) {
+    // f33f = lock-open, f33e = lock
+    iconSpan.className = 'mdi ' + (editMode ? 'mdi-lock-open' : 'mdi-lock');
+    iconSpan.style.fontFamily = 'Material Design Icons';
+    iconSpan.style.fontSize = '22px';
+  }
   // Show the backup button only in edit mode
   backupBtn.style.display = editMode ? '' : 'none';
   // Show the edit legend icon only in edit mode
