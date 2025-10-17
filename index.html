@@ -90,12 +90,6 @@
       background-repeat: no-repeat;
       background-size: 20px 20px;
     }
-    .leaflet-popup-content b {
-  margin-right: 2px;
-}
-.leaflet-popup-content span {
-  margin-left: 2px;
-}
   </style>
 </head>
 <body>
@@ -383,7 +377,7 @@ fetch('markers.json')
         rect: rect,
         handle: handle,
         name: m.name || "",
-        img: m.img || "",
+  img: (typeof m.img === 'string' && m.img.trim() !== "") ? m.img : "icons/4x4Vakantiebeurs.png",
         standnr: m.standnr || "",
         websitelink: m.websitelink || "",
         width: width,
@@ -520,7 +514,7 @@ function createEditablePopup(markerObj) {
   var lng = markerObj.marker.getLatLng().lng.toFixed(8);
   var id = markerObj.id;
   var name = markerObj.name || "";
-  var img = markerObj.img || "icons/4x4Vakantiebeurs.png";
+  var img = markerObj.img || "";
   var standnr = markerObj.standnr || "";
   var websitelink = markerObj.websitelink || "";
   var disabled = editMode ? "" : "disabled";
@@ -530,28 +524,18 @@ function createEditablePopup(markerObj) {
      <div><b>Lat:</b> <span>${lat}</span></div>
      <div><b>Lng:</b> <span>${lng}</span></div>`
     : "";
-  var imgTextBlock = editMode ? `<div><b>Afbeelding:</b> <input type=\"text\" id=\"img_${id}\" value=\"${img}\" style=\"width:140px\" placeholder=\"URL\" ${disabled}/></div>` : "";
-  var labelWidth = '90px';
-  var naamBlock = editMode
-    ? `<div><b>Naam:</b> <input type=\"text\" id=\"name_${id}\" value=\"${name}\" style=\"width:140px\" ${disabled}/></div>`
-    : `<div><b>Naam:</b> ${name}</div>`;
-  var standnrBlock = editMode
-    ? `<div><b>Standnr:</b> <input type=\"number\" id=\"standnr_${id}\" value=\"${standnr}\" style=\"width:60px\" ${disabled}/></div>`
-    : `<div><b>Standnr:</b> ${standnr}</div>`;
-  var websiteBlock = editMode
-    ? `<div><b>Website:</b> <input type=\"text\" id=\"web_${id}\" value="${websitelink}" style="width:140px" placeholder="https://...\" ${disabled}/></div>`
-    : `<div><b>Website:</b> ${websitelink}</div>`;
-  return `
-    <div style=\"min-width:220px\">
-      <div style=\"margin-bottom:8px;\"><img src=\"${img}\" id=\"img_preview_${id}\" style=\"max-width:120px;max-height:120px;\"></div>
-      ${idLatLngBlock}
-      ${naamBlock}
-      ${imgTextBlock}
-      ${standnrBlock}
-      ${websiteBlock}
-      ${saveBtn}
-    </div>
-  `;
+    var imgHtml = img ? `<div style='margin-bottom:6px;'><img src='${img}' alt='afbeelding' style='max-width:180px;max-height:120px;display:block;'/></div>` : "";
+    return `
+      <div style="min-width:220px">
+        ${imgHtml}
+        ${idLatLngBlock}
+        <div><b>Naam:</b> <input type="text" id="name_${id}" value="${name}" style="width:140px" ${disabled}/></div>
+        <div><b>Afbeelding:</b> <input type="text" id="img_${id}" value="${img}" style="width:140px" placeholder="URL" ${disabled}/></div>
+        <div><b>Standnr:</b> <input type="number" id="standnr_${id}" value="${standnr}" style="width:60px" ${disabled}/></div>
+        <div><b>Website:</b> <input type="text" id="web_${id}" value="${websitelink}" style="width:140px" placeholder="https://..." ${disabled}/></div>
+        ${saveBtn}
+      </div>
+    `;
 }
 
 map.on('contextmenu', function(e) {
@@ -599,7 +583,7 @@ map.on('contextmenu', function(e) {
     rect: rect,
     handle: handle,
     name: "",
-    img: "",
+  img: "icons/4x4Vakantiebeurs.png",
     standnr: markerId.toString(),
     websitelink: "",
     width: width,
