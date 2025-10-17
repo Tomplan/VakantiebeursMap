@@ -525,14 +525,16 @@ function createEditablePopup(markerObj) {
      <div><b>Lng:</b> <span>${lng}</span></div>`
     : "";
     var imgHtml = img ? `<div style='margin-bottom:6px;'><img src='${img}' alt='afbeelding' style='max-width:180px;max-height:120px;display:block;'/></div>` : "";
+    // Bepaal label-breedte: edit mode = 'Afbeelding:', read mode = 'Website:'
+    var labelWidth = editMode ? '82px' : '68px'; // 'Afbeelding:' ≈ 82px, 'Website:' ≈ 68px (afhankelijk van font)
     return `
       <div style="min-width:220px">
         ${imgHtml}
         ${idLatLngBlock}
-        <div><b>Naam:</b> <input type="text" id="name_${id}" value="${name}" style="width:140px" ${disabled}/></div>
-        <div><b>Afbeelding:</b> <input type="text" id="img_${id}" value="${img}" style="width:140px" placeholder="URL" ${disabled}/></div>
-        <div><b>Standnr:</b> <input type="number" id="standnr_${id}" value="${standnr}" style="width:60px" ${disabled}/></div>
-        <div><b>Website:</b> <input type="text" id="web_${id}" value="${websitelink}" style="width:140px" placeholder="https://..." ${disabled}/></div>
+  <div style="display:flex;align-items:center;gap:6px;margin-bottom:2px;"><b style="min-width:${labelWidth};">Naam:</b><input type="text" id="name_${id}" value="${name}" style="flex:1 1 0%;min-width:60px;max-width:100%;" ${disabled}/></div>
+  ${editMode ? `<div style="display:flex;align-items:center;gap:6px;margin-bottom:2px;"><b style="min-width:${labelWidth};">Afbeelding:</b><input type="text" id="img_${id}" value="${img}" style="flex:1 1 0%;min-width:60px;max-width:100%;" placeholder="URL" ${disabled}/></div>` : ''}
+  <div style="display:flex;align-items:center;gap:6px;margin-bottom:2px;"><b style="min-width:${labelWidth};">Standnr:</b><input type="number" id="standnr_${id}" value="${standnr}" style="flex:1 1 0%;min-width:40px;max-width:100%;" ${disabled}/></div>
+  <div style="display:flex;align-items:center;gap:6px;margin-bottom:2px;"><b style="min-width:${labelWidth};">Website:</b><input type="text" id="web_${id}" value="${websitelink}" style="flex:1 1 0%;min-width:60px;max-width:100%;" placeholder="https://..." ${disabled}/></div>
         ${saveBtn}
       </div>
     `;
