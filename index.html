@@ -116,6 +116,19 @@
       <li>❌ <strong>Right-click marker:</strong> Delete</li>
       <li>🔍 <strong>Search:</strong> Find markers</li>
     </ul>
+    <button id="downloadExcelBtn" style="width:36px;height:36px;border:2px solid rgba(0,0,0,0.3);border-radius:4px;background-color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;margin-top:8px;" title="Download markers als Excel/CSV">
+      <span class="mdi mdi-download" style="font-size:20px;"></span>
+    </button>
+    <button id="downloadExcelBtn" style="width:36px;height:36px;border:2px solid rgba(0,0,0,0.3);border-radius:4px;background-color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;margin-top:8px;" title="Download markers als Excel/CSV">
+      <span class="mdi mdi-download" style="font-size:20px;"></span>
+    </button>
+    </div>
+
+  <!-- Download-knop onder het legende blok, gecentreerd -->
+  <div id="downloadExcelBtnContainer" style="position:fixed;top:calc(10px + 180px);right:60px;z-index:1000;display:flex;justify-content:center;width:250px;">
+    <button id="downloadExcelBtn2" style="width:36px;height:36px;border:2px solid rgba(0,0,0,0.3);border-radius:4px;background-color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;" title="Download markers als Excel/CSV">
+      <span class="mdi mdi-download" style="font-size:20px;"></span>
+    </button>
   </div>
   <!-- Backups modal (hidden by default). Will be populated by JS when user opens Backups. -->
   <div id="backupsModal" class="modal" style="display:none;">
@@ -138,6 +151,49 @@
 <script src="Leaflet.Icon.Glyph.js"></script>
 <script src="https://unpkg.com/leaflet-search/dist/leaflet-search.min.js"></script>
 <script>
+window.addEventListener('DOMContentLoaded', function() {
+  // Download-knop alleen tonen in edit mode
+  function updateDownloadExcelBtnVisibility() {
+    var btn = document.getElementById('downloadExcelBtn');
+    if (btn) {
+      btn.style.display = editMode ? 'flex' : 'none';
+      console.log('Download-knop gevonden:', btn, 'Edit mode:', editMode);
+    } else {
+      console.warn('Download-knop niet gevonden in de DOM!');
+    }
+      var btn2 = document.getElementById('downloadExcelBtn2');
+      if (btn2) {
+        btn2.style.display = editMode ? 'flex' : 'none';
+      }
+  }
+  updateDownloadExcelBtnVisibility();
+  editModeToggleBtn.addEventListener('click', updateDownloadExcelBtnVisibility);
+
+  // Download markers als CSV
+  function markersToCSV() {
+    var header = ['id','lat','lng','name','img','standnr','websitelink','info','angle'];
+    var rows = markersList.map(function(m) {
+      return [m.id, m.marker.getLatLng().lat, m.marker.getLatLng().lng, m.name, m.img, m.standnr, m.websitelink, m.info, m.angle || 0];
+    });
+    var csv = [header.join(',')].concat(rows.map(r => r.map(x => '"'+String(x).replace(/"/g,'""')+'"').join(','))).join('\n');
+    return csv;
+  }
+
+  var downloadBtn = document.getElementById('downloadExcelBtn');
+  if (downloadBtn) {
+    downloadBtn.addEventListener('click', function() {
+      var csv = markersToCSV();
+      var blob = new Blob([csv], {type: 'text/csv'});
+      var url = URL.createObjectURL(blob);
+      var a = document.createElement('a');
+      a.href = url;
+      a.download = 'markers.csv';
+      document.body.appendChild(a);
+      a.click();
+      setTimeout(function() { document.body.removeChild(a); URL.revokeObjectURL(url); }, 100);
+    });
+  }
+});
 // Map initialization
 // Inputs: HTML element with id 'map'
 // Outputs: global `map` Leaflet map instance used throughout the file
