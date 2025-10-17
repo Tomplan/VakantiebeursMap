@@ -35,8 +35,55 @@ app.get('/list-backups', (req, res) => {
       .filter(f => f.startsWith('markers-backup-') && f.endsWith('.json'))
       .sort()
       .reverse(); // Most recent first
-    
-    res.json({ backups: files });
+
+    let result = [];
+    let prevMarkers = null;
+    files.forEach(f => {
+      const backupPath = path.join(backupsDir, f);
+      let markers = [];
+      let count = 0;
+      try {
+        const data = JSON.parse(fs.readFileSync(backupPath, 'utf8'));
+        markers = Array.isArray(data) ? data : [];
+        count = markers.length;
+      } catch (e) {}
+
+      // Diff per veld berekenen
+      let diff = { added: 0, removed: 0, changed: 0, fields: {} };
+      if (prevMarkers) {
+        const prevById = Object.fromEntries(prevMarkers.map(m => [m.id, m]));
+        const currById = Object.fromEntries(markers.map(m => [m.id, m]));
+        // Added
+        diff.added = markers.filter(m => !(m.id in prevById)).length;
+        // Removed
+        diff.removed = prevMarkers.filter(m => !(m.id in currById)).length;
+        // Changed
+        let changedMarkers = markers.filter(m => {
+          const prev = prevById[m.id];
+          if (!prev) return false;
+          return JSON.stringify(m) !== JSON.stringify(prev);
+        });
+        diff.changed = changedMarkers.length;
+        // Detail per veld
+        let fieldChanges = {};
+        changedMarkers.forEach(m => {
+          const prev = prevById[m.id];
+          if (!prev) return;
+          // Verzamel alle unieke keys uit beide objecten
+          const allKeys = Array.from(new Set([...Object.keys(m), ...Object.keys(prev)]));
+          allKeys.forEach(k => {
+            if (JSON.stringify(m[k]) !== JSON.stringify(prev[k])) {
+              fieldChanges[k] = (fieldChanges[k] || 0) + 1;
+            }
+          });
+        });
+        diff.fields = fieldChanges;
+      }
+      result.push({ filename: f, count, diff });
+      prevMarkers = markers;
+    });
+
+    res.json({ backups: result });
   } catch (error) {
     res.status(500).json({ error: 'Failed to list backups' });
   }

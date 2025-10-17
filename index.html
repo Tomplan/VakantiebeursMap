@@ -1161,25 +1161,72 @@ async function openBackupsModal() {
   restoreBtn.disabled = true;
   modal.style.display = 'flex';
   try {
-    const res = await fetch('/backups');
-    const files = await res.json();
-    if (!files || files.length === 0) {
+  const res = await fetch('/list-backups');
+    const data = await res.json();
+    const backups = data.backups || [];
+    if (!backups || backups.length === 0) {
       listEl.innerHTML = '<li>(no backups)</li>';
       return;
     }
-    files.slice(0, 200).forEach(function(f, i) {
+    backups.slice(0, 200).forEach(function(b, i) {
       const li = document.createElement('li');
       li.style.padding = '6px 0';
       const radio = document.createElement('input');
       radio.type = 'radio';
       radio.name = 'backup_choice';
-      radio.value = f;
+      radio.value = b.filename;
       radio.id = 'backup_choice_' + i;
       radio.addEventListener('change', function() { restoreBtn.disabled = false; });
       const label = document.createElement('label');
       label.htmlFor = radio.id;
       label.style.marginLeft = '8px';
-      label.textContent = f;
+      // Leesbare naam genereren
+      let readable = b.filename;
+      let comment = '';
+      // Patroon: backup_YYYY-MM-DD_HH-MM.json
+      const match1 = b.filename.match(/backup_(\d{4})-(\d{2})-(\d{2})_(\d{2})-(\d{2})(?:-(\d{2}))?\.json/);
+      // Patroon: markers-backup-YYYYMMDDHHmmss.json en markers-backup-YYYYMMDDHHmmss..json
+      const match2 = b.filename.match(/markers-backup-(\d{4})(\d{2})(\d{2})(\d{2})(\d{2})(\d{2})\.json/) || b.filename.match(/markers-backup-(\d{4})(\d{2})(\d{2})(\d{2})(\d{2})(\d{2})\.\.json/);
+      if (match1) {
+        const [_, y, m, d, h, min, s] = match1;
+        readable = `${d}-${m}-${y}, ${h}:${min}${s ? ':'+s : ''}`;
+        comment = 'Automatische backup';
+      } else if (match2) {
+        const [_, y, m, d, h, min, s] = match2;
+        readable = `${d}-${m}-${y}, ${h}:${min}:${s}`;
+        comment = 'Automatische backup';
+      }
+      label.textContent = readable;
+      label.title = b.filename;
+      // Marker info en diff tonen
+      const infoSpan = document.createElement('span');
+      let diffText = '';
+      if (b.diff) {
+        const d = b.diff;
+        let parts = [];
+        if (d.added) parts.push('+' + d.added + ' toegevoegd');
+        if (d.removed) parts.push('-' + d.removed + ' verwijderd');
+        // Toon altijd veld-diffs, ook als changed=0
+        if ((d.changed && d.changed > 0) || (d.fields && Object.keys(d.fields).length)) {
+          let fieldDetails = '';
+          if (d.fields && Object.keys(d.fields).length) {
+            fieldDetails = ' (' + Object.entries(d.fields).map(([k,v]) => `${k}: ${v}`).join(', ') + ')';
+          }
+          parts.push('~' + (d.changed || 0) + ' gewijzigd' + fieldDetails);
+        }
+        if (parts.length) diffText = ', diff: ' + parts.join(', ');
+      }
+      infoSpan.textContent = `  [${b.count} markers${diffText}]`;
+      infoSpan.style.color = '#1976D2';
+      infoSpan.style.fontSize = '0.95em';
+      label.appendChild(infoSpan);
+      if (comment) {
+        const commentSpan = document.createElement('span');
+        commentSpan.textContent = '  (' + comment + ')';
+        commentSpan.style.color = '#888';
+        commentSpan.style.fontSize = '0.95em';
+        label.appendChild(commentSpan);
+      }
       li.appendChild(radio);
       li.appendChild(label);
       listEl.appendChild(li);
