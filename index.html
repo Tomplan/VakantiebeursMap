@@ -516,7 +516,8 @@ function createEditablePopup(markerObj) {
   var name = markerObj.name || "";
   var img = markerObj.img || "";
   var standnr = markerObj.standnr || "";
-  var websitelink = markerObj.websitelink || "";
+    var defaultUrl = "https://www.4x4vakantiebeurs.nl";
+    var websitelink = markerObj.websitelink && markerObj.websitelink.trim() !== "" ? markerObj.websitelink.replace(/\/$/,"") : defaultUrl;
   var disabled = editMode ? "" : "disabled";
   var saveBtn = editMode ? `<button id="save_${id}" style="margin-top:6px; margin-right:6px">Save</button><button id="cancel_${id}" style="margin-top:6px">Cancel</button>` : "";
   var idLatLngBlock = editMode ?
@@ -527,17 +528,28 @@ function createEditablePopup(markerObj) {
     var imgHtml = img ? `<div style='margin-bottom:6px;'><img src='${img}' alt='afbeelding' style='max-width:180px;max-height:120px;display:block;'/></div>` : "";
     // Bepaal label-breedte: edit mode = 'Afbeelding:', read mode = 'Website:'
     var labelWidth = editMode ? '82px' : '68px'; // 'Afbeelding:' ≈ 82px, 'Website:' ≈ 68px (afhankelijk van font)
-    return `
-      <div style="min-width:220px">
-        ${imgHtml}
-        ${idLatLngBlock}
-  <div style="display:flex;align-items:center;gap:6px;margin-bottom:2px;"><b style="min-width:${labelWidth};">Naam:</b><input type="text" id="name_${id}" value="${name}" style="flex:1 1 0%;min-width:60px;max-width:100%;" ${disabled}/></div>
-  ${editMode ? `<div style="display:flex;align-items:center;gap:6px;margin-bottom:2px;"><b style="min-width:${labelWidth};">Afbeelding:</b><input type="text" id="img_${id}" value="${img}" style="flex:1 1 0%;min-width:60px;max-width:100%;" placeholder="URL" ${disabled}/></div>` : ''}
-  <div style="display:flex;align-items:center;gap:6px;margin-bottom:2px;"><b style="min-width:${labelWidth};">Standnr:</b><input type="number" id="standnr_${id}" value="${standnr}" style="flex:1 1 0%;min-width:40px;max-width:100%;" ${disabled}/></div>
-  <div style="display:flex;align-items:center;gap:6px;margin-bottom:2px;"><b style="min-width:${labelWidth};">Website:</b><input type="text" id="web_${id}" value="${websitelink}" style="flex:1 1 0%;min-width:60px;max-width:100%;" placeholder="https://..." ${disabled}/></div>
-        ${saveBtn}
-      </div>
-    `;
+      if (editMode) {
+        return `
+          <div style="min-width:220px">
+            ${imgHtml}
+            ${idLatLngBlock}
+            <div style="display:flex;align-items:center;gap:6px;margin-bottom:2px;"><b style="min-width:${labelWidth};">Afbeelding:</b><input type="text" id="img_${id}" value="${img}" style="flex:1 1 0%;min-width:60px;max-width:100%;" placeholder="URL" ${disabled}/></div>
+            <div style="display:flex;align-items:center;gap:6px;margin-bottom:2px;"><b style="min-width:${labelWidth};">Naam:</b><input type="text" id="name_${id}" value="${name}" style="flex:1 1 0%;min-width:60px;max-width:100%;" ${disabled}/></div>
+            <div style="display:flex;align-items:center;gap:6px;margin-bottom:2px;"><b style="min-width:${labelWidth};">Standnr:</b><input type="number" id="standnr_${id}" value="${standnr}" style="flex:1 1 0%;min-width:40px;max-width:100%;" ${disabled}/></div>
+            <div style="display:flex;align-items:center;gap:6px;margin-bottom:2px;"><b style="min-width:${labelWidth};">Website:</b><input type="text" id="web_${id}" value="${websitelink}" style="flex:1 1 0%;min-width:60px;max-width:100%;" placeholder="https://..." ${disabled}/></div>
+            ${saveBtn}
+          </div>
+        `;
+      } else {
+        return `
+          <div style="min-width:220px">
+            ${imgHtml}
+            <div style="margin-bottom:2px;text-align:left;">${name}</div>
+            <div style="margin-bottom:2px;text-align:left;">Booth ${standnr}</div>
+            <div style="margin-bottom:2px;text-align:left;"><a href="${websitelink}" target="_blank" rel="noopener noreferrer">${websitelink}</a></div>
+          </div>
+        `;
+      }
 }
 
 map.on('contextmenu', function(e) {
