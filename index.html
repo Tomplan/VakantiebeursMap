@@ -101,8 +101,12 @@
     <button id="editModeToggleBtn" title="Toggle Edit Mode" class="control-button" style="background-image:url('icons/pencil-icon.png');"></button>
     <button id="backupsBtn" title="View Backups" class="control-button" style="background-image:url('icons/backup-icon.png');"></button>
   <button id="downloadExcelBtn" style="width:36px;height:36px;border:2px solid rgba(0,0,0,0.3);border-radius:4px;background-color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;" title="Download markers als Excel/CSV">
-      <span class="mdi mdi-download" style="font-size:20px;"></span>
+  <span class="mdi mdi-download" style="font-size:20px;" title="Download Markers Excel"></span>
     </button>
+    <label id="uploadExcelLabel" style="width:36px;height:36px;border:2px solid rgba(0,0,0,0.3);border-radius:4px;background-color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;" title="Upload markers Excel/CSV">
+  <input id="uploadExcelInput" type="file" accept=".xlsx,.csv" style="display:none" />
+  <span class="mdi mdi-upload" style="font-size:20px;" title="Upload Markers Excel or CSV file"></span>
+    </label>
   </div>
   <button id="editLegendIcon" class="control-button" style="position: fixed; top: 90px; right: 10px; z-index: 1000;" title="Edit Mode Guide">
     i
