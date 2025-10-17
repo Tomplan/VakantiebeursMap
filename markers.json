@@ -48,5 +48,15 @@
     "standnr": "8",
     "websitelink": "",
     "angle": 0
+  },
+  {
+    "id": 9,
+    "lat": 51.89934961902736,
+    "lng": 5.774184465408325,
+    "name": "",
+    "img": "icons/4x4Vakantiebeurs.png",
+    "standnr": "9",
+    "websitelink": "",
+    "angle": 0
   }
 ]
