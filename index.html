@@ -322,7 +322,8 @@ window.addEventListener('DOMContentLoaded', function() {
           markerMap[id].standnr = String(row[1] !== undefined ? row[1] : markerMap[id].standnr).trim();
           markerMap[id].name = String(row[2] !== undefined ? row[2] : markerMap[id].name).trim();
           markerMap[id].websitelink = String(row[3] !== undefined ? row[3] : markerMap[id].websitelink).trim();
-          markerMap[id].info = String(row[4] !== undefined ? row[4] : markerMap[id].info).trim();
+          // info: altijd overschrijven, ook als leeg
+          markerMap[id].info = (row[4] !== undefined) ? String(row[4]).trim() : "";
           updatedMarkers.push(markerMap[id]);
           updatedCount++;
         }
