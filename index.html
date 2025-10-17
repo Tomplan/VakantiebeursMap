@@ -399,12 +399,12 @@ fetch('markers.json')
               markerObj.websitelink = document.getElementById(`web_${id}`).value;
               // Update marker title for search
               markerObj.marker.options.title = markerObj.name || markerObj.standnr || 'Unnamed';
-              // Update marker icon with new stand number
-              markerObj.marker.setIcon(createStandNumberIcon(markerObj.standnr));
-              
+              // Update marker glyph text direct na save
+              var iconOptions = markerObj.marker.options.icon.options;
+              iconOptions.glyph = markerObj.standnr;
+              markerObj.marker.setIcon(L.icon.glyph(iconOptions));
               // Debug: check if markerObj is updated
               // console.log('Updated markerObj:', markerObj.name, markerObj.standnr);
-              
               // Save using the helper function (markerObj is same object reference as in markersList)
               saveMarkers();
               marker.closePopup();
@@ -604,8 +604,10 @@ map.on('contextmenu', function(e) {
           markerObj.websitelink = document.getElementById(`web_${id}`).value;
           // Update marker title for search
           markerObj.marker.options.title = markerObj.name || markerObj.standnr || 'Unnamed';
-          // Update marker icon with new stand number
-          markerObj.marker.setIcon(createStandNumberIcon(markerObj.standnr));
+          // Update marker glyph text direct na save
+          var iconOptions = markerObj.marker.options.icon.options;
+          iconOptions.glyph = markerObj.standnr;
+          markerObj.marker.setIcon(L.icon.glyph(iconOptions));
           
           // Debug: check if markerObj is updated
           // console.log('Updated markerObj:', markerObj.name, markerObj.standnr);
