@@ -28,5 +28,15 @@
     "standnr": "5",
     "websitelink": "",
     "angle": 0
+  },
+  {
+    "id": 7,
+    "lat": 51.898902755155575,
+    "lng": 5.773658752441406,
+    "name": "",
+    "img": "",
+    "standnr": "7",
+    "websitelink": "",
+    "angle": 0
   }
 ]
