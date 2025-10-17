@@ -518,6 +518,7 @@ function createEditablePopup(markerObj) {
   var standnr = markerObj.standnr || "";
     var defaultUrl = "https://www.4x4vakantiebeurs.nl";
     var websitelink = markerObj.websitelink && markerObj.websitelink.trim() !== "" ? markerObj.websitelink.replace(/\/$/,"") : defaultUrl;
+  var info = markerObj.info || "";
   var disabled = editMode ? "" : "disabled";
   var saveBtn = editMode ? `<button id="save_${id}" style="margin-top:6px; margin-right:6px">Save</button><button id="cancel_${id}" style="margin-top:6px">Cancel</button>` : "";
   var idLatLngBlock = editMode ?
@@ -537,6 +538,7 @@ function createEditablePopup(markerObj) {
             <div style="display:flex;align-items:center;gap:6px;margin-bottom:2px;"><b style="min-width:${labelWidth};">Naam:</b><input type="text" id="name_${id}" value="${name}" style="flex:1 1 0%;min-width:60px;max-width:100%;" ${disabled}/></div>
             <div style="display:flex;align-items:center;gap:6px;margin-bottom:2px;"><b style="min-width:${labelWidth};">Standnr:</b><input type="number" id="standnr_${id}" value="${standnr}" style="flex:1 1 0%;min-width:40px;max-width:100%;" ${disabled}/></div>
             <div style="display:flex;align-items:center;gap:6px;margin-bottom:2px;"><b style="min-width:${labelWidth};">Website:</b><input type="text" id="web_${id}" value="${websitelink}" style="flex:1 1 0%;min-width:60px;max-width:100%;" placeholder="https://..." ${disabled}/></div>
+            <div style="display:flex;align-items:flex-start;gap:6px;margin-bottom:2px;"><b style="min-width:${labelWidth};">Info:</b><textarea id="info_${id}" style="flex:1 1 0%;min-width:60px;max-width:100%;height:60px;resize:vertical;" ${disabled}>${info}</textarea></div>
             ${saveBtn}
           </div>
         `;
@@ -547,6 +549,7 @@ function createEditablePopup(markerObj) {
             <div style="margin-bottom:2px;text-align:left;">${name}</div>
             <div style="margin-bottom:2px;text-align:left;">Booth ${standnr}</div>
             <div style="margin-bottom:2px;text-align:left;"><a href="${websitelink}" target="_blank" rel="noopener noreferrer">${websitelink}</a></div>
+            <div style="margin-bottom:2px;text-align:left;white-space:pre-line;">${info}</div>
           </div>
         `;
       }
@@ -618,6 +621,7 @@ map.on('contextmenu', function(e) {
           markerObj.img = document.getElementById(`img_${id}`).value;
           markerObj.standnr = document.getElementById(`standnr_${id}`).value;
           markerObj.websitelink = document.getElementById(`web_${id}`).value;
+          markerObj.info = document.getElementById(`info_${id}`).value;
           // Update marker title for search
           markerObj.marker.options.title = markerObj.name || markerObj.standnr || 'Unnamed';
           // Update marker glyph text direct na save
