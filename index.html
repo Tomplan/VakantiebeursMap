@@ -259,6 +259,7 @@ function saveMarkers() {
       img: obj.img,
       standnr: obj.standnr,
       websitelink: obj.websitelink,
+      info: obj.info || "",
       angle: obj.angle || 0
     };
   });
@@ -377,9 +378,10 @@ fetch('markers.json')
         rect: rect,
         handle: handle,
         name: m.name || "",
-  img: (typeof m.img === 'string' && m.img.trim() !== "") ? m.img : "icons/4x4Vakantiebeurs.png",
+        img: (typeof m.img === 'string' && m.img.trim() !== "") ? m.img : "icons/4x4Vakantiebeurs.png",
         standnr: m.standnr || "",
         websitelink: m.websitelink || "",
+  info: (typeof m.info === 'string' && m.info.trim() !== "") ? m.info : "Ontdek de wereld van de 4x4 vakanties op de 4x4 Vakantiebeurs. De grootste beurs in de BeNeLux op het gebied van 4x4 vakanties, reizen en alles wat ermee gemoeid is.",
         width: width,
         height: height,
         angle: angle
@@ -397,6 +399,7 @@ fetch('markers.json')
               markerObj.img = document.getElementById(`img_${id}`).value;
               markerObj.standnr = document.getElementById(`standnr_${id}`).value;
               markerObj.websitelink = document.getElementById(`web_${id}`).value;
+              markerObj.info = document.getElementById(`info_${id}`).value;
               // Update marker title for search
               markerObj.marker.options.title = markerObj.name || markerObj.standnr || 'Unnamed';
               // Update marker glyph text direct na save
@@ -600,9 +603,10 @@ map.on('contextmenu', function(e) {
     rect: rect,
     handle: handle,
     name: "",
-  img: "icons/4x4Vakantiebeurs.png",
+    img: "icons/4x4Vakantiebeurs.png",
     standnr: markerId.toString(),
     websitelink: "",
+    info: "Ontdek de wereld van de 4x4 vakanties op de 4x4 Vakantiebeurs. De grootste beurs in de BeNeLux op het gebied van 4x4 vakanties, reizen en alles wat ermee gemoeid is.",
     width: width,
     height: height,
     angle: angle
