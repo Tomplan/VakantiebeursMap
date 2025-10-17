@@ -4,7 +4,7 @@
     "lat": 51.898860551115725,
     "lng": 5.773169249296189,
     "name": "naam_1",
-    "img": "",
+    "img": "icons/4x4Vakantiebeurs.png",
     "standnr": "1",
     "websitelink": "",
     "angle": 8.806782382046173
@@ -14,7 +14,7 @@
     "lat": 51.89887296407276,
     "lng": 5.7732872664928445,
     "name": "Naam_4",
-    "img": "",
+    "img": "icons/4x4Vakantiebeurs.png",
     "standnr": "4",
     "websitelink": "",
     "angle": 0
@@ -24,7 +24,7 @@
     "lat": 51.89887089524682,
     "lng": 5.773414000868798,
     "name": "naam_5",
-    "img": "",
+    "img": "icons/4x4Vakantiebeurs.png",
     "standnr": "5",
     "websitelink": "",
     "angle": 0
@@ -33,8 +33,8 @@
     "id": 7,
     "lat": 51.898902755155575,
     "lng": 5.773658752441406,
-    "name": "Naam_7",
-    "img": "",
+    "name": "naam77",
+    "img": "icons/4x4Vakantiebeurs.png",
     "standnr": "7",
     "websitelink": "",
     "angle": 0
@@ -44,7 +44,7 @@
     "lat": 51.89888951467676,
     "lng": 5.773889422416688,
     "name": "Naam_8",
-    "img": "",
+    "img": "icons/4x4Vakantiebeurs.png",
     "standnr": "8",
     "websitelink": "",
     "angle": 0
