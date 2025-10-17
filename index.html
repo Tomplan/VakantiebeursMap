@@ -195,7 +195,7 @@ window.addEventListener('DOMContentLoaded', function() {
   // Preview modal tonen
   function showPreviewModal(data, filename) {
     // Kolomvalidatie: controleer headers
-    var expectedHeaders = ['id','standnr','name','websitelink','info'];
+  var expectedHeaders = ['id','standnr','name','img','websitelink','info'];
     var headerOk = false;
     if (data.length > 0) {
       var actual = data[0].map(function(h){return h.replace(/\s+/g,'').toLowerCase();});
@@ -248,8 +248,7 @@ window.addEventListener('DOMContentLoaded', function() {
     var duplicateIds = new Set();
     data.forEach(function(row, i) {
       var tr = document.createElement('tr');
-      var indices = [0,1,2,3,4];
-      indices.forEach(function(idx) {
+      for (let idx = 0; idx < row.length; idx++) {
         var td = document.createElement(i === 0 ? 'th' : 'td');
         var val = row[idx] !== undefined ? row[idx] : '';
         var valStr = String(val);
@@ -275,7 +274,7 @@ window.addEventListener('DOMContentLoaded', function() {
           }
         }
         tr.appendChild(td);
-      });
+      }
       table.appendChild(tr);
     });
     content.appendChild(table);
@@ -327,9 +326,10 @@ window.addEventListener('DOMContentLoaded', function() {
         if (id && markerMap[id]) {
           markerMap[id].standnr = String(row[1] !== undefined ? row[1] : markerMap[id].standnr).trim();
           markerMap[id].name = String(row[2] !== undefined ? row[2] : markerMap[id].name).trim();
-          markerMap[id].websitelink = String(row[3] !== undefined ? row[3] : markerMap[id].websitelink).trim();
+          markerMap[id].img = String(row[3] !== undefined ? row[3] : markerMap[id].img).trim();
+          markerMap[id].websitelink = String(row[4] !== undefined ? row[4] : markerMap[id].websitelink).trim();
           // info: altijd overschrijven, ook als leeg
-          markerMap[id].info = (row[4] !== undefined) ? String(row[4]).trim() : "";
+          markerMap[id].info = (row[5] !== undefined) ? String(row[5]).trim() : "";
           updatedMarkers.push(markerMap[id]);
           updatedCount++;
         }
@@ -405,13 +405,14 @@ window.addEventListener('DOMContentLoaded', function() {
       font: { bold: true, color: { argb: 'FFFFFFFF' }, size: 14 },
       fill: { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF1976D2' } }
     };
-    // Kolomheaders: id (niet aanpassen!), name, img, standnr, websitelink, info
-    var header = ['id','standnr','name','websitelink','info'];
+    // Kolomheaders: id (niet aanpassen!), standnr, name, img, websitelink, info
+    var header = ['id','standnr','name','img','websitelink','info'];
     var rows = markersList.map(function(m) {
       return [
         m.id,
         m.standnr,
         m.name,
+        m.img,
         m.websitelink,
         m.info
       ];
@@ -465,7 +466,12 @@ window.addEventListener('DOMContentLoaded', function() {
     worksheet.views = [ { state: 'frozen', xSplit: 1, ySplit: 1 } ];
     // Kolombreedte
     worksheet.columns = [
-      {width: 18}, {width: 24}, {width: 24}, {width: 12}, {width: 32}, {width: 32}
+      {width: 7},    // id (ruimte voor 5 tekens + marge)
+      {width: 12},   // Booth (standnr) +5
+      {width: 40},   // name +20
+      {width: 60},   // img +40
+      {width: 60},   // websitelink
+      {width: 60}    // info
     ];
 
     // Lock alle cellen
@@ -662,6 +668,7 @@ function refreshMarkersOnMap() {
         shadowAnchor: [-12, -41]
       })
     });
+    
     searchableMarkers.addLayer(marker);
     editElements.addLayer(rect);
     editElements.addLayer(handle);
@@ -733,31 +740,10 @@ function deleteMarker(marker, rect, handle, markerId) {
 }
 
 // Create layer groups for different types of elements
+// --- Special Markers Section ---
+// Deze markers zijn alleen zichtbaar in edit mode en worden niet geëxporteerd of gebackupt
 var searchableMarkers = L.layerGroup().addTo(map); // Markers - always visible
 var editElements = L.layerGroup(); // Rectangles and handles - only visible in edit mode
-
-// Function to create a custom marker icon with stand number
-function createStandNumberIcon(standnr) {
-  return L.divIcon({
-    className: 'stand-number-marker',
-    html: `<div style="
-      width: 30px; 
-      height: 30px; 
-      border-radius: 50%; 
-      background: white; 
-      border: 2px solid #333; 
-      display: flex; 
-      align-items: center; 
-      justify-content: center; 
-      font-weight: bold; 
-      font-size: 12px; 
-      color: #333;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.3);
-    ">${standnr || '?'}</div>`,
-    iconSize: [30, 30],
-    iconAnchor: [15, 15]
-  });
-}
 
 // Load markers from `markers.json` and recreate the visual elements for each marker.
 // Inputs: `markers.json` file on the same server — an array of marker objects (id, lat, lng, name, img, standnr, websitelink, angle)
