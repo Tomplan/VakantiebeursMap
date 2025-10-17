@@ -7,6 +7,7 @@
     "img": "icons/4x4Vakantiebeurs.png",
     "standnr": "1",
     "websitelink": "https://www.4x4vakantiebeurs.nl",
+    "info": "",
     "angle": 8.806782382046173
   },
   {
@@ -17,6 +18,7 @@
     "img": "icons/4x4Vakantiebeurs.png",
     "standnr": "4",
     "websitelink": "https://www.4x4vakantiebeurs.nl",
+    "info": "",
     "angle": 0
   },
   {
@@ -27,6 +29,7 @@
     "img": "icons/4x4Vakantiebeurs.png",
     "standnr": "5",
     "websitelink": "",
+    "info": "",
     "angle": 0
   },
   {
@@ -37,6 +40,7 @@
     "img": "icons/4x4Vakantiebeurs.png",
     "standnr": "7",
     "websitelink": "",
+    "info": "",
     "angle": 0
   },
   {
@@ -47,6 +51,7 @@
     "img": "icons/4x4Vakantiebeurs.png",
     "standnr": "8",
     "websitelink": "https://www.trackingtrailer.nl",
+    "info": "",
     "angle": 0
   }
 ]
