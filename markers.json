@@ -944,5 +944,16 @@
     "websitelink": "",
     "info": "Ontdek de wereld van de 4x4 vakanties op de 4x4 Vakantiebeurs. De grootste beurs in de BeNeLux op het gebied van 4x4 vakanties, reizen en alles wat ermee gemoeid is.",
     "angle": 0
+  },
+  {
+    "id": 87,
+    "lat": 51.89815135181008,
+    "lng": 5.77159345149994,
+    "name": "",
+    "img": "icons/4x4Vakantiebeurs.png",
+    "standnr": "87",
+    "websitelink": "",
+    "info": "Ontdek de wereld van de 4x4 vakanties op de 4x4 Vakantiebeurs. De grootste beurs in de BeNeLux op het gebied van 4x4 vakanties, reizen en alles wat ermee gemoeid is.",
+    "angle": 0
   }
 ]
