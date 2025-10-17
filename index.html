@@ -146,6 +146,15 @@
 <script src="https://unpkg.com/leaflet-search/dist/leaflet-search.min.js"></script>
 <script>
 window.addEventListener('DOMContentLoaded', function() {
+  // Download Excel event handler
+  var excelBtn = document.getElementById('downloadExcelBtn');
+  if (excelBtn) {
+    excelBtn.addEventListener('click', async function() {
+      await markersToExcel();
+    });
+  }
+
+  // markersToExcel functie verwijderen (dummy)
   // Download-knop alleen tonen in edit mode
   function updateDownloadExcelBtnVisibility() {
     var btn = document.getElementById('downloadExcelBtn');
@@ -267,12 +276,6 @@ window.addEventListener('DOMContentLoaded', function() {
     setTimeout(function() { document.body.removeChild(a); URL.revokeObjectURL(url); }, 100);
   }
 
-  var downloadBtn = document.getElementById('downloadExcelBtn');
-  if (downloadBtn) {
-    downloadBtn.addEventListener('click', function() {
-      markersToExcel();
-    });
-  }
 });
 // Map initialization
 // Inputs: HTML element with id 'map'
