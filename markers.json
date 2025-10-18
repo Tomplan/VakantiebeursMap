@@ -4,7 +4,7 @@
     "lat": 51.898865516298955,
     "lng": 5.773167908191682,
     "name": "camp impuls Bruder X",
-    "icon": "glyph-marker-icon-blue.svg",
+    "icon": "glyph-marker-icon-purple.svg",
     "img": "logos/BRUDER.webp",
     "standnr": "1",
     "websitelink": "https://camp-impuls.de/bruderx",
@@ -19,7 +19,7 @@
     "icon": "glyph-marker-icon-blue.svg",
     "img": "logos/BRUDER.webp",
     "standnr": "2",
-    "websitelink": "https://camp-impuls.de/bruderx",
+    "websitelink": "https://camp-impuls.de/bruderx/",
     "info": "BruderX is een fabrikant die zich onderscheidt door zijn uitzonderlijke offroad caravans. Het vlaggenschip, de EXP-10 , loopt voorop . Met het nieuwe model, de ADX-21, betreedt Bruder nieuw terrein door conventionele caravanconstructie te combineren met het unieke Bruder-chassis. Offroad caravans zijn al lang een vertrouwd gezicht in Duitsland, maar met de Bruder caravans zetten we nieuwe normen in de offroad sector en brengen we een uniek product uit Australië naar Europa.",
     "angle": 9.865796877600275
   },
@@ -43,7 +43,7 @@
     "icon": "glyph-marker-icon-blue.svg",
     "img": "logos/4x4Vakantiebeurs.png",
     "standnr": "4",
-    "websitelink": "https://www.4x4vakantiebeurs.nl",
+    "websitelink": "https://www.4x4vakantiebeurs.nl/",
     "info": "Ontdek de wereld van de 4x4 vakanties op de 4x4 Vakantiebeurs. De grootste beurs in de BeNeLux op het gebied van 4x4 vakanties, reizen en alles wat ermee gemoeid is.",
     "angle": 8.130093223990542
   },
