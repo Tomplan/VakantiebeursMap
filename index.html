@@ -236,73 +236,27 @@ window.addEventListener('DOMContentLoaded', function() {
     content.style.maxWidth = '90vw';
     content.style.maxHeight = '80vh';
     content.style.overflow = 'auto';
-    content.innerHTML = '<h3>Preview: ' + filename + '</h3>';
-    if (!headerOk) {
-      var warn = document.createElement('div');
-      warn.style.background = '#fff3cd';
-      warn.style.color = '#856404';
-      warn.style.border = '1px solid #ffeeba';
-      warn.style.padding = '10px 16px';
-      warn.style.marginBottom = '12px';
-      warn.style.borderRadius = '6px';
-      warn.innerHTML = '<b>Warning:</b> The column headers do not match the required format.<br>Expected: <code>' + expectedHeaders.join(', ') + '</code><br><span style="color:#b71c1c;font-weight:bold;">Import is disabled until the headers are correct.</span>';
-      content.appendChild(warn);
-    }
-    // Tabel
-    const table = document.createElement('table');
-    table.style.borderCollapse = 'collapse';
-    table.style.width = '100%';
-    table.style.marginBottom = '16px';
-    // Validatie: unieke en verplichte id's, markeer lege cellen
-    var idSet = new Set();
-    var duplicateIds = new Set();
-    data.forEach(function(row, i) {
-      var tr = document.createElement('tr');
-      for (let idx = 0; idx < row.length; idx++) {
-        var td = document.createElement(i === 0 ? 'th' : 'td');
-        var val = row[idx] !== undefined ? row[idx] : '';
-        var valStr = String(val);
-        td.textContent = valStr;
-        td.style.border = '1px solid #1976D2';
-        td.style.padding = '6px 10px';
-        td.style.background = i === 0 ? '#1976D2' : (i % 2 === 0 ? '#E3F2FD' : '#fff');
-        td.style.color = i === 0 ? '#fff' : '#222';
-        td.style.fontWeight = i === 0 ? 'bold' : 'normal';
-        // Markeer lege cellen (behalve header)
-        if (i > 0 && valStr.trim() === '') {
-          td.style.background = '#ffcdd2';
-          td.title = 'Required field is empty';
-        }
-        // Markeer duplicate id's
-        if (i > 0 && idx === 0) {
-          if (idSet.has(valStr)) {
-            td.style.background = '#ff9800';
-            td.title = 'Duplicate id';
-            duplicateIds.add(valStr);
-          } else if (valStr.trim() !== '') {
-            idSet.add(valStr);
-          }
-        }
-        tr.appendChild(td);
-      }
-      table.appendChild(tr);
-    });
-    content.appendChild(table);
-    // Buttons
-    const btnRow = document.createElement('div');
-    btnRow.style.display = 'flex';
-    btnRow.style.justifyContent = 'flex-end';
-    btnRow.style.gap = '12px';
-    // Sluiten
-    const closeBtn = document.createElement('button');
-    closeBtn.textContent = 'Sluiten';
-    closeBtn.style.padding = '8px 18px';
-    closeBtn.style.background = '#eee';
-    closeBtn.style.border = '1px solid #bbb';
-    closeBtn.style.borderRadius = '6px';
-    closeBtn.onclick = () => modal.remove();
-    btnRow.appendChild(closeBtn);
-    // Importeren
+
+  // Knoppenrij onderaan
+  const btnRow = document.createElement('div');
+  btnRow.style.display = 'flex';
+  btnRow.style.justifyContent = 'space-between';
+  btnRow.style.alignItems = 'center';
+  btnRow.style.gap = '12px';
+  btnRow.style.marginTop = '18px';
+
+    // Annuleren-knop links
+    const cancelBtn = document.createElement('button');
+    cancelBtn.textContent = 'Annuleren';
+    cancelBtn.style.padding = '8px 18px';
+    cancelBtn.style.background = '#eee';
+    cancelBtn.style.border = '1px solid #bbb';
+    cancelBtn.style.borderRadius = '6px';
+    cancelBtn.style.fontWeight = 'bold';
+    cancelBtn.onclick = () => modal.remove();
+    btnRow.appendChild(cancelBtn);
+
+    // Importeren-knop rechts
     var importBtn = document.createElement('button');
     importBtn.textContent = 'Importeren';
     importBtn.style.padding = '8px 18px';
@@ -383,9 +337,63 @@ window.addEventListener('DOMContentLoaded', function() {
       }
     };
     btnRow.appendChild(importBtn);
-    content.appendChild(btnRow);
-    modal.appendChild(content);
-    document.body.appendChild(modal);
+  // ...knoppen worden later toegevoegd onder de tabel...
+
+  content.innerHTML += '<h3>Preview: ' + filename + '</h3>';
+    if (!headerOk) {
+      var warn = document.createElement('div');
+      warn.style.background = '#fff3cd';
+      warn.style.color = '#856404';
+      warn.style.border = '1px solid #ffeeba';
+      warn.style.padding = '10px 16px';
+      warn.style.marginBottom = '12px';
+      warn.style.borderRadius = '6px';
+      warn.innerHTML = '<b>Warning:</b> The column headers do not match the required format.<br>Expected: <code>' + expectedHeaders.join(', ') + '</code><br><span style="color:#b71c1c;font-weight:bold;">Import is disabled until the headers are correct.</span>';
+      content.appendChild(warn);
+    }
+    // Tabel
+    const table = document.createElement('table');
+    table.style.borderCollapse = 'collapse';
+    table.style.width = '100%';
+    table.style.marginBottom = '16px';
+    // Validatie: unieke en verplichte id's, markeer lege cellen
+    var idSet = new Set();
+    var duplicateIds = new Set();
+    data.forEach(function(row, i) {
+      var tr = document.createElement('tr');
+      for (let idx = 0; idx < row.length; idx++) {
+        var td = document.createElement(i === 0 ? 'th' : 'td');
+        var val = row[idx] !== undefined ? row[idx] : '';
+        var valStr = String(val);
+        td.textContent = valStr;
+        td.style.border = '1px solid #1976D2';
+        td.style.padding = '6px 10px';
+        td.style.background = i === 0 ? '#1976D2' : (i % 2 === 0 ? '#E3F2FD' : '#fff');
+        td.style.color = i === 0 ? '#fff' : '#222';
+        td.style.fontWeight = i === 0 ? 'bold' : 'normal';
+        // Markeer lege cellen (behalve header)
+        if (i > 0 && valStr.trim() === '') {
+          td.style.background = '#ffcdd2';
+          td.title = 'Required field is empty';
+        }
+        // Markeer duplicate id's
+        if (i > 0 && idx === 0) {
+          if (idSet.has(valStr)) {
+            td.style.background = '#ff9800';
+            td.title = 'Duplicate id';
+            duplicateIds.add(valStr);
+          } else if (valStr.trim() !== '') {
+            idSet.add(valStr);
+          }
+        }
+        tr.appendChild(td);
+      }
+      table.appendChild(tr);
+    });
+  content.appendChild(table);
+  content.appendChild(btnRow);
+  modal.appendChild(content);
+  document.body.appendChild(modal);
   }
   // Download Excel event handler
   var excelBtn = document.getElementById('downloadExcelBtn');
@@ -401,7 +409,7 @@ window.addEventListener('DOMContentLoaded', function() {
     var btn = document.getElementById('downloadExcelBtn');
     if (btn) {
       btn.style.display = editMode ? 'flex' : 'none';
-      console.log('Download-knop gevonden:', btn, 'Edit mode:', editMode);
+  // ...existing code...
     } else {
       console.warn('Download-knop niet gevonden in de DOM!');
     }
@@ -673,16 +681,14 @@ function refreshMarkersOnMap() {
   if (typeof editElements !== 'undefined') {
     editElements.clearLayers();
   }
-  // Voeg alle markers uit markersList opnieuw toe
+  // Voeg alle markers uit markersList opnieuw toe, en bind popupopen-handler opnieuw
   markersList.forEach(function(m) {
-    // Bepaal positie en eigenschappen
-    var center = m.marker && m.marker.getLatLng ? m.marker.getLatLng() : (m.lat && m.lng ? L.latLng(m.lat, m.lng) : null);
+    var center = m.lat && m.lng ? L.latLng(m.lat, m.lng) : null;
     if (!center) return;
     var width = m.width || 6;
     var height = m.height || 6;
     var angle = typeof m.angle === 'number' ? m.angle : 0;
     var corners = getRectangleCornersMeters(center, width, height, angle);
-    // Maak rechthoek en handle
     var rect = L.polygon(corners, {color: "blue", weight: 2});
     var handle = L.marker(corners[2], {
       draggable: true,
@@ -692,7 +698,6 @@ function refreshMarkersOnMap() {
         html: `<div style=\"width:8px;height:8px;border-radius:50%;background:#3388ff;\"></div>`
       })
     });
-    // Maak marker
     var marker = L.marker(center, {draggable: true, title: m.name || m.standnr || 'Unnamed',
       icon: L.icon.glyph({
         prefix: '',
@@ -709,15 +714,84 @@ function refreshMarkersOnMap() {
         shadowAnchor: [-12, -41]
       })
     });
-    
     searchableMarkers.addLayer(marker);
     editElements.addLayer(rect);
     editElements.addLayer(handle);
-    // Update markerObj in markersList
     m.marker = marker;
     m.rect = rect;
     m.handle = handle;
     marker.bindPopup(createEditablePopup(m));
+    marker.on('popupopen', function(ev) {
+      var id = m.id;
+      setTimeout(function() {
+        marker.setPopupContent(createEditablePopup(m));
+        // Verwijder oude handlers
+        var oldBtn = document.getElementById(`iconDropdownBtn_${id}`);
+        if (oldBtn) oldBtn.onclick = null;
+        var oldMenu = document.getElementById(`iconDropdownMenu_${id}`);
+        if (oldMenu) Array.from(oldMenu.children).forEach(function(el){ if (el) el.onclick = null; });
+        if (editMode && document.getElementById(`save_${id}`)) {
+          var dropdownBtn = document.getElementById(`iconDropdownBtn_${id}`);
+          var dropdownMenu = document.getElementById(`iconDropdownMenu_${id}`);
+          var hiddenInput = document.getElementById(`iconHidden_${id}`);
+          if (dropdownBtn && dropdownMenu && hiddenInput) {
+            dropdownBtn.onclick = function(e) {
+              e.stopPropagation();
+              dropdownMenu.style.display = dropdownMenu.style.display === 'block' ? 'none' : 'block';
+            };
+            document.addEventListener('click', function handler(e) {
+              if (!dropdownBtn.contains(e.target) && !dropdownMenu.contains(e.target)) {
+                dropdownMenu.style.display = 'none';
+                document.removeEventListener('click', handler);
+              }
+            });
+            Array.from(dropdownMenu.children).forEach(function(iconDiv) {
+              iconDiv.onclick = function() {
+                var fileImg = iconDiv.querySelector('img');
+                if (!fileImg) return;
+                var file = fileImg.getAttribute('src').split('/').pop();
+                hiddenInput.value = file;
+                var btnImg = dropdownBtn.querySelector('img');
+                if (btnImg) btnImg.setAttribute('src', 'icons/svg/' + file);
+                Array.from(dropdownMenu.children).forEach(function(el){ if (el && el.style) { el.style.border='2px solid transparent'; el.style.background='transparent'; } });
+                if (iconDiv && iconDiv.style) { iconDiv.style.border = '2px solid #007bff'; iconDiv.style.background = '#e6f0ff'; }
+                dropdownMenu.style.display = 'none';
+              };
+            });
+          }
+          document.getElementById(`save_${id}`).onclick = function() {
+            var idx = markersList.findIndex(mm => mm.id === m.id);
+            if (idx !== -1) {
+              markersList[idx].name = document.getElementById(`name_${id}`).value;
+              markersList[idx].img = document.getElementById(`img_${id}`).value;
+              markersList[idx].standnr = document.getElementById(`standnr_${id}`).value;
+              markersList[idx].websitelink = document.getElementById(`web_${id}`).value;
+              markersList[idx].info = document.getElementById(`info_${id}`).value;
+              var iconFileRaw = document.getElementById(`iconHidden_${id}`).value;
+              var iconFileClean = iconFileRaw;
+              var match = iconFileRaw.match(/\(([^)]+)\)/);
+              if (match) {
+                iconFileClean = match[1];
+              } else if (iconFileRaw.includes(' ')) {
+                iconFileClean = iconFileRaw.split(' ').pop();
+              }
+              markersList[idx].icon = iconFileClean;
+              var iconOptions = m.marker.options.icon.options;
+              iconOptions.iconUrl = `icons/svg/${iconFileClean}`;
+              m.marker.options.icon.options.iconUrl = `icons/svg/${iconFileClean}`;
+              iconOptions.glyph = markersList[idx].standnr;
+              m.marker.setIcon(L.icon.glyph(iconOptions));
+              m.marker.options.title = markersList[idx].name || markersList[idx].standnr || 'Unnamed';
+            }
+            saveMarkers();
+            marker.closePopup();
+          };
+          document.getElementById(`cancel_${id}`).onclick = function() {
+            marker.closePopup();
+          };
+        }
+      }, 0);
+    });
   });
   updateLayerVisibility();
 }
@@ -749,8 +823,8 @@ function saveMarkers() {
   });
   
   // Debug: check what we're saving
-  // console.log('Saving data:', data);
-  // console.log('First few items:', data.slice(0, 3).map(function(item) { 
+  // ...existing code...
+  // ...existing code...
   //   return { id: item.id, name: item.name, standnr: item.standnr }; 
   // }));
   
@@ -760,11 +834,11 @@ function saveMarkers() {
     body: JSON.stringify(data)
   })
   .then(response => {
-    // console.log('Save response status:', response.status);
+  // ...existing code...
     return response.text();
   })
   .then(text => {
-    // console.log('Save response:', text);
+  // ...existing code...
   })
   .catch(error => {
     console.error('Save error:', error);
@@ -853,55 +927,84 @@ fetch('markers.json')
       marker.bindPopup(createEditablePopup(markerObj));
 
       marker.on('popupopen', function(ev) {
+  // ...existing code...
+  // ...existing code...
         var id = markerObj.id;
         // Altijd popup hertekenen met actuele data
         setTimeout(function() {
           marker.setPopupContent(createEditablePopup(markerObj));
+          // Verwijder eerst bestaande event-handlers van icon dropdown (indien aanwezig)
+          var oldBtn = document.getElementById(`iconDropdownBtn_${id}`);
+          if (oldBtn) oldBtn.onclick = null;
+          var oldMenu = document.getElementById(`iconDropdownMenu_${id}`);
+          if (oldMenu) Array.from(oldMenu.children).forEach(function(el){el.onclick = null;});
           if (editMode && document.getElementById(`save_${id}`)) {
-            // Live preview van marker icon bij selectie
-            var iconSelect = document.getElementById(`icon_${id}`);
-            var preview = document.getElementById(`iconPreview_${id}`);
-            var originalIcon = markerObj.icon;
-            if (iconSelect && preview) {
-              iconSelect.addEventListener('change', function() {
-                var file = iconSelect.value;
-                preview.innerHTML = `<img src='icons/svg/${file}' style='width:28px;height:28px;'/>`;
+            // Custom icon dropdown event-handlers
+            var dropdownBtn = document.getElementById(`iconDropdownBtn_${id}`);
+            var dropdownMenu = document.getElementById(`iconDropdownMenu_${id}`);
+            var hiddenInput = document.getElementById(`iconHidden_${id}`);
+            if (dropdownBtn && dropdownMenu && hiddenInput) {
+              dropdownBtn.onclick = function(e) {
+                e.stopPropagation();
+                dropdownMenu.style.display = dropdownMenu.style.display === 'block' ? 'none' : 'block';
+              };
+              document.addEventListener('click', function handler(e) {
+                if (!dropdownBtn.contains(e.target) && !dropdownMenu.contains(e.target)) {
+                  dropdownMenu.style.display = 'none';
+                  document.removeEventListener('click', handler);
+                }
+              });
+              Array.from(dropdownMenu.children).forEach(function(iconDiv) {
+                iconDiv.onclick = function() {
+                  var fileImg = iconDiv.querySelector('img');
+                  if (!fileImg) return;
+                  var file = fileImg.getAttribute('src').split('/').pop();
+                  hiddenInput.value = file;
+                  var btnImg = dropdownBtn.querySelector('img');
+                  if (btnImg) btnImg.setAttribute('src', 'icons/svg/' + file);
+                  Array.from(dropdownMenu.children).forEach(function(el){
+                    if (el && el.style) {
+                      el.style.border='2px solid transparent';
+                      el.style.background='transparent';
+                    }
+                  });
+                  if (iconDiv && iconDiv.style) {
+                    iconDiv.style.border = '2px solid #007bff';
+                    iconDiv.style.background = '#e6f0ff';
+                  }
+                  dropdownMenu.style.display = 'none';
+                };
               });
             }
             document.getElementById(`save_${id}`).onclick = function() {
-              markerObj.name = document.getElementById(`name_${id}`).value;
-              markerObj.img = document.getElementById(`img_${id}`).value;
-              markerObj.standnr = document.getElementById(`standnr_${id}`).value;
-              markerObj.websitelink = document.getElementById(`web_${id}`).value;
-              markerObj.info = document.getElementById(`info_${id}`).value;
-              // Marker kleur/icon
-              var iconFileRaw = iconSelect.value;
-              var iconFileClean = iconFileRaw;
-              var match = iconFileRaw.match(/\(([^)]+)\)/);
-              if (match) {
-                iconFileClean = match[1];
-              } else if (iconFileRaw.includes(' ')) {
-                iconFileClean = iconFileRaw.split(' ').pop();
-              }
-              markerObj.icon = iconFileClean;
               var idx = markersList.findIndex(m => m.id === markerObj.id);
-              if (idx !== -1) markersList[idx].icon = iconFileClean;
-              var iconOptions = markerObj.marker.options.icon.options;
-              iconOptions.iconUrl = `icons/svg/${iconFileClean}`;
-              markerObj.marker.options.icon.options.iconUrl = `icons/svg/${iconFileClean}`;
-              iconOptions.glyph = markerObj.standnr;
-              markerObj.marker.setIcon(L.icon.glyph(iconOptions));
-              markerObj.marker.options.title = markerObj.name || markerObj.standnr || 'Unnamed';
+              if (idx !== -1) {
+                markersList[idx].name = document.getElementById(`name_${id}`).value;
+                markersList[idx].img = document.getElementById(`img_${id}`).value;
+                markersList[idx].standnr = document.getElementById(`standnr_${id}`).value;
+                markersList[idx].websitelink = document.getElementById(`web_${id}`).value;
+                markersList[idx].info = document.getElementById(`info_${id}`).value;
+                var iconFileRaw = document.getElementById(`iconHidden_${id}`).value;
+                var iconFileClean = iconFileRaw;
+                var match = iconFileRaw.match(/\(([^)]+)\)/);
+                if (match) {
+                  iconFileClean = match[1];
+                } else if (iconFileRaw.includes(' ')) {
+                  iconFileClean = iconFileRaw.split(' ').pop();
+                }
+                markersList[idx].icon = iconFileClean;
+                var iconOptions = markerObj.marker.options.icon.options;
+                iconOptions.iconUrl = `icons/svg/${iconFileClean}`;
+                markerObj.marker.options.icon.options.iconUrl = `icons/svg/${iconFileClean}`;
+                iconOptions.glyph = markersList[idx].standnr;
+                markerObj.marker.setIcon(L.icon.glyph(iconOptions));
+                markerObj.marker.options.title = markersList[idx].name || markersList[idx].standnr || 'Unnamed';
+              }
               saveMarkers();
               marker.closePopup();
             };
             // Cancel button handler - restore originele preview
             document.getElementById(`cancel_${id}`).onclick = function() {
-              document.getElementById(`name_${id}`).value = markerObj.name || "";
-              document.getElementById(`img_${id}`).value = markerObj.img || "";
-              document.getElementById(`standnr_${id}`).value = markerObj.standnr || "";
-              document.getElementById(`web_${id}`).value = markerObj.websitelink || "";
-              if (preview) preview.innerHTML = `<img src='icons/svg/${originalIcon}' style='width:28px;height:28px;'/>`;
               marker.closePopup();
             };
           }
@@ -949,7 +1052,7 @@ fetch('markers.json')
       }
       markersList.push(markerObj);
       if (markerObj.id >= nextMarkerId) nextMarkerId = markerObj.id + 1;
-      // console.log('Updated nextMarkerId to:', nextMarkerId, 'based on marker ID:', markerObj.id);
+  // ...existing code...
     });
     
     // ============================================================
@@ -992,6 +1095,7 @@ fetch('markers.json')
   });
 
 function createEditablePopup(markerObj) {
+  // ...existing code...
   // Build popup HTML for a marker. This function is called when binding/opening a popup.
   // Inputs: markerObj (see markersList shape above)
   // Output: HTML string inserted into Leaflet popup
@@ -1040,26 +1144,33 @@ function createEditablePopup(markerObj) {
                 if (preview) preview.innerHTML = `<img src='icons/svg/${file}' style='width:28px;height:28px;'/>`;
               });
             }
-      // Select dropdown met SVG previews
-      let iconSelectHtml = `<div style="display:flex;align-items:center;gap:6px;margin-bottom:2px;"><b style="min-width:${labelWidth};">Marker icon:</b><select id="icon_${id}" style="flex:1 1 0%;min-width:60px;max-width:100%;">`;
+      // Custom dropdown met alleen iconen
+  // let iconDropdownHtml = ... (verwijderd, zie nieuwe variant hieronder)
+      // Custom dropdown die opent/sluit als menu met alleen iconen
+      let iconDropdownHtml = `<div style="display:flex;align-items:center;gap:6px;margin-bottom:2px;position:relative;"><b style="min-width:${labelWidth};">Marker icon:</b>`;
+      iconDropdownHtml += `<div id="iconDropdownBtn_${id}" style="cursor:pointer;border:2px solid #007bff;border-radius:6px;padding:2px;background:#e6f0ff;display:inline-block;">
+        <img src="icons/svg/${currentFile}" style="width:32px;height:32px;" alt="icon"/>
+        <span style="margin-left:4px;vertical-align:middle;">&#9660;</span>
+      </div>`;
+      iconDropdownHtml += `<div id="iconDropdownMenu_${id}" style="display:none;position:absolute;z-index:10;top:38px;left:0;background:#fff;border:1px solid #ccc;border-radius:6px;box-shadow:0 2px 8px rgba(0,0,0,0.12);padding:6px;min-width:180px;">`;
       markerIcons.forEach(file => {
-        iconSelectHtml += `<option value="${file}"${file===currentFile?' selected':''}>${file}</option>`;
+        iconDropdownHtml += `<div style="cursor:pointer;display:inline-block;border:${file===currentFile?'2px solid #007bff':'2px solid transparent'};border-radius:6px;padding:2px;margin:2px;background:${file===currentFile?'#e6f0ff':'transparent'};">
+          <img src="icons/svg/${file}" style="width:32px;height:32px;" alt="icon"/>
+        </div>`;
       });
-      iconSelectHtml += `</select>`;
-      // SVG preview
-      iconSelectHtml += `<span id="iconPreview_${id}" style="display:inline-block;width:28px;height:28px;vertical-align:middle;margin-left:8px;"><img src="icons/svg/${currentFile}" style="width:28px;height:28px;"/></span></div>`;
+      iconDropdownHtml += `</div><input type="hidden" id="iconHidden_${id}" value="${currentFile}"></div>`;
       return `
         <div style="min-width:220px">
           ${imgHtml}
           ${idLatLngBlock}
-          ${iconSelectHtml}
+          ${iconDropdownHtml}
           <div style="display:flex;align-items:center;gap:6px;margin-bottom:2px;"><b style="min-width:${labelWidth};">Afbeelding:</b><input type="text" id="img_${id}" value="${img}" style="flex:1 1 0%;min-width:60px;max-width:100%;" placeholder="URL" ${disabled}/></div>
           <div style="display:flex;align-items:center;gap:6px;margin-bottom:2px;"><b style="min-width:${labelWidth};">Naam:</b><input type="text" id="name_${id}" value="${name}" style="flex:1 1 0%;min-width:60px;max-width:100%;" ${disabled}/></div>
           <div style="display:flex;align-items:center;gap:6px;margin-bottom:2px;"><b style="min-width:${labelWidth};">Standnr:</b><input type="number" id="standnr_${id}" value="${standnr}" style="flex:1 1 0%;min-width:40px;max-width:100%;" ${disabled}/></div>
           <div style="display:flex;align-items:center;gap:6px;margin-bottom:2px;"><b style="min-width:${labelWidth};">Website:</b><input type="text" id="web_${id}" value="${websitelink}" style="flex:1 1 0%;min-width:60px;max-width:100%;" placeholder="https://..." ${disabled}/></div>
           <div style="display:flex;align-items:flex-start;gap:6px;margin-bottom:2px;"><b style="min-width:${labelWidth};">Info:</b><textarea id="info_${id}" style="flex:1 1 0%;min-width:60px;max-width:100%;height:60px;resize:vertical;" ${disabled}>${info}</textarea></div>
-          ${saveBtn}
         </div>
+        ${saveBtn}
       `;
     } else {
         // Toon het marker icon naast het standnummer
@@ -1138,8 +1249,42 @@ map.on('contextmenu', function(e) {
     // Altijd popup hertekenen met actuele editMode status
     setTimeout(function() {
       marker.setPopupContent(createEditablePopup(markerObj));
+      // Zorg dat icon dropdown handlers ook hier worden gebonden (voor nieuwe markers)
+      var oldBtn2 = document.getElementById(`iconDropdownBtn_${id}`);
+      if (oldBtn2) oldBtn2.onclick = null;
+      var oldMenu2 = document.getElementById(`iconDropdownMenu_${id}`);
+      if (oldMenu2) Array.from(oldMenu2.children).forEach(function(el){ if (el) el.onclick = null; });
       // Save-button alleen in edit mode
       if (editMode) {
+        // Bind custom dropdown if present
+        var dropdownBtn2 = document.getElementById(`iconDropdownBtn_${id}`);
+        var dropdownMenu2 = document.getElementById(`iconDropdownMenu_${id}`);
+        var hiddenInput2 = document.getElementById(`iconHidden_${id}`);
+        if (dropdownBtn2 && dropdownMenu2 && hiddenInput2) {
+          dropdownBtn2.onclick = function(e) {
+            e.stopPropagation();
+            dropdownMenu2.style.display = dropdownMenu2.style.display === 'block' ? 'none' : 'block';
+          };
+          document.addEventListener('click', function handler2(e) {
+            if (!dropdownBtn2.contains(e.target) && !dropdownMenu2.contains(e.target)) {
+              dropdownMenu2.style.display = 'none';
+              document.removeEventListener('click', handler2);
+            }
+          });
+          Array.from(dropdownMenu2.children).forEach(function(iconDiv) {
+            iconDiv.onclick = function() {
+              var fileImg = iconDiv.querySelector('img');
+              if (!fileImg) return;
+              var file = fileImg.getAttribute('src').split('/').pop();
+              hiddenInput2.value = file;
+              var btnImg = dropdownBtn2.querySelector('img');
+              if (btnImg) btnImg.setAttribute('src', 'icons/svg/' + file);
+              Array.from(dropdownMenu2.children).forEach(function(el){ if (el && el.style) { el.style.border='2px solid transparent'; el.style.background='transparent'; } });
+              if (iconDiv && iconDiv.style) { iconDiv.style.border = '2px solid #007bff'; iconDiv.style.background = '#e6f0ff'; }
+              dropdownMenu2.style.display = 'none';
+            };
+          });
+        }
         document.getElementById(`save_${id}`).onclick = function() {
           markerObj.name = document.getElementById(`name_${id}`).value;
           markerObj.img = document.getElementById(`img_${id}`).value;
@@ -1154,7 +1299,7 @@ map.on('contextmenu', function(e) {
           markerObj.marker.setIcon(L.icon.glyph(iconOptions));
           
           // Debug: check if markerObj is updated
-          // console.log('Updated markerObj:', markerObj.name, markerObj.standnr);
+          // ...existing code...
           
           // Update popup content with new data
           marker.setPopupContent(createEditablePopup(markerObj));
