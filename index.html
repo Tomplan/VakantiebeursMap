@@ -205,7 +205,7 @@ window.addEventListener('DOMContentLoaded', function() {
   // Preview modal tonen
   function showPreviewModal(data, filename) {
     // Kolomvalidatie: controleer headers
-  var expectedHeaders = ['id','standnr','name','icon','img','websitelink','info'];
+  var expectedHeaders = ['id','booth','name','icon','img','websitelink','info'];
     var headerOk = false;
     if (data.length > 0) {
       var actual = data[0].map(function(h){return h.replace(/\s+/g,'').toLowerCase();});
@@ -288,14 +288,16 @@ window.addEventListener('DOMContentLoaded', function() {
         var row = data[i];
         var id = String(row[0] !== undefined ? row[0] : '').trim();
         if (id && markerMap[id]) {
-          markerMap[id].standnr = String(row[1] !== undefined ? row[1] : markerMap[id].standnr).trim();
+          markerMap[id].booth = String(row[1] !== undefined ? row[1] : markerMap[id].booth).trim();
           markerMap[id].name = String(row[2] !== undefined ? row[2] : markerMap[id].name).trim();
           // Haal alleen de bestandsnaam uit de icon-waarde (Excel dropdown geeft 'Naam (bestand)')
           var iconCell = String(row[3] !== undefined ? row[3] : markerMap[id].icon || "glyph-marker-icon-blue.svg").trim();
           var iconMatch = iconCell.match(/\(([^)]+)\)/);
           markerMap[id].icon = iconMatch ? iconMatch[1] : iconCell;
           markerMap[id].img = String(row[4] !== undefined ? row[4] : markerMap[id].img).trim();
-          markerMap[id].websitelink = String(row[5] !== undefined ? row[5] : markerMap[id].websitelink).trim();
+          // websitelink: altijd default-url als leeg
+          var uploadedWeb = row[5] !== undefined ? String(row[5]).trim() : markerMap[id].websitelink;
+          markerMap[id].websitelink = uploadedWeb === "" ? "https://www.4x4vakantiebeurs.nl" : uploadedWeb;
           // info: altijd overschrijven, ook als leeg
           markerMap[id].info = (row[6] !== undefined) ? String(row[6]).trim() : "";
           updatedMarkers.push(markerMap[id]);
@@ -443,12 +445,12 @@ window.addEventListener('DOMContentLoaded', function() {
       font: { bold: true, color: { argb: 'FFFFFFFF' }, size: 14 },
       fill: { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF1976D2' } }
     };
-    // Kolomheaders: id (niet aanpassen!), standnr, name, img, websitelink, info
-    var header = ['id','standnr','name','icon','img','websitelink','info'];
+  // Kolomheaders: id (niet aanpassen!), booth, name, img, websitelink, info
+  var header = ['id','booth','name','icon','img','websitelink','info'];
     var rows = markersList.map(function(m) {
       return [
         m.id,
-        m.standnr,
+  m.booth,
         m.name,
         m.icon || "glyph-marker-icon-blue.svg",
         m.img,
@@ -515,7 +517,7 @@ window.addEventListener('DOMContentLoaded', function() {
     // Kolombreedte
     worksheet.columns = [
       {width: 7},    // id
-      {width: 12},   // Booth (standnr)
+  {width: 12},   // Booth
       {width: 40},   // name
       {width: 24},   // icon
       {width: 60},   // img
@@ -611,18 +613,20 @@ setTimeout(function() {
 // Outputs/Side-effects: toggles visibility of the save button, stores new mode in localStorage, and reloads the page
 // Rationale: we reload the page on mode change to force Leaflet to rebuild popups and drawing layers consistently. This
 // avoids subtle state bugs where popup content or input `disabled` attributes are stale after switching modes.
-// Hardcode read-only mode voor public/main branch
-var editMode = false;
+// Detect main branch via hostname (GitHub Pages)
+const isMainBranch = location.hostname === 'tomplan.github.io';
+var editMode = isMainBranch ? false : (localStorage.getItem('editMode') === 'true');
 // Verberg editMode toggle knop en legend icon direct
 document.addEventListener('DOMContentLoaded', function() {
   var editModeToggleBtn = document.getElementById('editModeToggleBtn');
-  if (editModeToggleBtn) editModeToggleBtn.style.display = 'none';
-  var legendIcon = document.getElementById('editLegendIcon');
-  if (legendIcon) legendIcon.style.display = 'none';
-  var uploadLabel = document.getElementById('uploadExcelLabel');
-  if (uploadLabel) uploadLabel.style.display = 'none';
-  var backupBtn = document.getElementById('backupsBtn');
-  if (backupBtn) backupBtn.style.display = 'none';
+  if (editModeToggleBtn) editModeToggleBtn.style.display = isMainBranch ? 'none' : '';
+  if (!isMainBranch && editModeToggleBtn) {
+    editModeToggleBtn.onclick = function() {
+      editMode = !editMode;
+      localStorage.setItem('editMode', editMode);
+      location.reload();
+    };
+  }
 });
 var editModeToggleBtn = document.getElementById('editModeToggleBtn');
 var backupBtn = document.getElementById('backupsBtn');
@@ -674,7 +678,7 @@ updateSaveButtonVisibility();
 
 // In-memory marker registry
 // `markersList` holds objects representing each marker and its associated rectangle and rotate-handle.
-// Each entry shape: { id, marker: L.Marker, rect: L.Polygon, handle: L.Marker, name, img, standnr, websitelink, width, height, angle }
+// Each entry shape: { id, marker: L.Marker, rect: L.Polygon, handle: L.Marker, name, img, booth, websitelink, width, height, angle }
 // `nextMarkerId` is used only when creating new markers client-side to provide a temporary unique id until saved.
 var markersList = [];
 // Ververst alle markers op de kaart na import of wijziging van markersList
@@ -703,10 +707,10 @@ function refreshMarkersOnMap() {
         html: `<div style=\"width:8px;height:8px;border-radius:50%;background:#3388ff;\"></div>`
       })
     });
-    var marker = L.marker(center, {draggable: true, title: m.name || m.standnr || 'Unnamed',
+  var marker = L.marker(center, {draggable: true, title: m.name || m.booth || 'Unnamed',
       icon: L.icon.glyph({
         prefix: '',
-        glyph: m.standnr,
+  glyph: m.booth,
         glyphColor: 'white',
         glyphSize: '12px',
         iconUrl: `icons/svg/${m.icon || 'glyph-marker-icon-blue.svg'}`,
@@ -769,7 +773,7 @@ function refreshMarkersOnMap() {
             if (idx !== -1) {
               markersList[idx].name = document.getElementById(`name_${id}`).value;
               markersList[idx].img = document.getElementById(`img_${id}`).value;
-              markersList[idx].standnr = document.getElementById(`standnr_${id}`).value;
+              markersList[idx].booth = document.getElementById(`booth_${id}`).value;
               markersList[idx].websitelink = document.getElementById(`web_${id}`).value;
               markersList[idx].info = document.getElementById(`info_${id}`).value;
               var iconFileRaw = document.getElementById(`iconHidden_${id}`).value;
@@ -784,9 +788,9 @@ function refreshMarkersOnMap() {
               var iconOptions = m.marker.options.icon.options;
               iconOptions.iconUrl = `icons/svg/${iconFileClean}`;
               m.marker.options.icon.options.iconUrl = `icons/svg/${iconFileClean}`;
-              iconOptions.glyph = markersList[idx].standnr;
+              iconOptions.glyph = markersList[idx].booth;
               m.marker.setIcon(L.icon.glyph(iconOptions));
-              m.marker.options.title = markersList[idx].name || markersList[idx].standnr || 'Unnamed';
+              m.marker.options.title = markersList[idx].name || markersList[idx].booth || 'Unnamed';
             }
             saveMarkers();
             marker.closePopup();
@@ -820,7 +824,7 @@ function saveMarkers() {
       name: obj.name,
       icon: obj.icon || "glyph-marker-icon-blue.svg",
       img: obj.img,
-      standnr: obj.standnr,
+  booth: obj.booth,
       websitelink: obj.websitelink,
       info: obj.info || "",
       angle: obj.angle || 0
@@ -830,7 +834,7 @@ function saveMarkers() {
   // Debug: check what we're saving
   // ...existing code...
   // ...existing code...
-  //   return { id: item.id, name: item.name, standnr: item.standnr }; 
+  //   return { id: item.id, name: item.name, booth: item.booth }; 
   // }));
   
   fetch('/save-markers', {
@@ -867,7 +871,7 @@ var searchableMarkers = L.layerGroup().addTo(map); // Markers - always visible
 var editElements = L.layerGroup(); // Rectangles and handles - only visible in edit mode
 
 // Load markers from `markers.json` and recreate the visual elements for each marker.
-// Inputs: `markers.json` file on the same server — an array of marker objects (id, lat, lng, name, img, standnr, websitelink, angle)
+// Inputs: `markers.json` file on the same server — an array of marker objects (id, lat, lng, name, img, booth, websitelink, angle)
 // Outputs: for each JSON entry we create a Leaflet marker, a rectangle polygon (width x height), and a rotate handle marker.
 // Side-effects: these objects are added to `markersList` so other UI actions (drag/rotate/save) can reference them.
 // Notes: rectangles are by default added to the map; previously we used conditional display logic — keep this behaviour consistent
@@ -892,10 +896,10 @@ fetch('markers.json')
         })
       });
       // Always add the marker itself to the map so markers remain visible even in read-only mode. The rect/handle provide editing affordances.
-      var marker = L.marker(center, {draggable: true, title: m.name || m.standnr || 'Unnamed',
+  var marker = L.marker(center, {draggable: true, title: m.name || m.booth || 'Unnamed',
         icon: L.icon.glyph({
           prefix: '',
-          glyph: m.standnr,
+          glyph: m.booth,
           glyphColor: 'white',
           glyphSize: '12px',
           iconUrl: `icons/svg/${m.icon || 'glyph-marker-icon-blue.svg'}`,
@@ -922,7 +926,7 @@ fetch('markers.json')
     name: m.name || "",
     icon: m.icon || "glyph-marker-icon-blue.svg",
     img: (typeof m.img === 'string' && m.img.trim() !== "") ? m.img : "logos/4x4Vakantiebeurs.png",
-    standnr: m.standnr || "",
+  booth: m.booth || "",
     websitelink: m.websitelink || "",
     info: (typeof m.info === 'string' ? m.info : ""),
     width: width,
@@ -986,7 +990,7 @@ fetch('markers.json')
               if (idx !== -1) {
                 markersList[idx].name = document.getElementById(`name_${id}`).value;
                 markersList[idx].img = document.getElementById(`img_${id}`).value;
-                markersList[idx].standnr = document.getElementById(`standnr_${id}`).value;
+                markersList[idx].booth = document.getElementById(`booth_${id}`).value;
                 markersList[idx].websitelink = document.getElementById(`web_${id}`).value;
                 markersList[idx].info = document.getElementById(`info_${id}`).value;
                 var iconFileRaw = document.getElementById(`iconHidden_${id}`).value;
@@ -1001,9 +1005,9 @@ fetch('markers.json')
                 var iconOptions = markerObj.marker.options.icon.options;
                 iconOptions.iconUrl = `icons/svg/${iconFileClean}`;
                 markerObj.marker.options.icon.options.iconUrl = `icons/svg/${iconFileClean}`;
-                iconOptions.glyph = markersList[idx].standnr;
+                iconOptions.glyph = markersList[idx].booth;
                 markerObj.marker.setIcon(L.icon.glyph(iconOptions));
-                markerObj.marker.options.title = markersList[idx].name || markersList[idx].standnr || 'Unnamed';
+                markerObj.marker.options.title = markersList[idx].name || markersList[idx].booth || 'Unnamed';
               }
               saveMarkers();
               marker.closePopup();
@@ -1074,7 +1078,7 @@ fetch('markers.json')
         propertyName: 'title', // Use the title property we set on markers
         initial: false,
         collapsed: true,
-        textPlaceholder: 'Search booths, stands, names...',
+        textPlaceholder: 'Search booth-holders',
         zoom: 20,
         moveToLocation: function(latlng, title, map) {
           // First smoothly fly to the location
@@ -1114,7 +1118,7 @@ function createEditablePopup(markerObj) {
   if (img === "icons/png/4x4Vakantiebeurs.png" || img === "icons/4x4Vakantiebeurs.png") {
     img = "logos/4x4Vakantiebeurs.png";
   }
-  var standnr = markerObj.standnr || "";
+  var booth = markerObj.booth || "";
     var defaultUrl = "https://www.4x4vakantiebeurs.nl";
     var websitelink = markerObj.websitelink && markerObj.websitelink.trim() !== "" ? markerObj.websitelink.replace(/\/$/,"") : defaultUrl;
   var info = markerObj.info || "";
@@ -1171,7 +1175,7 @@ function createEditablePopup(markerObj) {
           ${iconDropdownHtml}
           <div style="display:flex;align-items:center;gap:6px;margin-bottom:2px;"><b style="min-width:${labelWidth};">Afbeelding:</b><input type="text" id="img_${id}" value="${img}" style="flex:1 1 0%;min-width:60px;max-width:100%;" placeholder="URL" ${disabled}/></div>
           <div style="display:flex;align-items:center;gap:6px;margin-bottom:2px;"><b style="min-width:${labelWidth};">Naam:</b><input type="text" id="name_${id}" value="${name}" style="flex:1 1 0%;min-width:60px;max-width:100%;" ${disabled}/></div>
-          <div style="display:flex;align-items:center;gap:6px;margin-bottom:2px;"><b style="min-width:${labelWidth};">Standnr:</b><input type="number" id="standnr_${id}" value="${standnr}" style="flex:1 1 0%;min-width:40px;max-width:100%;" ${disabled}/></div>
+          <div style="display:flex;align-items:center;gap:6px;margin-bottom:2px;"><b style="min-width:${labelWidth};">Booth:</b><input type="number" id="booth_${id}" value="${booth}" style="flex:1 1 0%;min-width:40px;max-width:100%;" ${disabled}/></div>
           <div style="display:flex;align-items:center;gap:6px;margin-bottom:2px;"><b style="min-width:${labelWidth};">Website:</b><input type="text" id="web_${id}" value="${websitelink}" style="flex:1 1 0%;min-width:60px;max-width:100%;" placeholder="https://..." ${disabled}/></div>
           <div style="display:flex;align-items:flex-start;gap:6px;margin-bottom:2px;"><b style="min-width:${labelWidth};">Info:</b><textarea id="info_${id}" style="flex:1 1 0%;min-width:60px;max-width:100%;height:60px;resize:vertical;" ${disabled}>${info}</textarea></div>
         </div>
@@ -1184,7 +1188,7 @@ function createEditablePopup(markerObj) {
             ${imgHtml}
             <div style="margin-bottom:2px;position:relative;height:28px;display:flex;align-items:flex-start;gap:8px;text-align:left;">
               <img src="icons/svg/${currentFile}" style="width:28px;height:28px;display:block;" alt="icon"/>
-                <span style="position:absolute;left:36px;bottom:0;display:inline-block;font-size:1.5em;font-weight:bold;">Booth ${standnr}</span>
+                <span style="position:absolute;left:36px;bottom:0;display:inline-block;font-size:1.5em;font-weight:bold;">Booth ${booth}</span>
             </div>
               <div style="margin-bottom:2px;text-align:left;width:100%;font-weight:bold;">${name}</div>
             <div style="margin-bottom:2px;text-align:left;"><a href="${websitelink}" target="_blank" rel="noopener noreferrer">${websitelink}</a></div>
@@ -1240,7 +1244,7 @@ map.on('contextmenu', function(e) {
     handle: handle,
     name: "",
   img: "logos/4x4Vakantiebeurs.png",
-    standnr: markerId.toString(),
+  booth: markerId.toString(),
     websitelink: "",
     info: "Ontdek de wereld van de 4x4 vakanties op de 4x4 Vakantiebeurs. De grootste beurs in de BeNeLux op het gebied van 4x4 vakanties, reizen en alles wat ermee gemoeid is.",
     width: width,
@@ -1293,14 +1297,14 @@ map.on('contextmenu', function(e) {
         document.getElementById(`save_${id}`).onclick = function() {
           markerObj.name = document.getElementById(`name_${id}`).value;
           markerObj.img = document.getElementById(`img_${id}`).value;
-          markerObj.standnr = document.getElementById(`standnr_${id}`).value;
+          markerObj.booth = document.getElementById(`booth_${id}`).value;
           markerObj.websitelink = document.getElementById(`web_${id}`).value;
           markerObj.info = document.getElementById(`info_${id}`).value;
           // Update marker title for search
-          markerObj.marker.options.title = markerObj.name || markerObj.standnr || 'Unnamed';
+          markerObj.marker.options.title = markerObj.name || markerObj.booth || 'Unnamed';
           // Update marker glyph text direct na save
           var iconOptions = markerObj.marker.options.icon.options;
-          iconOptions.glyph = markerObj.standnr;
+          iconOptions.glyph = markerObj.booth;
           markerObj.marker.setIcon(L.icon.glyph(iconOptions));
           
           // Debug: check if markerObj is updated
@@ -1318,7 +1322,7 @@ map.on('contextmenu', function(e) {
         document.getElementById(`cancel_${id}`).onclick = function() {
           document.getElementById(`name_${id}`).value = markerObj.name || "";
           document.getElementById(`img_${id}`).value = markerObj.img || "";
-          document.getElementById(`standnr_${id}`).value = markerObj.standnr || "";
+          document.getElementById(`booth_${id}`).value = markerObj.booth || "";
           document.getElementById(`web_${id}`).value = markerObj.websitelink || "";
           marker.closePopup();
         };
