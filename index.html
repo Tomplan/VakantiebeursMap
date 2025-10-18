@@ -1,3 +1,4 @@
+    
 <!DOCTYPE html>
 <html>
 <head>
@@ -204,7 +205,7 @@ window.addEventListener('DOMContentLoaded', function() {
   // Preview modal tonen
   function showPreviewModal(data, filename) {
     // Kolomvalidatie: controleer headers
-  var expectedHeaders = ['id','standnr','name','img','websitelink','info'];
+  var expectedHeaders = ['id','standnr','name','icon','img','websitelink','info'];
     var headerOk = false;
     if (data.length > 0) {
       var actual = data[0].map(function(h){return h.replace(/\s+/g,'').toLowerCase();});
@@ -335,16 +336,25 @@ window.addEventListener('DOMContentLoaded', function() {
         if (id && markerMap[id]) {
           markerMap[id].standnr = String(row[1] !== undefined ? row[1] : markerMap[id].standnr).trim();
           markerMap[id].name = String(row[2] !== undefined ? row[2] : markerMap[id].name).trim();
-          markerMap[id].img = String(row[3] !== undefined ? row[3] : markerMap[id].img).trim();
-          markerMap[id].websitelink = String(row[4] !== undefined ? row[4] : markerMap[id].websitelink).trim();
+          // Haal alleen de bestandsnaam uit de icon-waarde (Excel dropdown geeft 'Naam (bestand)')
+          var iconCell = String(row[3] !== undefined ? row[3] : markerMap[id].icon || "glyph-marker-icon-blue.svg").trim();
+          var iconMatch = iconCell.match(/\(([^)]+)\)/);
+          markerMap[id].icon = iconMatch ? iconMatch[1] : iconCell;
+          markerMap[id].img = String(row[4] !== undefined ? row[4] : markerMap[id].img).trim();
+          markerMap[id].websitelink = String(row[5] !== undefined ? row[5] : markerMap[id].websitelink).trim();
           // info: altijd overschrijven, ook als leeg
-          markerMap[id].info = (row[5] !== undefined) ? String(row[5]).trim() : "";
+          markerMap[id].info = (row[6] !== undefined) ? String(row[6]).trim() : "";
           updatedMarkers.push(markerMap[id]);
           updatedCount++;
         }
       }
       // Update markersList and backupMarkers
-      markersList = existingMarkers.map(m => markerMap[m.id] || m);
+      markersList = existingMarkers.map(m => {
+        const updated = markerMap[m.id] || m;
+        // Forceer icon waarde in markersList
+        if (updated.icon) m.icon = updated.icon;
+        return updated;
+      });
       window.backupMarkers = JSON.parse(JSON.stringify(markersList));
       // Save to server
       await new Promise(resolve => { saveMarkers(); setTimeout(resolve, 400); });
@@ -405,6 +415,17 @@ window.addEventListener('DOMContentLoaded', function() {
 
   // Download markers als Excel (.xlsx) met freeze panes via ExcelJS
   async function markersToExcel() {
+      // Opties voor marker iconen met Engelse naam
+      const iconOptions = [
+        'Blue (glyph-marker-icon-blue.svg)',
+        'Red (glyph-marker-icon-red.svg)',
+        'Orange (glyph-marker-icon-orange.svg)',
+        'Green (glyph-marker-icon-green.svg)',
+        'Yellow (glyph-marker-icon-yellow.svg)',
+        'Purple (glyph-marker-icon-purple.svg)',
+        'Black (glyph-marker-icon-black.svg)',
+        'Gray (glyph-marker-icon-gray.svg)'
+      ];
     // Stijl voor header en eerste kolom
     const headerStyle = {
       font: { bold: true, color: { argb: 'FFFFFFFF' }, size: 14 },
@@ -415,12 +436,13 @@ window.addEventListener('DOMContentLoaded', function() {
       fill: { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF1976D2' } }
     };
     // Kolomheaders: id (niet aanpassen!), standnr, name, img, websitelink, info
-    var header = ['id','standnr','name','img','websitelink','info'];
+    var header = ['id','standnr','name','icon','img','websitelink','info'];
     var rows = markersList.map(function(m) {
       return [
         m.id,
         m.standnr,
         m.name,
+        m.icon || "glyph-marker-icon-blue.svg",
         m.img,
         m.websitelink,
         m.info
@@ -430,6 +452,15 @@ window.addEventListener('DOMContentLoaded', function() {
     var worksheet = workbook.addWorksheet('Markers');
     worksheet.addRow(header);
     rows.forEach(row => worksheet.addRow(row));
+    // Voeg data validatie (dropdown) toe aan de icon kolom (kolom 4)
+    for (let i = 2; i <= worksheet.rowCount; i++) {
+      worksheet.getRow(i).getCell(4).dataValidation = {
+        type: 'list',
+        allowBlank: false,
+        formulae: [`"${iconOptions.join(',')}"`],
+        showDropDown: true
+      };
+    }
     // Dynamische kolombreedte voor alle kolommen (ook gelockte), vóór locking/protect
     for (let col = 1; col <= worksheet.columnCount; col++) {
       let maxLen = 10;
@@ -447,9 +478,9 @@ window.addEventListener('DOMContentLoaded', function() {
       // Voeg extra marge toe (6 ipv 2)
       worksheet.getColumn(col).width = Math.min(Math.max(maxLen + 6, 16), 80);
     }
-    // Verwijder alle kolommen na F (6)
-    while (worksheet.columnCount > 6) {
-      worksheet.spliceColumns(7, 1);
+    // Verwijder alle kolommen na G (7)
+    while (worksheet.columnCount > 7) {
+      worksheet.spliceColumns(8, 1);
     }
     // Dynamische kolombreedte voor alle kolommen (ook gelockte)
     for (let col = 1; col <= worksheet.columnCount; col++) {
@@ -475,10 +506,11 @@ window.addEventListener('DOMContentLoaded', function() {
     worksheet.views = [ { state: 'frozen', xSplit: 1, ySplit: 1 } ];
     // Kolombreedte
     worksheet.columns = [
-      {width: 7},    // id (ruimte voor 5 tekens + marge)
-      {width: 12},   // Booth (standnr) +5
-      {width: 40},   // name +20
-      {width: 60},   // img +40
+      {width: 7},    // id
+      {width: 12},   // Booth (standnr)
+      {width: 40},   // name
+      {width: 24},   // icon
+      {width: 60},   // img
       {width: 60},   // websitelink
       {width: 60}    // info
     ];
@@ -550,6 +582,15 @@ var layerControl = L.control.layers(baseLayers).addTo(map);
 
 // Move layer control into our custom container
 setTimeout(function() {
+          // Live preview van marker icon bij selectie
+          var iconSelect = document.getElementById(`icon_${id}`);
+          if (iconSelect) {
+            iconSelect.addEventListener('change', function() {
+              var file = iconSelect.value;
+              var preview = document.getElementById(`iconPreview_${id}`);
+              if (preview) preview.innerHTML = `<img src='icons/svg/${file}' style='width:28px;height:28px;'/>`;
+            });
+          }
   var layerControlElement = layerControl.getContainer();
   var container = document.getElementById('layerControlContainer');
   if (layerControlElement && container) {
@@ -667,7 +708,7 @@ function refreshMarkersOnMap() {
         glyph: m.standnr,
         glyphColor: 'white',
         glyphSize: '12px',
-  iconUrl: 'icons/svg/glyph-marker-icon.svg',
+        iconUrl: `icons/svg/${m.icon || 'glyph-marker-icon-blue.svg'}`,
         shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
         className: 'xolonium glyph-marker-icon',
         glyphAnchor: [0, -6],
@@ -707,6 +748,7 @@ function saveMarkers() {
       lat: lat,
       lng: lng,
       name: obj.name,
+      icon: obj.icon || "glyph-marker-icon-blue.svg",
       img: obj.img,
       standnr: obj.standnr,
       websitelink: obj.websitelink,
@@ -786,7 +828,7 @@ fetch('markers.json')
           glyph: m.standnr,
           glyphColor: 'white',
           glyphSize: '12px',
-          iconUrl: 'icons/svg/glyph-marker-icon.svg',
+          iconUrl: `icons/svg/${m.icon || 'glyph-marker-icon-blue.svg'}`,
           shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
           className: 'xolonium glyph-marker-icon',
           glyphAnchor: [0, -6],
@@ -803,18 +845,19 @@ fetch('markers.json')
       editElements.addLayer(handle);
       // Store the full marker object in our in-memory registry for later updates/saves
       var markerObj = {
-        id: m.id,
-        marker: marker,
-        rect: rect,
-        handle: handle,
-        name: m.name || "",
-  img: (typeof m.img === 'string' && m.img.trim() !== "") ? m.img : "logos/4x4Vakantiebeurs.png",
-        standnr: m.standnr || "",
-        websitelink: m.websitelink || "",
-        info: (typeof m.info === 'string' ? m.info : ""),
-        width: width,
-        height: height,
-        angle: angle
+    id: m.id,
+    marker: marker,
+    rect: rect,
+    handle: handle,
+    name: m.name || "",
+    icon: m.icon || "glyph-marker-icon-blue.svg",
+    img: (typeof m.img === 'string' && m.img.trim() !== "") ? m.img : "logos/4x4Vakantiebeurs.png",
+    standnr: m.standnr || "",
+    websitelink: m.websitelink || "",
+    info: (typeof m.info === 'string' ? m.info : ""),
+    width: width,
+    height: height,
+    angle: angle
       };
       marker.bindPopup(createEditablePopup(markerObj));
 
@@ -830,15 +873,24 @@ fetch('markers.json')
               markerObj.standnr = document.getElementById(`standnr_${id}`).value;
               markerObj.websitelink = document.getElementById(`web_${id}`).value;
               markerObj.info = document.getElementById(`info_${id}`).value;
-              // Update marker title for search
-              markerObj.marker.options.title = markerObj.name || markerObj.standnr || 'Unnamed';
-              // Update marker glyph text direct na save
+              // Marker kleur/icon
+              var iconFileRaw = document.getElementById(`icon_${id}`).value;
+              var iconFileClean = iconFileRaw;
+              var match = iconFileRaw.match(/\(([^)]+)\)/);
+              if (match) {
+                iconFileClean = match[1];
+              } else if (iconFileRaw.includes(' ')) {
+                iconFileClean = iconFileRaw.split(' ').pop();
+              }
+              markerObj.icon = iconFileClean;
+              var idx = markersList.findIndex(m => m.id === markerObj.id);
+              if (idx !== -1) markersList[idx].icon = iconFileClean;
               var iconOptions = markerObj.marker.options.icon.options;
+              iconOptions.iconUrl = `icons/svg/${iconFileClean}`;
+              markerObj.marker.options.icon.options.iconUrl = `icons/svg/${iconFileClean}`;
               iconOptions.glyph = markerObj.standnr;
               markerObj.marker.setIcon(L.icon.glyph(iconOptions));
-              // Debug: check if markerObj is updated
-              // console.log('Updated markerObj:', markerObj.name, markerObj.standnr);
-              // Save using the helper function (markerObj is same object reference as in markersList)
+              markerObj.marker.options.title = markerObj.name || markerObj.standnr || 'Unnamed';
               saveMarkers();
               marker.closePopup();
             };
@@ -964,22 +1016,42 @@ function createEditablePopup(markerObj) {
      <div><b>Lng:</b> <span>${lng}</span></div>`
     : "";
     var imgHtml = img ? `<div style='margin-bottom:6px;'><img src='${img}' alt='afbeelding' style='max-width:180px;max-height:120px;display:block;'/></div>` : "";
-    // Bepaal label-breedte: edit mode = 'Afbeelding:', read mode = 'Website:'
-    var labelWidth = editMode ? '82px' : '68px'; // 'Afbeelding:' ≈ 82px, 'Website:' ≈ 68px (afhankelijk van font)
-      if (editMode) {
-        return `
-          <div style="min-width:220px">
-            ${imgHtml}
-            ${idLatLngBlock}
-            <div style="display:flex;align-items:center;gap:6px;margin-bottom:2px;"><b style="min-width:${labelWidth};">Afbeelding:</b><input type="text" id="img_${id}" value="${img}" style="flex:1 1 0%;min-width:60px;max-width:100%;" placeholder="URL" ${disabled}/></div>
-            <div style="display:flex;align-items:center;gap:6px;margin-bottom:2px;"><b style="min-width:${labelWidth};">Naam:</b><input type="text" id="name_${id}" value="${name}" style="flex:1 1 0%;min-width:60px;max-width:100%;" ${disabled}/></div>
-            <div style="display:flex;align-items:center;gap:6px;margin-bottom:2px;"><b style="min-width:${labelWidth};">Standnr:</b><input type="number" id="standnr_${id}" value="${standnr}" style="flex:1 1 0%;min-width:40px;max-width:100%;" ${disabled}/></div>
-            <div style="display:flex;align-items:center;gap:6px;margin-bottom:2px;"><b style="min-width:${labelWidth};">Website:</b><input type="text" id="web_${id}" value="${websitelink}" style="flex:1 1 0%;min-width:60px;max-width:100%;" placeholder="https://..." ${disabled}/></div>
-            <div style="display:flex;align-items:flex-start;gap:6px;margin-bottom:2px;"><b style="min-width:${labelWidth};">Info:</b><textarea id="info_${id}" style="flex:1 1 0%;min-width:60px;max-width:100%;height:60px;resize:vertical;" ${disabled}>${info}</textarea></div>
-            ${saveBtn}
-          </div>
-        `;
-      } else {
+    // Marker icon kleur opties
+    const markerIcons = [
+      'glyph-marker-icon-blue.svg',
+      'glyph-marker-icon-red.svg',
+      'glyph-marker-icon-orange.svg',
+      'glyph-marker-icon-green.svg',
+      'glyph-marker-icon-yellow.svg',
+      'glyph-marker-icon-purple.svg',
+      'glyph-marker-icon-black.svg',
+      'glyph-marker-icon-gray.svg'
+    ];
+    let currentFile = markerObj.icon || 'glyph-marker-icon-blue.svg';
+    var labelWidth = editMode ? '82px' : '68px';
+    if (editMode) {
+      // Select dropdown met SVG previews
+      let iconSelectHtml = `<div style="display:flex;align-items:center;gap:6px;margin-bottom:2px;"><b style="min-width:${labelWidth};">Marker icon:</b><select id="icon_${id}" style="flex:1 1 0%;min-width:60px;max-width:100%;">`;
+      markerIcons.forEach(file => {
+        iconSelectHtml += `<option value="${file}"${file===currentFile?' selected':''}>${file}</option>`;
+      });
+      iconSelectHtml += `</select>`;
+      // SVG preview
+      iconSelectHtml += `<span id="iconPreview_${id}" style="display:inline-block;width:28px;height:28px;vertical-align:middle;margin-left:8px;"><img src="icons/svg/${currentFile}" style="width:28px;height:28px;"/></span></div>`;
+      return `
+        <div style="min-width:220px">
+          ${imgHtml}
+          ${idLatLngBlock}
+          ${iconSelectHtml}
+          <div style="display:flex;align-items:center;gap:6px;margin-bottom:2px;"><b style="min-width:${labelWidth};">Afbeelding:</b><input type="text" id="img_${id}" value="${img}" style="flex:1 1 0%;min-width:60px;max-width:100%;" placeholder="URL" ${disabled}/></div>
+          <div style="display:flex;align-items:center;gap:6px;margin-bottom:2px;"><b style="min-width:${labelWidth};">Naam:</b><input type="text" id="name_${id}" value="${name}" style="flex:1 1 0%;min-width:60px;max-width:100%;" ${disabled}/></div>
+          <div style="display:flex;align-items:center;gap:6px;margin-bottom:2px;"><b style="min-width:${labelWidth};">Standnr:</b><input type="number" id="standnr_${id}" value="${standnr}" style="flex:1 1 0%;min-width:40px;max-width:100%;" ${disabled}/></div>
+          <div style="display:flex;align-items:center;gap:6px;margin-bottom:2px;"><b style="min-width:${labelWidth};">Website:</b><input type="text" id="web_${id}" value="${websitelink}" style="flex:1 1 0%;min-width:60px;max-width:100%;" placeholder="https://..." ${disabled}/></div>
+          <div style="display:flex;align-items:flex-start;gap:6px;margin-bottom:2px;"><b style="min-width:${labelWidth};">Info:</b><textarea id="info_${id}" style="flex:1 1 0%;min-width:60px;max-width:100%;height:60px;resize:vertical;" ${disabled}>${info}</textarea></div>
+          ${saveBtn}
+        </div>
+      `;
+    } else {
         return `
           <div style="min-width:220px">
             ${imgHtml}
