@@ -460,11 +460,7 @@
     "lat": 51.89849395357253,
     "lng": 5.77455461025238,
     "name": "tracking trailer",
-<<<<<<< HEAD
-  "icon": "glyph-marker-icon-orange.svg",
-=======
     "icon": "glyph-marker-icon-orange.svg",
->>>>>>> 3db630d (Feature: live icon preview in marker popup, preview wordt direct aangepast bij selectie, pas opgeslagen bij save)
     "img": "logos/trackingtrailer.webp",
     "standnr": "39",
     "websitelink": "https://www.trackingtrailer.nl",

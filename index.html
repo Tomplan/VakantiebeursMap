@@ -582,15 +582,6 @@ var layerControl = L.control.layers(baseLayers).addTo(map);
 
 // Move layer control into our custom container
 setTimeout(function() {
-          // Live preview van marker icon bij selectie
-          var iconSelect = document.getElementById(`icon_${id}`);
-          if (iconSelect) {
-            iconSelect.addEventListener('change', function() {
-              var file = iconSelect.value;
-              var preview = document.getElementById(`iconPreview_${id}`);
-              if (preview) preview.innerHTML = `<img src='icons/svg/${file}' style='width:28px;height:28px;'/>`;
-            });
-          }
   var layerControlElement = layerControl.getContainer();
   var container = document.getElementById('layerControlContainer');
   if (layerControlElement && container) {
