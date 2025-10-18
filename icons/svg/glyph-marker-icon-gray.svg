@@ -32,11 +32,11 @@
        id="a">
       <stop
          offset="0"
-         stop-color="#e53935"
+         stop-color="#757575"
          id="stop12" />
       <stop
          offset="1"
-         stop-color="#ff8a80"
+         stop-color="#bdbdbd"
          id="stop14" />
     </linearGradient>
     <linearGradient
@@ -52,11 +52,11 @@
        id="b">
       <stop
          offset="0"
-         stop-color="#b71c1c"
+         stop-color="#424242"
          id="stop7" />
       <stop
          offset="1"
-         stop-color="#ff5252"
+         stop-color="#e0e0e0"
          id="stop9" />
     </linearGradient>
   </defs>
