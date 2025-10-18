@@ -4,11 +4,11 @@
     "lat": 51.898865516298955,
     "lng": 5.773167908191682,
     "name": "camp impuls Bruder X",
-    "icon": "glyph-marker-icon-blue.svg",
+    "icon": "glyph-marker-icon-orange.svg",
     "img": "logos/BRUDER.webp",
-    "standnr": "1",
+    "booth": "1",
     "websitelink": "https://camp-impuls.de/bruderx",
-    "info": "BruderX is een fabrikant die zich onderscheidt door zijn uitzonderlijke offroad caravans. Het vlaggenschip, de EXP-10 , loopt voorop . Met het nieuwe model, de ADX-21, betreedt Bruder nieuw terrein door conventionele caravanconstructie te combineren met het unieke Bruder-chassis. Offroad caravans zijn al lang een vertrouwd gezicht in Duitsland, maar met de Bruder caravans zetten we nieuwe normen in de offroad sector en brengen we een uniek product uit Australië naar Europa.",
+    "info": "",
     "angle": 9.7524156071159
   },
   {
@@ -18,8 +18,8 @@
     "name": "camp impuls Bruder X",
     "icon": "glyph-marker-icon-blue.svg",
     "img": "logos/BRUDER.webp",
-    "standnr": "2",
-    "websitelink": "https://camp-impuls.de/bruderx/",
+    "booth": "2",
+    "websitelink": "https://camp-impuls.de/bruderx",
     "info": "BruderX is een fabrikant die zich onderscheidt door zijn uitzonderlijke offroad caravans. Het vlaggenschip, de EXP-10 , loopt voorop . Met het nieuwe model, de ADX-21, betreedt Bruder nieuw terrein door conventionele caravanconstructie te combineren met het unieke Bruder-chassis. Offroad caravans zijn al lang een vertrouwd gezicht in Duitsland, maar met de Bruder caravans zetten we nieuwe normen in de offroad sector en brengen we een uniek product uit Australië naar Europa.",
     "angle": 9.865796877600275
   },
@@ -30,7 +30,7 @@
     "name": "Char Art Leatherworks",
     "icon": "glyph-marker-icon-blue.svg",
     "img": "logos/CharArt.png",
-    "standnr": "3",
+    "booth": "3",
     "websitelink": "https://charart.nl/",
     "info": "Bent u op zoek naar een goede tas, een oersterk ceintuur, of bijvoorbeeld een foedraal voor uw favoriete mes? Dan bent u bij Charlotte Heuvelmans aan het juiste adres. Met haar jarenlange ervaring, nauwkeurige afwerking en de mogelijkheden tot unieke personalisatie zijn de producten van CharArt Leatherworks niet alleen van hoge kwaliteit, maar ook nog eens een lust voor het oog. Het resultaat laat zich wellicht nog het beste omschrijven als draagbare kunst.",
     "angle": 9.323582032993095
@@ -42,7 +42,7 @@
     "name": "Widebird",
     "icon": "glyph-marker-icon-blue.svg",
     "img": "logos/4x4Vakantiebeurs.png",
-    "standnr": "4",
+    "booth": "4",
     "websitelink": "https://www.4x4vakantiebeurs.nl",
     "info": "Ontdek de wereld van de 4x4 vakanties op de 4x4 Vakantiebeurs. De grootste beurs in de BeNeLux op het gebied van 4x4 vakanties, reizen en alles wat ermee gemoeid is.",
     "angle": 8.130093223990542
@@ -54,7 +54,7 @@
     "name": "Recreative & Greenlane tracks",
     "icon": "glyph-marker-icon-blue.svg",
     "img": "icons/4x4Vakantiebeurs.png",
-    "standnr": "5",
+    "booth": "5",
     "websitelink": "https://www.4x4vakantiebeurs.nl/",
     "info": "Ontdek de wereld van de 4x4 vakanties op de 4x4 Vakantiebeurs. De grootste beurs in de BeNeLux op het gebied van 4x4 vakanties, reizen en alles wat ermee gemoeid is.",
     "angle": 4.205347455278151
@@ -66,7 +66,7 @@
     "name": "The Kings Elephant",
     "icon": "glyph-marker-icon-blue.svg",
     "img": "icons/4x4Vakantiebeurs.png",
-    "standnr": "6",
+    "booth": "6",
     "websitelink": "https://www.4x4vakantiebeurs.nl/",
     "info": "Ontdek de wereld van de 4x4 vakanties op de 4x4 Vakantiebeurs. De grootste beurs in de BeNeLux op het gebied van 4x4 vakanties, reizen en alles wat ermee gemoeid is.",
     "angle": 6.6325053561793865
@@ -78,7 +78,7 @@
     "name": "The Kings Elephant",
     "icon": "glyph-marker-icon-blue.svg",
     "img": "icons/4x4Vakantiebeurs.png",
-    "standnr": "7",
+    "booth": "7",
     "websitelink": "https://www.4x4vakantiebeurs.nl/",
     "info": "Ontdek de wereld van de 4x4 vakanties op de 4x4 Vakantiebeurs. De grootste beurs in de BeNeLux op het gebied van 4x4 vakanties, reizen en alles wat ermee gemoeid is.",
     "angle": 3.930166393409074
@@ -90,7 +90,7 @@
     "name": "Tembo Travel service",
     "icon": "glyph-marker-icon-blue.svg",
     "img": "icons/4x4Vakantiebeurs.png",
-    "standnr": "8",
+    "booth": "8",
     "websitelink": "https://www.4x4vakantiebeurs.nl/",
     "info": "Ontdek de wereld van de 4x4 vakanties op de 4x4 Vakantiebeurs. De grootste beurs in de BeNeLux op het gebied van 4x4 vakanties, reizen en alles wat ermee gemoeid is.",
     "angle": 2.6025531230176497
@@ -102,7 +102,7 @@
     "name": "Tembo Travel service",
     "icon": "glyph-marker-icon-blue.svg",
     "img": "icons/4x4Vakantiebeurs.png",
-    "standnr": "9",
+    "booth": "9",
     "websitelink": "https://www.4x4vakantiebeurs.nl/",
     "info": "Ontdek de wereld van de 4x4 vakanties op de 4x4 Vakantiebeurs. De grootste beurs in de BeNeLux op het gebied van 4x4 vakanties, reizen en alles wat ermee gemoeid is.",
     "angle": 2.6025531303445604
@@ -114,7 +114,7 @@
     "name": "Kifaru Services",
     "icon": "glyph-marker-icon-blue.svg",
     "img": "icons/4x4Vakantiebeurs.png",
-    "standnr": "10",
+    "booth": "10",
     "websitelink": "https://www.4x4vakantiebeurs.nl/",
     "info": "Ontdek de wereld van de 4x4 vakanties op de 4x4 Vakantiebeurs. De grootste beurs in de BeNeLux op het gebied van 4x4 vakanties, reizen en alles wat ermee gemoeid is.",
     "angle": 0
@@ -126,7 +126,7 @@
     "name": "Off road Juf",
     "icon": "glyph-marker-icon-blue.svg",
     "img": "icons/4x4Vakantiebeurs.png",
-    "standnr": "11",
+    "booth": "11",
     "websitelink": "https://www.4x4vakantiebeurs.nl/",
     "info": "Ontdek de wereld van de 4x4 vakanties op de 4x4 Vakantiebeurs. De grootste beurs in de BeNeLux op het gebied van 4x4 vakanties, reizen en alles wat ermee gemoeid is.",
     "angle": 0
@@ -138,7 +138,7 @@
     "name": "All road events",
     "icon": "glyph-marker-icon-blue.svg",
     "img": "icons/4x4Vakantiebeurs.png",
-    "standnr": "12",
+    "booth": "12",
     "websitelink": "https://www.4x4vakantiebeurs.nl/",
     "info": "Ontdek de wereld van de 4x4 vakanties op de 4x4 Vakantiebeurs. De grootste beurs in de BeNeLux op het gebied van 4x4 vakanties, reizen en alles wat ermee gemoeid is.",
     "angle": 0
@@ -150,7 +150,7 @@
     "name": "Viking Mink Campers",
     "icon": "glyph-marker-icon-blue.svg",
     "img": "icons/4x4Vakantiebeurs.png",
-    "standnr": "13",
+    "booth": "13",
     "websitelink": "https://www.4x4vakantiebeurs.nl/",
     "info": "Ontdek de wereld van de 4x4 vakanties op de 4x4 Vakantiebeurs. De grootste beurs in de BeNeLux op het gebied van 4x4 vakanties, reizen en alles wat ermee gemoeid is.",
     "angle": -5.440339426822668
@@ -162,7 +162,7 @@
     "name": "Overland Campers",
     "icon": "glyph-marker-icon-blue.svg",
     "img": "icons/4x4Vakantiebeurs.png",
-    "standnr": "14",
+    "booth": "14",
     "websitelink": "https://www.4x4vakantiebeurs.nl/",
     "info": "Ontdek de wereld van de 4x4 vakanties op de 4x4 Vakantiebeurs. De grootste beurs in de BeNeLux op het gebied van 4x4 vakanties, reizen en alles wat ermee gemoeid is.",
     "angle": -9.323598792361913
@@ -174,7 +174,7 @@
     "name": "4wdspecialist BV",
     "icon": "glyph-marker-icon-blue.svg",
     "img": "icons/4x4Vakantiebeurs.png",
-    "standnr": "15",
+    "booth": "15",
     "websitelink": "https://www.4x4vakantiebeurs.nl/",
     "info": "Ontdek de wereld van de 4x4 vakanties op de 4x4 Vakantiebeurs. De grootste beurs in de BeNeLux op het gebied van 4x4 vakanties, reizen en alles wat ermee gemoeid is.",
     "angle": 0
@@ -186,7 +186,7 @@
     "name": "4wdspecialist BV",
     "icon": "glyph-marker-icon-blue.svg",
     "img": "icons/4x4Vakantiebeurs.png",
-    "standnr": "16",
+    "booth": "16",
     "websitelink": "https://www.4x4vakantiebeurs.nl/",
     "info": "Ontdek de wereld van de 4x4 vakanties op de 4x4 Vakantiebeurs. De grootste beurs in de BeNeLux op het gebied van 4x4 vakanties, reizen en alles wat ermee gemoeid is.",
     "angle": 0
@@ -198,7 +198,7 @@
     "name": "4wdspecialist BV",
     "icon": "glyph-marker-icon-blue.svg",
     "img": "icons/4x4Vakantiebeurs.png",
-    "standnr": "17",
+    "booth": "17",
     "websitelink": "https://www.4x4vakantiebeurs.nl/",
     "info": "Ontdek de wereld van de 4x4 vakanties op de 4x4 Vakantiebeurs. De grootste beurs in de BeNeLux op het gebied van 4x4 vakanties, reizen en alles wat ermee gemoeid is.",
     "angle": 0
@@ -210,7 +210,7 @@
     "name": "4wdspecialist BV",
     "icon": "glyph-marker-icon-blue.svg",
     "img": "icons/4x4Vakantiebeurs.png",
-    "standnr": "18",
+    "booth": "18",
     "websitelink": "https://www.4x4vakantiebeurs.nl/",
     "info": "Ontdek de wereld van de 4x4 vakanties op de 4x4 Vakantiebeurs. De grootste beurs in de BeNeLux op het gebied van 4x4 vakanties, reizen en alles wat ermee gemoeid is.",
     "angle": 0
@@ -222,7 +222,7 @@
     "name": "Tent Vent",
     "icon": "glyph-marker-icon-blue.svg",
     "img": "icons/4x4Vakantiebeurs.png",
-    "standnr": "19",
+    "booth": "19",
     "websitelink": "https://www.4x4vakantiebeurs.nl/",
     "info": "Ontdek de wereld van de 4x4 vakanties op de 4x4 Vakantiebeurs. De grootste beurs in de BeNeLux op het gebied van 4x4 vakanties, reizen en alles wat ermee gemoeid is.",
     "angle": 0
@@ -234,7 +234,7 @@
     "name": "Tent Vent",
     "icon": "glyph-marker-icon-blue.svg",
     "img": "icons/4x4Vakantiebeurs.png",
-    "standnr": "20",
+    "booth": "20",
     "websitelink": "https://www.4x4vakantiebeurs.nl/",
     "info": "Ontdek de wereld van de 4x4 vakanties op de 4x4 Vakantiebeurs. De grootste beurs in de BeNeLux op het gebied van 4x4 vakanties, reizen en alles wat ermee gemoeid is.",
     "angle": 0
@@ -246,7 +246,7 @@
     "name": "Totalcool",
     "icon": "glyph-marker-icon-blue.svg",
     "img": "icons/4x4Vakantiebeurs.png",
-    "standnr": "21",
+    "booth": "21",
     "websitelink": "https://www.4x4vakantiebeurs.nl/",
     "info": "Ontdek de wereld van de 4x4 vakanties op de 4x4 Vakantiebeurs. De grootste beurs in de BeNeLux op het gebied van 4x4 vakanties, reizen en alles wat ermee gemoeid is.",
     "angle": 0
@@ -258,7 +258,7 @@
     "name": "CB-shop",
     "icon": "glyph-marker-icon-blue.svg",
     "img": "icons/4x4Vakantiebeurs.png",
-    "standnr": "22",
+    "booth": "22",
     "websitelink": "https://www.4x4vakantiebeurs.nl/",
     "info": "Ontdek de wereld van de 4x4 vakanties op de 4x4 Vakantiebeurs. De grootste beurs in de BeNeLux op het gebied van 4x4 vakanties, reizen en alles wat ermee gemoeid is.",
     "angle": 0
@@ -270,7 +270,7 @@
     "name": "Expeditech / Larorent",
     "icon": "glyph-marker-icon-blue.svg",
     "img": "icons/4x4Vakantiebeurs.png",
-    "standnr": "23",
+    "booth": "23",
     "websitelink": "https://www.4x4vakantiebeurs.nl/",
     "info": "Ontdek de wereld van de 4x4 vakanties op de 4x4 Vakantiebeurs. De grootste beurs in de BeNeLux op het gebied van 4x4 vakanties, reizen en alles wat ermee gemoeid is.",
     "angle": 0
@@ -282,7 +282,7 @@
     "name": "Expeditech / Larorent",
     "icon": "glyph-marker-icon-blue.svg",
     "img": "icons/4x4Vakantiebeurs.png",
-    "standnr": "24",
+    "booth": "24",
     "websitelink": "https://www.4x4vakantiebeurs.nl/",
     "info": "Ontdek de wereld van de 4x4 vakanties op de 4x4 Vakantiebeurs. De grootste beurs in de BeNeLux op het gebied van 4x4 vakanties, reizen en alles wat ermee gemoeid is.",
     "angle": 0
@@ -294,7 +294,7 @@
     "name": "Gitrax",
     "icon": "glyph-marker-icon-blue.svg",
     "img": "icons/4x4Vakantiebeurs.png",
-    "standnr": "25",
+    "booth": "25",
     "websitelink": "https://www.4x4vakantiebeurs.nl/",
     "info": "Ontdek de wereld van de 4x4 vakanties op de 4x4 Vakantiebeurs. De grootste beurs in de BeNeLux op het gebied van 4x4 vakanties, reizen en alles wat ermee gemoeid is.",
     "angle": 0
@@ -306,7 +306,7 @@
     "name": "Gitrax",
     "icon": "glyph-marker-icon-blue.svg",
     "img": "icons/4x4Vakantiebeurs.png",
-    "standnr": "26",
+    "booth": "26",
     "websitelink": "https://www.4x4vakantiebeurs.nl/",
     "info": "Ontdek de wereld van de 4x4 vakanties op de 4x4 Vakantiebeurs. De grootste beurs in de BeNeLux op het gebied van 4x4 vakanties, reizen en alles wat ermee gemoeid is.",
     "angle": 0
@@ -318,7 +318,7 @@
     "name": "Made for Adventure",
     "icon": "glyph-marker-icon-blue.svg",
     "img": "icons/4x4Vakantiebeurs.png",
-    "standnr": "27",
+    "booth": "27",
     "websitelink": "https://www.4x4vakantiebeurs.nl/",
     "info": "Ontdek de wereld van de 4x4 vakanties op de 4x4 Vakantiebeurs. De grootste beurs in de BeNeLux op het gebied van 4x4 vakanties, reizen en alles wat ermee gemoeid is.",
     "angle": 0
@@ -330,7 +330,7 @@
     "name": "Made for Adventure",
     "icon": "glyph-marker-icon-blue.svg",
     "img": "icons/4x4Vakantiebeurs.png",
-    "standnr": "28",
+    "booth": "28",
     "websitelink": "https://www.4x4vakantiebeurs.nl/",
     "info": "Ontdek de wereld van de 4x4 vakanties op de 4x4 Vakantiebeurs. De grootste beurs in de BeNeLux op het gebied van 4x4 vakanties, reizen en alles wat ermee gemoeid is.",
     "angle": 0
@@ -342,7 +342,7 @@
     "name": "DutchDefenderX & Lowlands",
     "icon": "glyph-marker-icon-blue.svg",
     "img": "icons/4x4Vakantiebeurs.png",
-    "standnr": "29",
+    "booth": "29",
     "websitelink": "https://www.4x4vakantiebeurs.nl/",
     "info": "Ontdek de wereld van de 4x4 vakanties op de 4x4 Vakantiebeurs. De grootste beurs in de BeNeLux op het gebied van 4x4 vakanties, reizen en alles wat ermee gemoeid is.",
     "angle": 0
@@ -354,7 +354,7 @@
     "name": "Jefi wild",
     "icon": "glyph-marker-icon-blue.svg",
     "img": "icons/4x4Vakantiebeurs.png",
-    "standnr": "30",
+    "booth": "30",
     "websitelink": "https://www.4x4vakantiebeurs.nl/",
     "info": "Ontdek de wereld van de 4x4 vakanties op de 4x4 Vakantiebeurs. De grootste beurs in de BeNeLux op het gebied van 4x4 vakanties, reizen en alles wat ermee gemoeid is.",
     "angle": 0
@@ -366,7 +366,7 @@
     "name": "Balou adventures",
     "icon": "glyph-marker-icon-blue.svg",
     "img": "icons/4x4Vakantiebeurs.png",
-    "standnr": "31",
+    "booth": "31",
     "websitelink": "https://www.4x4vakantiebeurs.nl/",
     "info": "Ontdek de wereld van de 4x4 vakanties op de 4x4 Vakantiebeurs. De grootste beurs in de BeNeLux op het gebied van 4x4 vakanties, reizen en alles wat ermee gemoeid is.",
     "angle": 0
@@ -378,7 +378,7 @@
     "name": "XFood.nl",
     "icon": "glyph-marker-icon-blue.svg",
     "img": "icons/4x4Vakantiebeurs.png",
-    "standnr": "32",
+    "booth": "32",
     "websitelink": "https://www.4x4vakantiebeurs.nl/",
     "info": "Ontdek de wereld van de 4x4 vakanties op de 4x4 Vakantiebeurs. De grootste beurs in de BeNeLux op het gebied van 4x4 vakanties, reizen en alles wat ermee gemoeid is.",
     "angle": 0
@@ -390,7 +390,7 @@
     "name": "XFood.nl",
     "icon": "glyph-marker-icon-blue.svg",
     "img": "icons/4x4Vakantiebeurs.png",
-    "standnr": "33",
+    "booth": "33",
     "websitelink": "https://www.4x4vakantiebeurs.nl/",
     "info": "Ontdek de wereld van de 4x4 vakanties op de 4x4 Vakantiebeurs. De grootste beurs in de BeNeLux op het gebied van 4x4 vakanties, reizen en alles wat ermee gemoeid is.",
     "angle": 0
@@ -402,7 +402,7 @@
     "name": "Gobanna",
     "icon": "glyph-marker-icon-blue.svg",
     "img": "icons/4x4Vakantiebeurs.png",
-    "standnr": "34",
+    "booth": "34",
     "websitelink": "https://www.4x4vakantiebeurs.nl/",
     "info": "Ontdek de wereld van de 4x4 vakanties op de 4x4 Vakantiebeurs. De grootste beurs in de BeNeLux op het gebied van 4x4 vakanties, reizen en alles wat ermee gemoeid is.",
     "angle": 0
@@ -414,7 +414,7 @@
     "name": "Land cruiser club Nederland",
     "icon": "glyph-marker-icon-blue.svg",
     "img": "icons/4x4Vakantiebeurs.png",
-    "standnr": "35",
+    "booth": "35",
     "websitelink": "https://www.4x4vakantiebeurs.nl/",
     "info": "Ontdek de wereld van de 4x4 vakanties op de 4x4 Vakantiebeurs. De grootste beurs in de BeNeLux op het gebied van 4x4 vakanties, reizen en alles wat ermee gemoeid is.",
     "angle": 0
@@ -426,7 +426,7 @@
     "name": "Land cruiser club Nederland",
     "icon": "glyph-marker-icon-blue.svg",
     "img": "icons/4x4Vakantiebeurs.png",
-    "standnr": "36",
+    "booth": "36",
     "websitelink": "https://www.4x4vakantiebeurs.nl/",
     "info": "Ontdek de wereld van de 4x4 vakanties op de 4x4 Vakantiebeurs. De grootste beurs in de BeNeLux op het gebied van 4x4 vakanties, reizen en alles wat ermee gemoeid is.",
     "angle": 0
@@ -438,7 +438,7 @@
     "name": "Land cruiser club Nederland",
     "icon": "glyph-marker-icon-blue.svg",
     "img": "icons/4x4Vakantiebeurs.png",
-    "standnr": "37",
+    "booth": "37",
     "websitelink": "https://www.4x4vakantiebeurs.nl/",
     "info": "Ontdek de wereld van de 4x4 vakanties op de 4x4 Vakantiebeurs. De grootste beurs in de BeNeLux op het gebied van 4x4 vakanties, reizen en alles wat ermee gemoeid is.",
     "angle": 0
@@ -450,7 +450,7 @@
     "name": "Lumberjackoutdoor",
     "icon": "glyph-marker-icon-blue.svg",
     "img": "icons/4x4Vakantiebeurs.png",
-    "standnr": "38",
+    "booth": "38",
     "websitelink": "https://www.4x4vakantiebeurs.nl/",
     "info": "Ontdek de wereld van de 4x4 vakanties op de 4x4 Vakantiebeurs. De grootste beurs in de BeNeLux op het gebied van 4x4 vakanties, reizen en alles wat ermee gemoeid is.",
     "angle": 0
@@ -462,7 +462,7 @@
     "name": "tracking trailer",
     "icon": "glyph-marker-icon-blue.svg",
     "img": "logos/trackingtrailer.webp",
-    "standnr": "39",
+    "booth": "39",
     "websitelink": "https://www.trackingtrailer.nl",
     "info": "Squaredroptrailers zijn ongekend populair in onder andere Australië, Canada en Zuid-Afrika. En inmiddels zien we deze stoere mini-caravans in Nederland ook steeds vaker. Tracking Trailer was het eerste Nederlandse merk dat deze kampeertrailers handmatig bouwde met voornamelijk Nederlandse materialen en leveranciers.",
     "angle": 0
@@ -474,7 +474,7 @@
     "name": "Geoshower europe",
     "icon": "glyph-marker-icon-blue.svg",
     "img": "icons/4x4Vakantiebeurs.png",
-    "standnr": "40",
+    "booth": "40",
     "websitelink": "https://www.4x4vakantiebeurs.nl/",
     "info": "Ontdek de wereld van de 4x4 vakanties op de 4x4 Vakantiebeurs. De grootste beurs in de BeNeLux op het gebied van 4x4 vakanties, reizen en alles wat ermee gemoeid is.",
     "angle": 0
@@ -486,7 +486,7 @@
     "name": "fladde outdoor",
     "icon": "glyph-marker-icon-blue.svg",
     "img": "icons/4x4Vakantiebeurs.png",
-    "standnr": "41",
+    "booth": "41",
     "websitelink": "https://www.4x4vakantiebeurs.nl/",
     "info": "Ontdek de wereld van de 4x4 vakanties op de 4x4 Vakantiebeurs. De grootste beurs in de BeNeLux op het gebied van 4x4 vakanties, reizen en alles wat ermee gemoeid is.",
     "angle": 0
@@ -498,7 +498,7 @@
     "name": "Smokey Goose Barbecue & More",
     "icon": "glyph-marker-icon-blue.svg",
     "img": "icons/4x4Vakantiebeurs.png",
-    "standnr": "42",
+    "booth": "42",
     "websitelink": "https://www.4x4vakantiebeurs.nl/",
     "info": "Ontdek de wereld van de 4x4 vakanties op de 4x4 Vakantiebeurs. De grootste beurs in de BeNeLux op het gebied van 4x4 vakanties, reizen en alles wat ermee gemoeid is.",
     "angle": 0
@@ -510,7 +510,7 @@
     "name": "Camping Donnersberg",
     "icon": "glyph-marker-icon-blue.svg",
     "img": "icons/4x4Vakantiebeurs.png",
-    "standnr": "43",
+    "booth": "43",
     "websitelink": "https://www.4x4vakantiebeurs.nl/",
     "info": "Ontdek de wereld van de 4x4 vakanties op de 4x4 Vakantiebeurs. De grootste beurs in de BeNeLux op het gebied van 4x4 vakanties, reizen en alles wat ermee gemoeid is.",
     "angle": 0
@@ -522,7 +522,7 @@
     "name": "Campingplatz Braunlage GmbH",
     "icon": "glyph-marker-icon-blue.svg",
     "img": "icons/4x4Vakantiebeurs.png",
-    "standnr": "44",
+    "booth": "44",
     "websitelink": "https://www.4x4vakantiebeurs.nl/",
     "info": "Ontdek de wereld van de 4x4 vakanties op de 4x4 Vakantiebeurs. De grootste beurs in de BeNeLux op het gebied van 4x4 vakanties, reizen en alles wat ermee gemoeid is.",
     "angle": 0
@@ -534,7 +534,7 @@
     "name": "3Dotzero",
     "icon": "glyph-marker-icon-blue.svg",
     "img": "icons/4x4Vakantiebeurs.png",
-    "standnr": "45",
+    "booth": "45",
     "websitelink": "https://www.4x4vakantiebeurs.nl/",
     "info": "Ontdek de wereld van de 4x4 vakanties op de 4x4 Vakantiebeurs. De grootste beurs in de BeNeLux op het gebied van 4x4 vakanties, reizen en alles wat ermee gemoeid is.",
     "angle": 0
@@ -546,7 +546,7 @@
     "name": "4WD travel",
     "icon": "glyph-marker-icon-blue.svg",
     "img": "icons/4x4Vakantiebeurs.png",
-    "standnr": "46",
+    "booth": "46",
     "websitelink": "https://www.4x4vakantiebeurs.nl/",
     "info": "Ontdek de wereld van de 4x4 vakanties op de 4x4 Vakantiebeurs. De grootste beurs in de BeNeLux op het gebied van 4x4 vakanties, reizen en alles wat ermee gemoeid is.",
     "angle": 0
@@ -558,7 +558,7 @@
     "name": "Dutch overland EG techniek",
     "icon": "glyph-marker-icon-blue.svg",
     "img": "icons/4x4Vakantiebeurs.png",
-    "standnr": "47",
+    "booth": "47",
     "websitelink": "https://www.4x4vakantiebeurs.nl/",
     "info": "Ontdek de wereld van de 4x4 vakanties op de 4x4 Vakantiebeurs. De grootste beurs in de BeNeLux op het gebied van 4x4 vakanties, reizen en alles wat ermee gemoeid is.",
     "angle": 0
@@ -570,7 +570,7 @@
     "name": "Lost tracks",
     "icon": "glyph-marker-icon-blue.svg",
     "img": "icons/4x4Vakantiebeurs.png",
-    "standnr": "48",
+    "booth": "48",
     "websitelink": "https://www.4x4vakantiebeurs.nl/",
     "info": "Ontdek de wereld van de 4x4 vakanties op de 4x4 Vakantiebeurs. De grootste beurs in de BeNeLux op het gebied van 4x4 vakanties, reizen en alles wat ermee gemoeid is.",
     "angle": 0
@@ -582,7 +582,7 @@
     "name": "Lost tracks",
     "icon": "glyph-marker-icon-blue.svg",
     "img": "icons/4x4Vakantiebeurs.png",
-    "standnr": "49",
+    "booth": "49",
     "websitelink": "https://www.4x4vakantiebeurs.nl/",
     "info": "Ontdek de wereld van de 4x4 vakanties op de 4x4 Vakantiebeurs. De grootste beurs in de BeNeLux op het gebied van 4x4 vakanties, reizen en alles wat ermee gemoeid is.",
     "angle": 0
@@ -594,7 +594,7 @@
     "name": "UAZ specials naast losttracks",
     "icon": "glyph-marker-icon-blue.svg",
     "img": "icons/4x4Vakantiebeurs.png",
-    "standnr": "50",
+    "booth": "50",
     "websitelink": "https://www.4x4vakantiebeurs.nl/",
     "info": "Ontdek de wereld van de 4x4 vakanties op de 4x4 Vakantiebeurs. De grootste beurs in de BeNeLux op het gebied van 4x4 vakanties, reizen en alles wat ermee gemoeid is.",
     "angle": 0
@@ -606,7 +606,7 @@
     "name": "Vouwwagencentrum N-bergum Noordbergum",
     "icon": "glyph-marker-icon-blue.svg",
     "img": "icons/4x4Vakantiebeurs.png",
-    "standnr": "51",
+    "booth": "51",
     "websitelink": "https://www.4x4vakantiebeurs.nl/",
     "info": "Ontdek de wereld van de 4x4 vakanties op de 4x4 Vakantiebeurs. De grootste beurs in de BeNeLux op het gebied van 4x4 vakanties, reizen en alles wat ermee gemoeid is.",
     "angle": 0
@@ -618,7 +618,7 @@
     "name": "Vouwwagencentrum N-bergum Noordbergum",
     "icon": "glyph-marker-icon-blue.svg",
     "img": "icons/4x4Vakantiebeurs.png",
-    "standnr": "52",
+    "booth": "52",
     "websitelink": "https://www.4x4vakantiebeurs.nl/",
     "info": "Ontdek de wereld van de 4x4 vakanties op de 4x4 Vakantiebeurs. De grootste beurs in de BeNeLux op het gebied van 4x4 vakanties, reizen en alles wat ermee gemoeid is.",
     "angle": 0
@@ -630,7 +630,7 @@
     "name": "Offroadcaravans.eu",
     "icon": "glyph-marker-icon-blue.svg",
     "img": "icons/4x4Vakantiebeurs.png",
-    "standnr": "53",
+    "booth": "53",
     "websitelink": "https://www.4x4vakantiebeurs.nl/",
     "info": "Ontdek de wereld van de 4x4 vakanties op de 4x4 Vakantiebeurs. De grootste beurs in de BeNeLux op het gebied van 4x4 vakanties, reizen en alles wat ermee gemoeid is.",
     "angle": 0
@@ -642,7 +642,7 @@
     "name": "Offroadcaravans.eu",
     "icon": "glyph-marker-icon-blue.svg",
     "img": "icons/4x4Vakantiebeurs.png",
-    "standnr": "54",
+    "booth": "54",
     "websitelink": "https://www.4x4vakantiebeurs.nl/",
     "info": "Ontdek de wereld van de 4x4 vakanties op de 4x4 Vakantiebeurs. De grootste beurs in de BeNeLux op het gebied van 4x4 vakanties, reizen en alles wat ermee gemoeid is.",
     "angle": 0
@@ -654,7 +654,7 @@
     "name": "Offroadcaravans.eu",
     "icon": "glyph-marker-icon-blue.svg",
     "img": "icons/4x4Vakantiebeurs.png",
-    "standnr": "55",
+    "booth": "55",
     "websitelink": "https://www.4x4vakantiebeurs.nl/",
     "info": "Ontdek de wereld van de 4x4 vakanties op de 4x4 Vakantiebeurs. De grootste beurs in de BeNeLux op het gebied van 4x4 vakanties, reizen en alles wat ermee gemoeid is.",
     "angle": 0
@@ -666,7 +666,7 @@
     "name": "Offroadcaravans.eu",
     "icon": "glyph-marker-icon-blue.svg",
     "img": "icons/4x4Vakantiebeurs.png",
-    "standnr": "56",
+    "booth": "56",
     "websitelink": "https://www.4x4vakantiebeurs.nl/",
     "info": "Ontdek de wereld van de 4x4 vakanties op de 4x4 Vakantiebeurs. De grootste beurs in de BeNeLux op het gebied van 4x4 vakanties, reizen en alles wat ermee gemoeid is.",
     "angle": 0
@@ -678,7 +678,7 @@
     "name": "Offroadcaravans.eu",
     "icon": "glyph-marker-icon-blue.svg",
     "img": "icons/4x4Vakantiebeurs.png",
-    "standnr": "57",
+    "booth": "57",
     "websitelink": "https://www.4x4vakantiebeurs.nl/",
     "info": "Ontdek de wereld van de 4x4 vakanties op de 4x4 Vakantiebeurs. De grootste beurs in de BeNeLux op het gebied van 4x4 vakanties, reizen en alles wat ermee gemoeid is.",
     "angle": 0
@@ -690,7 +690,7 @@
     "name": "Saris 4x4",
     "icon": "glyph-marker-icon-blue.svg",
     "img": "icons/4x4Vakantiebeurs.png",
-    "standnr": "58",
+    "booth": "58",
     "websitelink": "https://www.4x4vakantiebeurs.nl/",
     "info": "Ontdek de wereld van de 4x4 vakanties op de 4x4 Vakantiebeurs. De grootste beurs in de BeNeLux op het gebied van 4x4 vakanties, reizen en alles wat ermee gemoeid is.",
     "angle": 0
@@ -702,7 +702,7 @@
     "name": "Saris 4x4",
     "icon": "glyph-marker-icon-blue.svg",
     "img": "icons/4x4Vakantiebeurs.png",
-    "standnr": "59",
+    "booth": "59",
     "websitelink": "https://www.4x4vakantiebeurs.nl/",
     "info": "Ontdek de wereld van de 4x4 vakanties op de 4x4 Vakantiebeurs. De grootste beurs in de BeNeLux op het gebied van 4x4 vakanties, reizen en alles wat ermee gemoeid is.",
     "angle": 0
@@ -714,7 +714,7 @@
     "name": "Stormproducts",
     "icon": "glyph-marker-icon-blue.svg",
     "img": "icons/4x4Vakantiebeurs.png",
-    "standnr": "60",
+    "booth": "60",
     "websitelink": "https://www.4x4vakantiebeurs.nl/",
     "info": "Ontdek de wereld van de 4x4 vakanties op de 4x4 Vakantiebeurs. De grootste beurs in de BeNeLux op het gebied van 4x4 vakanties, reizen en alles wat ermee gemoeid is.",
     "angle": 0
@@ -726,7 +726,7 @@
     "name": "Saris Adventure Vehicles Jip",
     "icon": "glyph-marker-icon-blue.svg",
     "img": "icons/4x4Vakantiebeurs.png",
-    "standnr": "61",
+    "booth": "61",
     "websitelink": "https://www.4x4vakantiebeurs.nl/",
     "info": "Ontdek de wereld van de 4x4 vakanties op de 4x4 Vakantiebeurs. De grootste beurs in de BeNeLux op het gebied van 4x4 vakanties, reizen en alles wat ermee gemoeid is.",
     "angle": 0
@@ -738,7 +738,7 @@
     "name": "Saris Adventure Vehicles Jip",
     "icon": "glyph-marker-icon-blue.svg",
     "img": "icons/4x4Vakantiebeurs.png",
-    "standnr": "62",
+    "booth": "62",
     "websitelink": "https://www.4x4vakantiebeurs.nl/",
     "info": "Ontdek de wereld van de 4x4 vakanties op de 4x4 Vakantiebeurs. De grootste beurs in de BeNeLux op het gebied van 4x4 vakanties, reizen en alles wat ermee gemoeid is.",
     "angle": 0
@@ -750,7 +750,7 @@
     "name": "Landroamer",
     "icon": "glyph-marker-icon-blue.svg",
     "img": "icons/4x4Vakantiebeurs.png",
-    "standnr": "63",
+    "booth": "63",
     "websitelink": "https://www.4x4vakantiebeurs.nl/",
     "info": "Ontdek de wereld van de 4x4 vakanties op de 4x4 Vakantiebeurs. De grootste beurs in de BeNeLux op het gebied van 4x4 vakanties, reizen en alles wat ermee gemoeid is.",
     "angle": 0
@@ -762,7 +762,7 @@
     "name": "Roverland",
     "icon": "glyph-marker-icon-blue.svg",
     "img": "icons/4x4Vakantiebeurs.png",
-    "standnr": "64",
+    "booth": "64",
     "websitelink": "https://www.4x4vakantiebeurs.nl/",
     "info": "Ontdek de wereld van de 4x4 vakanties op de 4x4 Vakantiebeurs. De grootste beurs in de BeNeLux op het gebied van 4x4 vakanties, reizen en alles wat ermee gemoeid is.",
     "angle": 0
@@ -774,7 +774,7 @@
     "name": "Roverland",
     "icon": "glyph-marker-icon-blue.svg",
     "img": "icons/4x4Vakantiebeurs.png",
-    "standnr": "65",
+    "booth": "65",
     "websitelink": "https://www.4x4vakantiebeurs.nl/",
     "info": "Ontdek de wereld van de 4x4 vakanties op de 4x4 Vakantiebeurs. De grootste beurs in de BeNeLux op het gebied van 4x4 vakanties, reizen en alles wat ermee gemoeid is.",
     "angle": 0
@@ -786,7 +786,7 @@
     "name": "Defendershop",
     "icon": "glyph-marker-icon-blue.svg",
     "img": "icons/4x4Vakantiebeurs.png",
-    "standnr": "66",
+    "booth": "66",
     "websitelink": "https://www.4x4vakantiebeurs.nl/",
     "info": "Ontdek de wereld van de 4x4 vakanties op de 4x4 Vakantiebeurs. De grootste beurs in de BeNeLux op het gebied van 4x4 vakanties, reizen en alles wat ermee gemoeid is.",
     "angle": 0
@@ -798,7 +798,7 @@
     "name": "Defendershop",
     "icon": "glyph-marker-icon-blue.svg",
     "img": "icons/4x4Vakantiebeurs.png",
-    "standnr": "67",
+    "booth": "67",
     "websitelink": "https://www.4x4vakantiebeurs.nl/",
     "info": "Ontdek de wereld van de 4x4 vakanties op de 4x4 Vakantiebeurs. De grootste beurs in de BeNeLux op het gebied van 4x4 vakanties, reizen en alles wat ermee gemoeid is.",
     "angle": 0
@@ -810,7 +810,7 @@
     "name": "Pathfinder Adventure Campers",
     "icon": "glyph-marker-icon-blue.svg",
     "img": "icons/4x4Vakantiebeurs.png",
-    "standnr": "68",
+    "booth": "68",
     "websitelink": "https://www.4x4vakantiebeurs.nl/",
     "info": "Ontdek de wereld van de 4x4 vakanties op de 4x4 Vakantiebeurs. De grootste beurs in de BeNeLux op het gebied van 4x4 vakanties, reizen en alles wat ermee gemoeid is.",
     "angle": 0
@@ -822,7 +822,7 @@
     "name": "Pathfinder Adventure Campers",
     "icon": "glyph-marker-icon-blue.svg",
     "img": "icons/4x4Vakantiebeurs.png",
-    "standnr": "69",
+    "booth": "69",
     "websitelink": "https://www.4x4vakantiebeurs.nl/",
     "info": "Ontdek de wereld van de 4x4 vakanties op de 4x4 Vakantiebeurs. De grootste beurs in de BeNeLux op het gebied van 4x4 vakanties, reizen en alles wat ermee gemoeid is.",
     "angle": 0
@@ -834,7 +834,7 @@
     "name": "Bolt adventure",
     "icon": "glyph-marker-icon-blue.svg",
     "img": "icons/4x4Vakantiebeurs.png",
-    "standnr": "70",
+    "booth": "70",
     "websitelink": "https://www.4x4vakantiebeurs.nl/",
     "info": "Ontdek de wereld van de 4x4 vakanties op de 4x4 Vakantiebeurs. De grootste beurs in de BeNeLux op het gebied van 4x4 vakanties, reizen en alles wat ermee gemoeid is.",
     "angle": 0
@@ -846,7 +846,7 @@
     "name": "Bolt adventure",
     "icon": "glyph-marker-icon-blue.svg",
     "img": "icons/4x4Vakantiebeurs.png",
-    "standnr": "71",
+    "booth": "71",
     "websitelink": "https://www.4x4vakantiebeurs.nl/",
     "info": "Ontdek de wereld van de 4x4 vakanties op de 4x4 Vakantiebeurs. De grootste beurs in de BeNeLux op het gebied van 4x4 vakanties, reizen en alles wat ermee gemoeid is.",
     "angle": 0
@@ -858,7 +858,7 @@
     "name": "Camping Le Prahay",
     "icon": "glyph-marker-icon-blue.svg",
     "img": "icons/4x4Vakantiebeurs.png",
-    "standnr": "72",
+    "booth": "72",
     "websitelink": "https://www.4x4vakantiebeurs.nl/",
     "info": "Ontdek de wereld van de 4x4 vakanties op de 4x4 Vakantiebeurs. De grootste beurs in de BeNeLux op het gebied van 4x4 vakanties, reizen en alles wat ermee gemoeid is.",
     "angle": 0
@@ -870,7 +870,7 @@
     "name": "Camping Le Prahay",
     "icon": "glyph-marker-icon-blue.svg",
     "img": "icons/4x4Vakantiebeurs.png",
-    "standnr": "73",
+    "booth": "73",
     "websitelink": "https://www.4x4vakantiebeurs.nl/",
     "info": "Ontdek de wereld van de 4x4 vakanties op de 4x4 Vakantiebeurs. De grootste beurs in de BeNeLux op het gebied van 4x4 vakanties, reizen en alles wat ermee gemoeid is.",
     "angle": 0
@@ -882,7 +882,7 @@
     "name": "Fennec Adventures",
     "icon": "glyph-marker-icon-blue.svg",
     "img": "icons/4x4Vakantiebeurs.png",
-    "standnr": "74",
+    "booth": "74",
     "websitelink": "https://www.4x4vakantiebeurs.nl/",
     "info": "Ontdek de wereld van de 4x4 vakanties op de 4x4 Vakantiebeurs. De grootste beurs in de BeNeLux op het gebied van 4x4 vakanties, reizen en alles wat ermee gemoeid is.",
     "angle": 0
@@ -894,7 +894,7 @@
     "name": "Fennec Adventures",
     "icon": "glyph-marker-icon-blue.svg",
     "img": "icons/4x4Vakantiebeurs.png",
-    "standnr": "75",
+    "booth": "75",
     "websitelink": "https://www.4x4vakantiebeurs.nl/",
     "info": "Ontdek de wereld van de 4x4 vakanties op de 4x4 Vakantiebeurs. De grootste beurs in de BeNeLux op het gebied van 4x4 vakanties, reizen en alles wat ermee gemoeid is.",
     "angle": 0
@@ -906,7 +906,7 @@
     "name": "Campventure B.V.",
     "icon": "glyph-marker-icon-blue.svg",
     "img": "icons/4x4Vakantiebeurs.png",
-    "standnr": "76",
+    "booth": "76",
     "websitelink": "https://www.4x4vakantiebeurs.nl/",
     "info": "Ontdek de wereld van de 4x4 vakanties op de 4x4 Vakantiebeurs. De grootste beurs in de BeNeLux op het gebied van 4x4 vakanties, reizen en alles wat ermee gemoeid is.",
     "angle": 0
@@ -918,7 +918,7 @@
     "name": "Campventure B.V.",
     "icon": "glyph-marker-icon-blue.svg",
     "img": "icons/4x4Vakantiebeurs.png",
-    "standnr": "77",
+    "booth": "77",
     "websitelink": "https://www.4x4vakantiebeurs.nl/",
     "info": "Ontdek de wereld van de 4x4 vakanties op de 4x4 Vakantiebeurs. De grootste beurs in de BeNeLux op het gebied van 4x4 vakanties, reizen en alles wat ermee gemoeid is.",
     "angle": 0
@@ -930,7 +930,7 @@
     "name": "Pathfinder Adventure Campers",
     "icon": "glyph-marker-icon-blue.svg",
     "img": "icons/4x4Vakantiebeurs.png",
-    "standnr": "78",
+    "booth": "78",
     "websitelink": "https://www.4x4vakantiebeurs.nl/",
     "info": "Ontdek de wereld van de 4x4 vakanties op de 4x4 Vakantiebeurs. De grootste beurs in de BeNeLux op het gebied van 4x4 vakanties, reizen en alles wat ermee gemoeid is.",
     "angle": 0
@@ -942,7 +942,7 @@
     "name": "Pathfinder Adventure Campers",
     "icon": "glyph-marker-icon-blue.svg",
     "img": "icons/4x4Vakantiebeurs.png",
-    "standnr": "79",
+    "booth": "79",
     "websitelink": "https://www.4x4vakantiebeurs.nl/",
     "info": "Ontdek de wereld van de 4x4 vakanties op de 4x4 Vakantiebeurs. De grootste beurs in de BeNeLux op het gebied van 4x4 vakanties, reizen en alles wat ermee gemoeid is.",
     "angle": 0
@@ -954,7 +954,7 @@
     "name": "Kleinwier Subaru",
     "icon": "glyph-marker-icon-blue.svg",
     "img": "icons/4x4Vakantiebeurs.png",
-    "standnr": "80",
+    "booth": "80",
     "websitelink": "https://www.4x4vakantiebeurs.nl/",
     "info": "Ontdek de wereld van de 4x4 vakanties op de 4x4 Vakantiebeurs. De grootste beurs in de BeNeLux op het gebied van 4x4 vakanties, reizen en alles wat ermee gemoeid is.",
     "angle": 0
@@ -966,7 +966,7 @@
     "name": "Kleinwier Subaru",
     "icon": "glyph-marker-icon-blue.svg",
     "img": "icons/4x4Vakantiebeurs.png",
-    "standnr": "81",
+    "booth": "81",
     "websitelink": "https://www.4x4vakantiebeurs.nl/",
     "info": "Ontdek de wereld van de 4x4 vakanties op de 4x4 Vakantiebeurs. De grootste beurs in de BeNeLux op het gebied van 4x4 vakanties, reizen en alles wat ermee gemoeid is.",
     "angle": 0
@@ -978,7 +978,7 @@
     "name": "Outback Daktenten",
     "icon": "glyph-marker-icon-blue.svg",
     "img": "icons/4x4Vakantiebeurs.png",
-    "standnr": "82",
+    "booth": "82",
     "websitelink": "https://www.4x4vakantiebeurs.nl/",
     "info": "Ontdek de wereld van de 4x4 vakanties op de 4x4 Vakantiebeurs. De grootste beurs in de BeNeLux op het gebied van 4x4 vakanties, reizen en alles wat ermee gemoeid is.",
     "angle": 0
@@ -990,7 +990,7 @@
     "name": "Roofspace",
     "icon": "glyph-marker-icon-blue.svg",
     "img": "icons/4x4Vakantiebeurs.png",
-    "standnr": "83",
+    "booth": "83",
     "websitelink": "https://www.4x4vakantiebeurs.nl/",
     "info": "Ontdek de wereld van de 4x4 vakanties op de 4x4 Vakantiebeurs. De grootste beurs in de BeNeLux op het gebied van 4x4 vakanties, reizen en alles wat ermee gemoeid is.",
     "angle": 0
@@ -1002,7 +1002,7 @@
     "name": "Roofspace",
     "icon": "glyph-marker-icon-blue.svg",
     "img": "icons/4x4Vakantiebeurs.png",
-    "standnr": "84",
+    "booth": "84",
     "websitelink": "https://www.4x4vakantiebeurs.nl/",
     "info": "Ontdek de wereld van de 4x4 vakanties op de 4x4 Vakantiebeurs. De grootste beurs in de BeNeLux op het gebied van 4x4 vakanties, reizen en alles wat ermee gemoeid is.",
     "angle": 0
@@ -1014,7 +1014,7 @@
     "name": "Autobedrijf van der Zweerde",
     "icon": "glyph-marker-icon-blue.svg",
     "img": "icons/4x4Vakantiebeurs.png",
-    "standnr": "85",
+    "booth": "85",
     "websitelink": "https://www.4x4vakantiebeurs.nl/",
     "info": "Ontdek de wereld van de 4x4 vakanties op de 4x4 Vakantiebeurs. De grootste beurs in de BeNeLux op het gebied van 4x4 vakanties, reizen en alles wat ermee gemoeid is.",
     "angle": 0
@@ -1026,7 +1026,7 @@
     "name": "Autobedrijf van der Zweerde",
     "icon": "glyph-marker-icon-blue.svg",
     "img": "icons/4x4Vakantiebeurs.png",
-    "standnr": "86",
+    "booth": "86",
     "websitelink": "https://www.4x4vakantiebeurs.nl/",
     "info": "Ontdek de wereld van de 4x4 vakanties op de 4x4 Vakantiebeurs. De grootste beurs in de BeNeLux op het gebied van 4x4 vakanties, reizen en alles wat ermee gemoeid is.",
     "angle": 0
@@ -1038,7 +1038,7 @@
     "name": "Booth 87",
     "icon": "glyph-marker-icon-blue.svg",
     "img": "icons/4x4Vakantiebeurs.png",
-    "standnr": "87",
+    "booth": "87",
     "websitelink": "https://www.4x4vakantiebeurs.nl/",
     "info": "Ontdek de wereld van de 4x4 vakanties op de 4x4 Vakantiebeurs. De grootste beurs in de BeNeLux op het gebied van 4x4 vakanties, reizen en alles wat ermee gemoeid is.",
     "angle": 0
@@ -1050,7 +1050,7 @@
     "name": "Flex Adventure 4x4",
     "icon": "glyph-marker-icon-blue.svg",
     "img": "icons/4x4Vakantiebeurs.png",
-    "standnr": "88",
+    "booth": "88",
     "websitelink": "https://www.4x4vakantiebeurs.nl/",
     "info": "Ontdek de wereld van de 4x4 vakanties op de 4x4 Vakantiebeurs. De grootste beurs in de BeNeLux op het gebied van 4x4 vakanties, reizen en alles wat ermee gemoeid is.",
     "angle": 0
@@ -1062,7 +1062,7 @@
     "name": "L-R-Parts",
     "icon": "glyph-marker-icon-blue.svg",
     "img": "icons/4x4Vakantiebeurs.png",
-    "standnr": "89",
+    "booth": "89",
     "websitelink": "https://www.4x4vakantiebeurs.nl/",
     "info": "Ontdek de wereld van de 4x4 vakanties op de 4x4 Vakantiebeurs. De grootste beurs in de BeNeLux op het gebied van 4x4 vakanties, reizen en alles wat ermee gemoeid is.",
     "angle": 0
@@ -1074,7 +1074,7 @@
     "name": "L-R-Parts",
     "icon": "glyph-marker-icon-blue.svg",
     "img": "icons/4x4Vakantiebeurs.png",
-    "standnr": "90",
+    "booth": "90",
     "websitelink": "https://www.4x4vakantiebeurs.nl/",
     "info": "Ontdek de wereld van de 4x4 vakanties op de 4x4 Vakantiebeurs. De grootste beurs in de BeNeLux op het gebied van 4x4 vakanties, reizen en alles wat ermee gemoeid is.",
     "angle": 0
@@ -1086,7 +1086,7 @@
     "name": "Booth 91",
     "icon": "glyph-marker-icon-blue.svg",
     "img": "icons/4x4Vakantiebeurs.png",
-    "standnr": "91",
+    "booth": "91",
     "websitelink": "https://www.4x4vakantiebeurs.nl/",
     "info": "Ontdek de wereld van de 4x4 vakanties op de 4x4 Vakantiebeurs. De grootste beurs in de BeNeLux op het gebied van 4x4 vakanties, reizen en alles wat ermee gemoeid is.",
     "angle": 0
@@ -1098,7 +1098,7 @@
     "name": "Booth 92",
     "icon": "glyph-marker-icon-blue.svg",
     "img": "icons/4x4Vakantiebeurs.png",
-    "standnr": "92",
+    "booth": "92",
     "websitelink": "https://www.4x4vakantiebeurs.nl/",
     "info": "Ontdek de wereld van de 4x4 vakanties op de 4x4 Vakantiebeurs. De grootste beurs in de BeNeLux op het gebied van 4x4 vakanties, reizen en alles wat ermee gemoeid is.",
     "angle": 0
@@ -1110,7 +1110,7 @@
     "name": "4x4 Vakantie Reizen",
     "icon": "glyph-marker-icon-blue.svg",
     "img": "icons/4x4Vakantiebeurs.png",
-    "standnr": "93",
+    "booth": "93",
     "websitelink": "https://www.4x4vakantiebeurs.nl/",
     "info": "Ontdek de wereld van de 4x4 vakanties op de 4x4 Vakantiebeurs. De grootste beurs in de BeNeLux op het gebied van 4x4 vakanties, reizen en alles wat ermee gemoeid is.",
     "angle": 0
@@ -1122,7 +1122,7 @@
     "name": "Further Adventures",
     "icon": "glyph-marker-icon-blue.svg",
     "img": "icons/4x4Vakantiebeurs.png",
-    "standnr": "94",
+    "booth": "94",
     "websitelink": "https://www.4x4vakantiebeurs.nl/",
     "info": "Ontdek de wereld van de 4x4 vakanties op de 4x4 Vakantiebeurs. De grootste beurs in de BeNeLux op het gebied van 4x4 vakanties, reizen en alles wat ermee gemoeid is.",
     "angle": 0
@@ -1134,7 +1134,7 @@
     "name": "Further Adventures",
     "icon": "glyph-marker-icon-blue.svg",
     "img": "icons/4x4Vakantiebeurs.png",
-    "standnr": "95",
+    "booth": "95",
     "websitelink": "https://www.4x4vakantiebeurs.nl/",
     "info": "Ontdek de wereld van de 4x4 vakanties op de 4x4 Vakantiebeurs. De grootste beurs in de BeNeLux op het gebied van 4x4 vakanties, reizen en alles wat ermee gemoeid is.",
     "angle": 0
@@ -1146,7 +1146,7 @@
     "name": "Booth 96",
     "icon": "glyph-marker-icon-blue.svg",
     "img": "icons/4x4Vakantiebeurs.png",
-    "standnr": "96",
+    "booth": "96",
     "websitelink": "https://www.4x4vakantiebeurs.nl/",
     "info": "Ontdek de wereld van de 4x4 vakanties op de 4x4 Vakantiebeurs. De grootste beurs in de BeNeLux op het gebied van 4x4 vakanties, reizen en alles wat ermee gemoeid is.",
     "angle": 0
@@ -1158,7 +1158,7 @@
     "name": "quint 4x4 reizen",
     "icon": "glyph-marker-icon-blue.svg",
     "img": "icons/4x4Vakantiebeurs.png",
-    "standnr": "97",
+    "booth": "97",
     "websitelink": "https://www.4x4vakantiebeurs.nl/",
     "info": "Ontdek de wereld van de 4x4 vakanties op de 4x4 Vakantiebeurs. De grootste beurs in de BeNeLux op het gebied van 4x4 vakanties, reizen en alles wat ermee gemoeid is.",
     "angle": 0
@@ -1170,7 +1170,7 @@
     "name": "quint 4x4 reizen",
     "icon": "glyph-marker-icon-blue.svg",
     "img": "icons/4x4Vakantiebeurs.png",
-    "standnr": "98",
+    "booth": "98",
     "websitelink": "https://www.4x4vakantiebeurs.nl/",
     "info": "Ontdek de wereld van de 4x4 vakanties op de 4x4 Vakantiebeurs. De grootste beurs in de BeNeLux op het gebied van 4x4 vakanties, reizen en alles wat ermee gemoeid is.",
     "angle": 0
@@ -1182,7 +1182,7 @@
     "name": "Dream Trails Off Road Adventures",
     "icon": "glyph-marker-icon-blue.svg",
     "img": "icons/4x4Vakantiebeurs.png",
-    "standnr": "99",
+    "booth": "99",
     "websitelink": "https://www.4x4vakantiebeurs.nl/",
     "info": "Ontdek de wereld van de 4x4 vakanties op de 4x4 Vakantiebeurs. De grootste beurs in de BeNeLux op het gebied van 4x4 vakanties, reizen en alles wat ermee gemoeid is.",
     "angle": 0
@@ -1194,7 +1194,7 @@
     "name": "SandandStone",
     "icon": "glyph-marker-icon-blue.svg",
     "img": "icons/4x4Vakantiebeurs.png",
-    "standnr": "100",
+    "booth": "100",
     "websitelink": "https://www.4x4vakantiebeurs.nl/",
     "info": "Ontdek de wereld van de 4x4 vakanties op de 4x4 Vakantiebeurs. De grootste beurs in de BeNeLux op het gebied van 4x4 vakanties, reizen en alles wat ermee gemoeid is.",
     "angle": 0
@@ -1206,7 +1206,7 @@
     "name": "Camping MAKA",
     "icon": "glyph-marker-icon-blue.svg",
     "img": "icons/4x4Vakantiebeurs.png",
-    "standnr": "101",
+    "booth": "101",
     "websitelink": "https://www.4x4vakantiebeurs.nl/",
     "info": "Ontdek de wereld van de 4x4 vakanties op de 4x4 Vakantiebeurs. De grootste beurs in de BeNeLux op het gebied van 4x4 vakanties, reizen en alles wat ermee gemoeid is.",
     "angle": 0
@@ -1218,7 +1218,7 @@
     "name": "AdventureVan.EU",
     "icon": "glyph-marker-icon-blue.svg",
     "img": "icons/4x4Vakantiebeurs.png",
-    "standnr": "102",
+    "booth": "102",
     "websitelink": "https://www.4x4vakantiebeurs.nl/",
     "info": "Ontdek de wereld van de 4x4 vakanties op de 4x4 Vakantiebeurs. De grootste beurs in de BeNeLux op het gebied van 4x4 vakanties, reizen en alles wat ermee gemoeid is.",
     "angle": 0
@@ -1230,7 +1230,7 @@
     "name": "PSP Expeditioncampers",
     "icon": "glyph-marker-icon-blue.svg",
     "img": "icons/4x4Vakantiebeurs.png",
-    "standnr": "103",
+    "booth": "103",
     "websitelink": "https://www.4x4vakantiebeurs.nl/",
     "info": "Ontdek de wereld van de 4x4 vakanties op de 4x4 Vakantiebeurs. De grootste beurs in de BeNeLux op het gebied van 4x4 vakanties, reizen en alles wat ermee gemoeid is.",
     "angle": 0
@@ -1242,7 +1242,7 @@
     "name": "PSP Expeditioncampers",
     "icon": "glyph-marker-icon-blue.svg",
     "img": "icons/4x4Vakantiebeurs.png",
-    "standnr": "104",
+    "booth": "104",
     "websitelink": "https://www.4x4vakantiebeurs.nl/",
     "info": "Ontdek de wereld van de 4x4 vakanties op de 4x4 Vakantiebeurs. De grootste beurs in de BeNeLux op het gebied van 4x4 vakanties, reizen en alles wat ermee gemoeid is.",
     "angle": 0
