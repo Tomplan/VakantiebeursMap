@@ -867,6 +867,16 @@ fetch('markers.json')
         setTimeout(function() {
           marker.setPopupContent(createEditablePopup(markerObj));
           if (editMode && document.getElementById(`save_${id}`)) {
+            // Live preview van marker icon bij selectie
+            var iconSelect = document.getElementById(`icon_${id}`);
+            var preview = document.getElementById(`iconPreview_${id}`);
+            var originalIcon = markerObj.icon;
+            if (iconSelect && preview) {
+              iconSelect.addEventListener('change', function() {
+                var file = iconSelect.value;
+                preview.innerHTML = `<img src='icons/svg/${file}' style='width:28px;height:28px;'/>`;
+              });
+            }
             document.getElementById(`save_${id}`).onclick = function() {
               markerObj.name = document.getElementById(`name_${id}`).value;
               markerObj.img = document.getElementById(`img_${id}`).value;
@@ -874,7 +884,7 @@ fetch('markers.json')
               markerObj.websitelink = document.getElementById(`web_${id}`).value;
               markerObj.info = document.getElementById(`info_${id}`).value;
               // Marker kleur/icon
-              var iconFileRaw = document.getElementById(`icon_${id}`).value;
+              var iconFileRaw = iconSelect.value;
               var iconFileClean = iconFileRaw;
               var match = iconFileRaw.match(/\(([^)]+)\)/);
               if (match) {
@@ -894,13 +904,13 @@ fetch('markers.json')
               saveMarkers();
               marker.closePopup();
             };
-            
-            // Cancel button handler - restore original values
+            // Cancel button handler - restore originele preview
             document.getElementById(`cancel_${id}`).onclick = function() {
               document.getElementById(`name_${id}`).value = markerObj.name || "";
               document.getElementById(`img_${id}`).value = markerObj.img || "";
               document.getElementById(`standnr_${id}`).value = markerObj.standnr || "";
               document.getElementById(`web_${id}`).value = markerObj.websitelink || "";
+              if (preview) preview.innerHTML = `<img src='icons/svg/${originalIcon}' style='width:28px;height:28px;'/>`;
               marker.closePopup();
             };
           }
@@ -1030,6 +1040,15 @@ function createEditablePopup(markerObj) {
     let currentFile = markerObj.icon || 'glyph-marker-icon-blue.svg';
     var labelWidth = editMode ? '82px' : '68px';
     if (editMode) {
+            // Live preview van marker icon bij selectie
+            var iconSelect = document.getElementById(`icon_${id}`);
+            if (iconSelect) {
+              iconSelect.addEventListener('change', function() {
+                var file = iconSelect.value;
+                var preview = document.getElementById(`iconPreview_${id}`);
+                if (preview) preview.innerHTML = `<img src='icons/svg/${file}' style='width:28px;height:28px;'/>`;
+              });
+            }
       // Select dropdown met SVG previews
       let iconSelectHtml = `<div style="display:flex;align-items:center;gap:6px;margin-bottom:2px;"><b style="min-width:${labelWidth};">Marker icon:</b><select id="icon_${id}" style="flex:1 1 0%;min-width:60px;max-width:100%;">`;
       markerIcons.forEach(file => {
