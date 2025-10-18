@@ -667,7 +667,7 @@ function refreshMarkersOnMap() {
         glyph: m.standnr,
         glyphColor: 'white',
         glyphSize: '12px',
-  iconUrl: 'icons/png/glyph-marker-icon.png',
+  iconUrl: 'icons/svg/glyph-marker-icon.svg',
         shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
         className: 'xolonium glyph-marker-icon',
         glyphAnchor: [0, -6],
@@ -786,7 +786,7 @@ fetch('markers.json')
           glyph: m.standnr,
           glyphColor: 'white',
           glyphSize: '12px',
-          iconUrl: 'icons/png/glyph-marker-icon.png',
+          iconUrl: 'icons/svg/glyph-marker-icon.svg',
           shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
           className: 'xolonium glyph-marker-icon',
           glyphAnchor: [0, -6],
@@ -808,7 +808,7 @@ fetch('markers.json')
         rect: rect,
         handle: handle,
         name: m.name || "",
-        img: (typeof m.img === 'string' && m.img.trim() !== "") ? m.img : "icons/4x4Vakantiebeurs.png",
+  img: (typeof m.img === 'string' && m.img.trim() !== "") ? m.img : "logos/4x4Vakantiebeurs.png",
         standnr: m.standnr || "",
         websitelink: m.websitelink || "",
         info: (typeof m.info === 'string' ? m.info : ""),
@@ -948,6 +948,10 @@ function createEditablePopup(markerObj) {
   var id = markerObj.id;
   var name = markerObj.name || "";
   var img = markerObj.img || "";
+  // Corrigeer legacy pad voor 4x4Vakantiebeurs.png
+  if (img === "icons/png/4x4Vakantiebeurs.png" || img === "icons/4x4Vakantiebeurs.png") {
+    img = "logos/4x4Vakantiebeurs.png";
+  }
   var standnr = markerObj.standnr || "";
     var defaultUrl = "https://www.4x4vakantiebeurs.nl";
     var websitelink = markerObj.websitelink && markerObj.websitelink.trim() !== "" ? markerObj.websitelink.replace(/\/$/,"") : defaultUrl;
@@ -1003,7 +1007,7 @@ map.on('contextmenu', function(e) {
     glyph: '?',
     glyphColor: 'white',
     glyphSize: '12px',
-  iconUrl: 'icons/png/glyph-marker-icon.png',
+  iconUrl: 'icons/svg/glyph-marker-icon.svg',
     shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
     className: 'xolonium glyph-marker-icon',
     glyphAnchor: [0, -6],
@@ -1033,7 +1037,7 @@ map.on('contextmenu', function(e) {
     rect: rect,
     handle: handle,
     name: "",
-    img: "icons/4x4Vakantiebeurs.png",
+  img: "logos/4x4Vakantiebeurs.png",
     standnr: markerId.toString(),
     websitelink: "",
     info: "Ontdek de wereld van de 4x4 vakanties op de 4x4 Vakantiebeurs. De grootste beurs in de BeNeLux op het gebied van 4x4 vakanties, reizen en alles wat ermee gemoeid is.",
