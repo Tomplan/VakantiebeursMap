@@ -611,7 +611,19 @@ setTimeout(function() {
 // Outputs/Side-effects: toggles visibility of the save button, stores new mode in localStorage, and reloads the page
 // Rationale: we reload the page on mode change to force Leaflet to rebuild popups and drawing layers consistently. This
 // avoids subtle state bugs where popup content or input `disabled` attributes are stale after switching modes.
-var editMode = localStorage.getItem('editMode') === 'true';
+// Hardcode read-only mode voor public/main branch
+var editMode = false;
+// Verberg editMode toggle knop en legend icon direct
+document.addEventListener('DOMContentLoaded', function() {
+  var editModeToggleBtn = document.getElementById('editModeToggleBtn');
+  if (editModeToggleBtn) editModeToggleBtn.style.display = 'none';
+  var legendIcon = document.getElementById('editLegendIcon');
+  if (legendIcon) legendIcon.style.display = 'none';
+  var uploadLabel = document.getElementById('uploadExcelLabel');
+  if (uploadLabel) uploadLabel.style.display = 'none';
+  var backupBtn = document.getElementById('backupsBtn');
+  if (backupBtn) backupBtn.style.display = 'none';
+});
 var editModeToggleBtn = document.getElementById('editModeToggleBtn');
 var backupBtn = document.getElementById('backupsBtn');
 
@@ -658,14 +670,7 @@ function updateSaveButtonVisibility() {
     }
 }
 updateSaveButtonVisibility();
-editModeToggleBtn.addEventListener('click', function() {
-  // Toggle edit mode, persist choice and reload to ensure UI/popup consistency.
-  editMode = !editMode;
-  localStorage.setItem('editMode', editMode);
-  updateSaveButtonVisibility();
-  // Reload: forces popups and Leaflet handlers to be reconstructed according to the new mode.
-  location.reload();
-});
+// Geen toggle event in read-only mode
 
 // In-memory marker registry
 // `markersList` holds objects representing each marker and its associated rectangle and rotate-handle.
