@@ -40,10 +40,10 @@
     "lat": 51.89889199726683,
     "lng": 5.773432776331902,
     "name": "Widebird",
-    "icon": "glyph-marker-icon-blue.svg",
+    "icon": "glyph-marker-icon-red.svg",
     "img": "logos/4x4Vakantiebeurs.png",
     "standnr": "4",
-    "websitelink": "https://www.4x4vakantiebeurs.nl/",
+    "websitelink": "https://www.4x4vakantiebeurs.nl",
     "info": "Ontdek de wereld van de 4x4 vakanties op de 4x4 Vakantiebeurs. De grootste beurs in de BeNeLux op het gebied van 4x4 vakanties, reizen en alles wat ermee gemoeid is.",
     "angle": 8.130093223990542
   },
