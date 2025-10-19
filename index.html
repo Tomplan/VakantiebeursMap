@@ -15,71 +15,87 @@
   <!-- Xolonium typeface -->
   <link rel="stylesheet" media="screen" href="https://fontlibrary.org/face/xolonium" />
 
-	<style>
-	.map {
-		width:600px;
-		height:400px;
-		margin: 0;
-	}
-
-	.leaflet-marker-icon.sans-serif {
-		font-weight: bold;
-		font-family: Sans Serif;
-	}
-
-	.leaflet-marker-icon.xolonium {
-		font-weight: bold;
-		font-family: Xolonium;
-	}
-	</style>
-	<style>.leaflet-map-pane div { box-shadow: none; }</style>
-
-  <link rel="stylesheet" href="/assets/styles.css" />
   <!-- Styles moved to /assets/styles.css -->
-  </style>
+  <link rel="stylesheet" href="/assets/styles.css" />
+ 
 </head>
 
+
 <body>
-
-  <!-- Flexbox container for all control buttons -->
+  <!--
+    === Control Button Column ===
+    Main vertical toolbar with all primary map controls:
+    - Lock/unlock edit mode
+    - Backup/restore markers
+    - Download markers as Excel/CSV
+    - Upload markers from file
+    - Show info popup
+  -->
   <div id="controlButtonColumn" class="control-button-column">
-    <button id="editModeToggleBtn" title="Toggle Edit Mode" class="control-button">
-      <span id="editModeIcon" class="mdi icon-lg"></span>
+    <!-- Lock/unlock edit mode button -->
+    <button id="lockBtn" title="(Un)Lock" class="control-button">
+      <span id="lockBtnIcon" class="mdi icon-lg"></span>
     </button>
-    <button id="backupsBtn" title="View Backups" class="control-button">
-      <span class="mdi mdi-backup-restore icon-lg"></span>
+    <!-- Backup/restore button -->
+    <button id="backupRestoreBtn" title="Backup Restore" class="control-button">
+      <span class="mdi mdi-history icon-lg"></span>
     </button>
-  <button id="downloadExcelBtn" class="control-button square-btn" title="Download markers als Excel/CSV">
-    <span class="mdi mdi-download icon-md" title="Download Markers Excel"></span>
-  </button>
-  <label id="uploadExcelLabel" class="control-button square-btn" title="Upload markers Excel/CSV">
-    <input id="uploadExcelInput" type="file" accept=".xlsx,.csv" class="visually-hidden" />
-    <span class="mdi mdi-upload icon-md" title="Upload Markers Excel or CSV file"></span>
-  </label>
-    <button id="editLegendIcon" class="control-button" title="Edit Mode Guide">
-      <span class="mdi mdi-information-outline icon-lg"></span>
+    <!-- Download markers button -->
+    <button id="downloadBtn" class="control-button" title="Download Markers">
+      <span class="mdi mdi-download icon-lg"></span>
     </button>
-  <div id="layerControlContainer" class="layer-control-container"></div>
-    <!-- Edit mode legend content (hidden popup) now in container -->
+    <!-- Upload markers button (label wraps input for styling) -->
+    <label id="uploadLabel" class="control-button" title="Upload Markers">
+      <input id="uploadInput" type="file" accept=".xlsx,.csv" class="visually-hidden" />
+      <span class="mdi mdi-upload icon-lg"></span>
+    </label>
+    <!-- Info popup button -->
+    <button id="infoBtn" class="control-button" title="Info">
+      <span class="mdi mdi-information-variant-circle icon-lg"></span>
+    </button>
+    <!-- Custom Leaflet layer control container (populated by JS) -->
+    <div id="layerControlContainer" class="layer-control-container"></div>
   </div>
-  
-  <!-- Layer control positioned under legend button -->
-  
-  <!-- Edit mode legend content (hidden popup) -->
-  <div id="editLegendContent" class="edit-legend-content">
-    <button id="editLegendClose" class="edit-legend-close" title="Close">&times;</button>
-    <h4 class="legend-title">📝 Edit Mode Guide</h4>
-    <ul>
-      <li>🖱️ <strong>Right-click map:</strong> Add new marker</li>
-      <li>👆 <strong>Drag marker:</strong> Move position</li>
-      <li>🔵 <strong>Drag blue dot:</strong> Rotate rectangle</li>
-      <li>✏️ <strong>Click marker:</strong> Edit details</li>
-      <li>❌ <strong>Right-click marker:</strong> Delete</li>
-      <li>🔍 <strong>Search:</strong> Find markers</li>
-    </ul>
-    </div>
 
-  <!-- Backups modal (hidden by default). Will be populated by JS when user opens Backups. -->
+  <!--
+    === Info Popup ===
+    Provides a quick explanation of all map actions for users.
+    Hidden by default, shown when info button is clicked.
+  -->
+  <div id="infoContent" class="info-content">
+    <!-- Close button for info popup -->
+    <button id="infoClose" class="info-close" title="Close">&times;</button>
+    <!-- Info title with icon -->
+    <h4 class="info-title">
+      <span class="mdi mdi-information-variant-circle"></span>
+      Info
+    </h4>
+    <!-- List of map actions and their icons -->
+    <ul>
+      <li>
+        <span class="mdi mdi-mouse-right-click"></span>
+        <strong>Right-click map:</strong> Add new marker
+      </li>
+      <li>
+        <span class="mdi mdi-mouse-left-click"></span>
+        <strong>Left-click marker:</strong> Edit marker details
+      </li>
+      <li>
+        <span class="mdi mdi-cursor-move"></span>
+        <strong>Drag marker:</strong> Move marker position
+      </li>
+      <li>
+        <span class="mdi mdi-format-rotate-90"></span>
+        <strong>Rotate blue dot:</strong> Rotate rectangle
+      </li>
+      <li>
+        <span class="mdi mdi-delete-forever"></span>
+        <strong>Right-click marker:</strong> Delete
+      </li>
+    </ul>
+  </div>
+
+  <!-- === Backups Modal: backup/restore functionality, hidden until backup button is clicked === -->
   <div id="backupsModal" class="modal hidden">
     <div class="modal-content">
       <span id="backupsClose" class="modal-close">&times;</span>
@@ -94,6 +110,7 @@
       </div>
     </div>
   </div>
+  <!-- === Map Container: Leaflet map is initialized here === -->
   <div id="map"></div>
 
 <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
@@ -102,45 +119,45 @@
 <script>
 window.addEventListener('DOMContentLoaded', function() {
   // Upload functionaliteit: bestand inlezen en preview tonen
-  var uploadInput = document.getElementById('uploadExcelInput');
+  var uploadInput = document.getElementById('uploadInput');
   uploadInput.addEventListener('change', function(e) {
-    const file = e.target.files[0];
-    if (!file) return;
-    const ext = file.name.split('.').pop().toLowerCase();
-    if (ext === 'xlsx') {
-      const reader = new FileReader();
-      reader.onload = function(evt) {
-        const buffer = evt.target.result;
-        const workbook = new ExcelJS.Workbook();
-        workbook.xlsx.load(buffer).then(function() {
-          const worksheet = workbook.worksheets[0];
-          const previewData = [];
-          worksheet.eachRow({ includeEmpty: false }, function(row, rowNumber) {
-            previewData.push(row.values.slice(1)); // ExcelJS rows zijn 1-based
+      const file = e.target.files[0];
+      if (!file) return;
+      const ext = file.name.split('.').pop().toLowerCase();
+      if (ext === 'xlsx') {
+        const reader = new FileReader();
+  reader.onload = function(evt) {
+          const buffer = evt.target.result;
+          const workbook = new ExcelJS.Workbook();
+          workbook.xlsx.load(buffer).then(function() {
+            const worksheet = workbook.worksheets[0];
+            const previewData = [];
+            worksheet.eachRow({ includeEmpty: false }, function(row, rowNumber) {
+              previewData.push(row.values.slice(1)); // ExcelJS rows zijn 1-based
+            });
+            showPreviewModal(previewData, file.name);
           });
-          showPreviewModal(previewData, file.name);
-        });
-      };
-      reader.readAsArrayBuffer(file);
-    } else if (ext === 'csv') {
-      const reader = new FileReader();
-      reader.onload = function(evt) {
-        const text = evt.target.result;
-        const rows = text.split(/\r?\n/).map(line => line.split(','));
-        showPreviewModal(rows, file.name);
-      };
-      reader.readAsText(file);
-    } else {
-      alert('Bestandstype niet ondersteund. Kies een .xlsx of .csv bestand.');
-    }
-    // Reset input zodat je opnieuw kunt uploaden
-    e.target.value = '';
+        };
+        reader.readAsArrayBuffer(file);
+      } else if (ext === 'csv') {
+        const reader = new FileReader();
+        reader.onload = function(evt) {
+          const text = evt.target.result;
+          const rows = text.split(/\r?\n/).map(line => line.split(','));
+          showPreviewModal(rows, file.name);
+        };
+        reader.readAsText(file);
+      } else {
+        alert('Bestandstype niet ondersteund. Kies een .xlsx of .csv bestand.');
+      }
+      // Reset input zodat je opnieuw kunt uploaden
+      e.target.value = '';
   });
 
   // Preview modal tonen
   function showPreviewModal(data, filename) {
     // Kolomvalidatie: controleer headers
-  var expectedHeaders = ['id','booth','name','icon','img','websitelink','info'];
+    var expectedHeaders = ['id', 'booth', 'name', 'icon', 'img', 'websitelink', 'info'];
     var headerOk = false;
     if (data.length > 0) {
       var actual = data[0].map(function(h){return h.replace(/\s+/g,'').toLowerCase();});
@@ -229,10 +246,21 @@ window.addEventListener('DOMContentLoaded', function() {
           var iconCell = String(row[3] !== undefined ? row[3] : markerMap[id].icon || "glyph-marker-icon-blue.svg").trim();
           var iconMatch = iconCell.match(/\(([^)]+)\)/);
           markerMap[id].icon = iconMatch ? iconMatch[1] : iconCell;
-          markerMap[id].img = String(row[4] !== undefined ? row[4] : markerMap[id].img).trim();
-          // websitelink: altijd default-url als leeg
+          // img: als geen pad, altijd logos/ prefix toevoegen
+          var imgCell = String(row[4] !== undefined ? row[4] : markerMap[id].img).trim();
+          if (imgCell && !imgCell.includes('/') && imgCell !== '') {
+            imgCell = 'logos/' + imgCell;
+          }
+          markerMap[id].img = imgCell;
+          // websitelink: altijd default-url als leeg, en altijd geldig url-formaat
           var uploadedWeb = row[5] !== undefined ? String(row[5]).trim() : markerMap[id].websitelink;
-          markerMap[id].websitelink = uploadedWeb === "" ? "https://www.4x4vakantiebeurs.nl" : uploadedWeb;
+          if (uploadedWeb === "") {
+            markerMap[id].websitelink = "https://www.4x4vakantiebeurs.nl";
+          } else if (!/^https?:\/\//i.test(uploadedWeb)) {
+            markerMap[id].websitelink = "https://" + uploadedWeb.replace(/^\/*/, "");
+          } else {
+            markerMap[id].websitelink = uploadedWeb;
+          }
           // info: altijd overschrijven, ook als leeg
           markerMap[id].info = (row[6] !== undefined) ? String(row[6]).trim() : "";
           updatedMarkers.push(markerMap[id]);
@@ -333,9 +361,9 @@ window.addEventListener('DOMContentLoaded', function() {
   document.body.appendChild(modal);
   }
   // Download Excel event handler
-  var excelBtn = document.getElementById('downloadExcelBtn');
-  if (excelBtn) {
-    excelBtn.addEventListener('click', async function() {
+  var downloadBtn = document.getElementById('downloadBtn');
+  if (downloadBtn) {
+    downloadBtn.addEventListener('click', async function() {
       await markersToExcel();
     });
   }
@@ -343,7 +371,7 @@ window.addEventListener('DOMContentLoaded', function() {
   // markersToExcel functie verwijderen (dummy)
   // Download-knop alleen tonen in edit mode
   function updateDownloadExcelBtnVisibility() {
-    var btn = document.getElementById('downloadExcelBtn');
+  var btn = document.getElementById('downloadBtn');
     if (btn) {
       btn.style.display = editMode ? 'flex' : 'none';
   // ...existing code...
@@ -356,7 +384,7 @@ window.addEventListener('DOMContentLoaded', function() {
       }
   }
   updateDownloadExcelBtnVisibility();
-  editModeToggleBtn.addEventListener('click', updateDownloadExcelBtnVisibility);
+  lockBtn.addEventListener('click', updateDownloadExcelBtnVisibility);
 
   // Download markers als Excel (.xlsx) met freeze panes via ExcelJS
   async function markersToExcel() {
@@ -385,10 +413,10 @@ window.addEventListener('DOMContentLoaded', function() {
     var rows = markersList.map(function(m) {
       return [
         m.id,
-  m.booth,
+        m.booth,
         m.name,
         m.icon || "glyph-marker-icon-blue.svg",
-        m.img,
+        (typeof m.img === 'string' && m.img.startsWith('logos/')) ? m.img.replace(/^logos\//, '') : m.img,
         m.websitelink,
         m.info
       ];
@@ -553,18 +581,18 @@ const isMainBranch = location.hostname === 'tomplan.github.io';
 var editMode = isMainBranch ? false : (localStorage.getItem('editMode') === 'true');
 // Verberg editMode toggle knop en legend icon direct
 document.addEventListener('DOMContentLoaded', function() {
-  var editModeToggleBtn = document.getElementById('editModeToggleBtn');
-  if (editModeToggleBtn) editModeToggleBtn.style.display = isMainBranch ? 'none' : '';
-  if (!isMainBranch && editModeToggleBtn) {
-    editModeToggleBtn.onclick = function() {
+  var lockBtn = document.getElementById('lockBtn');
+  if (lockBtn) lockBtn.style.display = isMainBranch ? 'none' : '';
+  if (!isMainBranch && lockBtn) {
+    lockBtn.onclick = function() {
       editMode = !editMode;
       localStorage.setItem('editMode', editMode);
       location.reload();
     };
   }
 });
-var editModeToggleBtn = document.getElementById('editModeToggleBtn');
-var backupBtn = document.getElementById('backupsBtn');
+var lockBtn = document.getElementById('lockBtn');
+var backupRestoreBtn = document.getElementById('backupRestoreBtn');
 
 // Initialize edit elements layer visibility based on current edit mode
 function updateLayerVisibility() {
@@ -575,20 +603,23 @@ function updateLayerVisibility() {
   }
 }
 function updateSaveButtonVisibility() {
+  // Show the download button only in edit mode
+  var downloadBtn = document.getElementById('downloadBtn');
+  if (downloadBtn) downloadBtn.style.display = editMode ? 'flex' : 'none';
   // Toggle the edit mode button icon based on current mode
-  var iconSpan = document.getElementById('editModeIcon');
+  var iconSpan = document.getElementById('lockBtnIcon');
   if (iconSpan) {
     // f33f = lock-open, f33e = lock
     iconSpan.className = 'mdi ' + (editMode ? 'mdi-lock-open' : 'mdi-lock');
     iconSpan.style.fontFamily = 'Material Design Icons';
     iconSpan.style.fontSize = '22px';
   }
-  // Show the backup button only in edit mode
-  backupBtn.style.display = editMode ? '' : 'none';
+  // Show the backup/restore button only in edit mode
+  backupRestoreBtn.style.display = editMode ? '' : 'none';
   // Show the edit legend icon only in edit mode
-  var legendIcon = document.getElementById('editLegendIcon');
-  if (legendIcon) {
-    legendIcon.style.display = editMode ? 'flex' : 'none';
+  var infoBtn = document.getElementById('infoBtn');
+  if (infoBtn) {
+    infoBtn.style.display = editMode ? 'flex' : 'none';
   }
   // Control layer control container visibility - only show in edit mode
   document.getElementById('layerControlContainer').style.display = editMode ? 'flex' : 'none';
@@ -603,7 +634,7 @@ function updateSaveButtonVisibility() {
     updateLayerVisibility();
   }
     // Upload-knop alleen zichtbaar in edit mode
-    var uploadLabel = document.getElementById('uploadExcelLabel');
+    var uploadLabel = document.getElementById('uploadLabel');
     if (uploadLabel) {
       uploadLabel.style.display = editMode ? 'flex' : 'none';
     }
@@ -709,7 +740,15 @@ function refreshMarkersOnMap() {
               markersList[idx].name = document.getElementById(`name_${id}`).value;
               markersList[idx].img = document.getElementById(`img_${id}`).value;
               markersList[idx].booth = document.getElementById(`booth_${id}`).value;
-              markersList[idx].websitelink = document.getElementById(`web_${id}`).value;
+              // Forceer altijd geldig url-formaat bij opslaan
+              let webVal = document.getElementById(`web_${id}`).value.trim();
+              if (webVal === "") {
+                markersList[idx].websitelink = "https://www.4x4vakantiebeurs.nl";
+              } else if (!/^https?:\/\//i.test(webVal)) {
+                markersList[idx].websitelink = "https://" + webVal.replace(/^\/*/, "");
+              } else {
+                markersList[idx].websitelink = webVal;
+              }
               markersList[idx].info = document.getElementById(`info_${id}`).value;
               var iconFileRaw = document.getElementById(`iconHidden_${id}`).value;
               var iconFileClean = iconFileRaw;
@@ -1049,6 +1088,8 @@ function createEditablePopup(markerObj) {
   var id = markerObj.id;
   var name = markerObj.name || "";
   var img = markerObj.img || "";
+  // Toon in edit mode alleen bestandsnaam (zonder logos/) in tekstveld
+  var imgField = (typeof img === 'string' && img.startsWith('logos/')) ? img.replace(/^logos\//, '') : img;
   // Corrigeer legacy pad voor 4x4Vakantiebeurs.png
   if (img === "icons/png/4x4Vakantiebeurs.png" || img === "icons/4x4Vakantiebeurs.png") {
     img = "logos/4x4Vakantiebeurs.png";
@@ -1056,6 +1097,13 @@ function createEditablePopup(markerObj) {
   var booth = markerObj.booth || "";
     var defaultUrl = "https://www.4x4vakantiebeurs.nl";
     var websitelink = markerObj.websitelink && markerObj.websitelink.trim() !== "" ? markerObj.websitelink.replace(/\/$/,"") : defaultUrl;
+  // Toon in edit mode alleen originele invoer (zonder http(s)://) in tekstveld
+  var webField = markerObj.websitelink ? markerObj.websitelink.replace(/^https?:\/\//i, '') : '';
+    // Forceer altijd geldig url-formaat voor href, maar behoud originele tekst
+    var hrefLink = websitelink;
+    if (hrefLink && !/^https?:\/\//i.test(hrefLink)) {
+      hrefLink = "https://" + hrefLink.replace(/^\/*/, "");
+    }
   var info = markerObj.info || "";
   var disabled = editMode ? "" : "disabled";
   var saveBtn = editMode ? `<button id="save_${id}" class="popup-save-btn">Save</button><button id="cancel_${id}" class="popup-cancel-btn">Cancel</button>` : "";
@@ -1064,7 +1112,12 @@ function createEditablePopup(markerObj) {
      <div><b>Lat:</b> <span>${lat}</span></div>
      <div><b>Lng:</b> <span>${lng}</span></div>`
     : "";
-  var imgHtml = img ? `<div class="popup-img-block"><img src='${img}' alt='afbeelding' class='popup-img'/></div>` : "";
+  // Forceer logos/ prefix voor de afbeelding in de popup
+  var imgSrc = img;
+  if (imgSrc && !imgSrc.startsWith('logos/') && imgSrc !== "") {
+    imgSrc = 'logos/' + imgSrc;
+  }
+  var imgHtml = imgSrc ? `<div class="popup-img-block"><img src='${imgSrc}' alt='afbeelding' class='popup-img'/></div>` : "";
     // Marker icon kleur opties
     const markerIcons = [
       'glyph-marker-icon-blue.svg',
@@ -1108,16 +1161,18 @@ function createEditablePopup(markerObj) {
           ${imgHtml}
           ${idLatLngBlock}
           ${iconDropdownHtml}
-          <div class="popup-row"><b class="popup-label" style="min-width:${labelWidth};">Afbeelding:</b><input type="text" id="img_${id}" value="${img}" class="popup-input" placeholder="URL" ${disabled}/></div>
+          <div class="popup-row"><b class="popup-label" style="min-width:${labelWidth};">Afbeelding:</b><input type="text" id="img_${id}" value="${imgField}" class="popup-input" placeholder="URL" ${disabled}/></div>
           <div class="popup-row"><b class="popup-label" style="min-width:${labelWidth};">Naam:</b><input type="text" id="name_${id}" value="${name}" class="popup-input" ${disabled}/></div>
           <div class="popup-row"><b class="popup-label" style="min-width:${labelWidth};">Booth:</b><input type="number" id="booth_${id}" value="${booth}" class="popup-input" ${disabled}/></div>
-          <div class="popup-row"><b class="popup-label" style="min-width:${labelWidth};">Website:</b><input type="text" id="web_${id}" value="${websitelink}" class="popup-input" placeholder="https://..." ${disabled}/></div>
+          <div class="popup-row"><b class="popup-label" style="min-width:${labelWidth};">Website:</b><input type="text" id="web_${id}" value="${webField}" class="popup-input" placeholder="https://..." ${disabled}/></div>
           <div class="popup-row"><b class="popup-label" style="min-width:${labelWidth};">Info:</b><textarea id="info_${id}" class="popup-textarea" ${disabled}>${info}</textarea></div>
         </div>
         ${saveBtn}
       `;
     } else {
         // Show marker icon next to booth number
+        // Zichtbare tekst van de link is altijd de originele invoer zonder http(s)://
+        let webText = markerObj.websitelink ? markerObj.websitelink.replace(/^https?:\/\//i, '') : '';
         return `
           <div class="popup-main-block">
             ${imgHtml}
@@ -1126,7 +1181,7 @@ function createEditablePopup(markerObj) {
                 <span class="popup-marker-booth">Booth ${booth}</span>
             </div>
               <div class="popup-marker-name">${name}</div>
-            <div class="popup-marker-link"><a href="${websitelink}" target="_blank" rel="noopener noreferrer">${websitelink}</a></div>
+            <div class="popup-marker-link"><a href="${hrefLink}" target="_blank" rel="noopener noreferrer">${webText}</a></div>
             <div class="popup-marker-info">${info}</div>
           </div>
         `;
@@ -1333,7 +1388,7 @@ function getRectangleCornersMeters(centerLatLng, width_m, height_m, angleDeg) {
 }
 
 // Backups UI: list available backups and trigger server-side restore
-document.getElementById('backupsBtn').addEventListener('click', async function() {
+document.getElementById('backupRestoreBtn').addEventListener('click', async function() {
   openBackupsModal();
 });
 
@@ -1463,8 +1518,8 @@ document.getElementById('restoreSelectedBtn').addEventListener('click', async fu
 });
 
 // Edit legend icon click handler
-document.getElementById('editLegendIcon').addEventListener('click', function() {
-  var content = document.getElementById('editLegendContent');
+document.getElementById('infoBtn').addEventListener('click', function() {
+  var content = document.getElementById('infoContent');
   if (content.style.display === 'none' || content.style.display === '') {
     content.style.display = 'block';
   } else {
@@ -1473,11 +1528,11 @@ document.getElementById('editLegendIcon').addEventListener('click', function() {
 });
 
 // Close button inside legend popup: only hides the popup (does not change editMode)
-var legendCloseBtn = document.getElementById('editLegendClose');
+var legendCloseBtn = document.getElementById('infoClose');
 if (legendCloseBtn) {
   legendCloseBtn.addEventListener('click', function(e) {
     e.stopPropagation();
-    var content = document.getElementById('editLegendContent');
+  var content = document.getElementById('infoContent');
     if (content) content.style.display = 'none';
   });
 }

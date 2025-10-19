@@ -1,3 +1,11 @@
+/* Zorg dat label.control-button exact gelijk is aan button.control-button */
+label.control-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  box-sizing: border-box;
+}
 /* Popup and modal UI classes for marker editing */
 .popup-main-block { min-width: 220px; }
 .popup-img-block { margin-bottom: 6px; }
@@ -53,7 +61,6 @@ html, body { height: 100%; margin: 0; padding: 0; }
   background-color: #fff; cursor: pointer; display:flex; align-items:center; justify-content:center;
   background-position: center; background-repeat: no-repeat; background-size: 20px 20px;
 }
-.square-btn { width: 36px; height: 36px; }
 
 /* Icon sizes */
 .icon-lg { font-size: 22px; }
@@ -64,10 +71,10 @@ html, body { height: 100%; margin: 0; padding: 0; }
 .layer-control-container .leaflet-control-layers-toggle { width:20px; height:20px; background-size:20px 20px; }
 .layer-control-container { display:flex; align-items:center; justify-content:center; margin-top:8px; }
 
-/* Edit legend popup */
-.edit-legend-content { display: none; position: fixed; top: 10px; right: 80px; z-index: 1000; background: rgba(255,255,255,0.95); padding: 12px; border-radius: 6px; font-size: 12px; line-height: 1.4; box-shadow: 0 2px 8px rgba(0,0,0,0.2); min-width: 250px; border: 2px solid rgba(0,0,0,0.3); }
-.edit-legend-close { position: absolute; top: 6px; right: 8px; border: none; background: transparent; font-size: 18px; line-height: 1; cursor: pointer; }
-.legend-title { margin-top: 4px; }
+/* Info popup */
+.info-content { display: none; position: fixed; top: 10px; right: 80px; z-index: 1000; background: rgba(255,255,255,0.95); padding: 12px; border-radius: 6px; font-size: 12px; line-height: 1.4; box-shadow: 0 2px 8px rgba(0,0,0,0.2); min-width: 250px; border: 2px solid rgba(0,0,0,0.3); }
+.info-close { position: absolute; top: 6px; right: 8px; border: none; background: transparent; font-size: 18px; line-height: 1; cursor: pointer; }
+.info-title { margin-top: 4px; }
 
 /* Backups modal small helpers */
 .backups-list-container { max-height: 320px; overflow: auto; margin-bottom: 12px; }
