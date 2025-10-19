@@ -15,36 +15,17 @@
   <!-- Xolonium typeface -->
   <link rel="stylesheet" media="screen" href="https://fontlibrary.org/face/xolonium" />
 
-	<style>
-	.map {
-		width:600px;
-		height:400px;
-		margin: 0;
-	}
-
-	.leaflet-marker-icon.sans-serif {
-		font-weight: bold;
-		font-family: Sans Serif;
-	}
-
-	.leaflet-marker-icon.xolonium {
-		font-weight: bold;
-		font-family: Xolonium;
-	}
-	</style>
-	<style>.leaflet-map-pane div { box-shadow: none; }</style>
-
-  <link rel="stylesheet" href="/assets/styles.css" />
   <!-- Styles moved to /assets/styles.css -->
-  </style>
+  <link rel="stylesheet" href="/assets/styles.css" />
+ 
 </head>
 
 <body>
 
-  <!-- Flexbox container for all control buttons -->
+  <!-- === Control Button Column: main buttons for edit, backup, download, upload, legend === -->
   <div id="controlButtonColumn" class="control-button-column">
-    <button id="editModeToggleBtn" title="Toggle Edit Mode" class="control-button">
-      <span id="editModeIcon" class="mdi icon-lg"></span>
+    <button id="lockBtn" title="(Un)Lock" class="control-button">
+  <span id="lockBtnIcon" class="mdi icon-lg"></span>
     </button>
     <button id="backupsBtn" title="View Backups" class="control-button">
       <span class="mdi mdi-backup-restore icon-lg"></span>
@@ -59,13 +40,11 @@
     <button id="editLegendIcon" class="control-button" title="Edit Mode Guide">
       <span class="mdi mdi-information-outline icon-lg"></span>
     </button>
+  <!-- === Layer Control Container: custom Leaflet layer control is placed here === -->
   <div id="layerControlContainer" class="layer-control-container"></div>
-    <!-- Edit mode legend content (hidden popup) now in container -->
   </div>
   
-  <!-- Layer control positioned under legend button -->
-  
-  <!-- Edit mode legend content (hidden popup) -->
+  <!-- === Edit Mode Legend Popup: explanation of edit functionality, hidden until info button is clicked === -->
   <div id="editLegendContent" class="edit-legend-content">
     <button id="editLegendClose" class="edit-legend-close" title="Close">&times;</button>
     <h4 class="legend-title">📝 Edit Mode Guide</h4>
@@ -79,7 +58,7 @@
     </ul>
     </div>
 
-  <!-- Backups modal (hidden by default). Will be populated by JS when user opens Backups. -->
+  <!-- === Backups Modal: backup/restore functionality, hidden until backup button is clicked === -->
   <div id="backupsModal" class="modal hidden">
     <div class="modal-content">
       <span id="backupsClose" class="modal-close">&times;</span>
@@ -94,6 +73,7 @@
       </div>
     </div>
   </div>
+  <!-- === Map Container: Leaflet map is initialized here === -->
   <div id="map"></div>
 
 <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
@@ -356,7 +336,7 @@ window.addEventListener('DOMContentLoaded', function() {
       }
   }
   updateDownloadExcelBtnVisibility();
-  editModeToggleBtn.addEventListener('click', updateDownloadExcelBtnVisibility);
+  lockBtn.addEventListener('click', updateDownloadExcelBtnVisibility);
 
   // Download markers als Excel (.xlsx) met freeze panes via ExcelJS
   async function markersToExcel() {
@@ -553,17 +533,17 @@ const isMainBranch = location.hostname === 'tomplan.github.io';
 var editMode = isMainBranch ? false : (localStorage.getItem('editMode') === 'true');
 // Verberg editMode toggle knop en legend icon direct
 document.addEventListener('DOMContentLoaded', function() {
-  var editModeToggleBtn = document.getElementById('editModeToggleBtn');
-  if (editModeToggleBtn) editModeToggleBtn.style.display = isMainBranch ? 'none' : '';
-  if (!isMainBranch && editModeToggleBtn) {
-    editModeToggleBtn.onclick = function() {
+  var lockBtn = document.getElementById('lockBtn');
+  if (lockBtn) lockBtn.style.display = isMainBranch ? 'none' : '';
+  if (!isMainBranch && lockBtn) {
+    lockBtn.onclick = function() {
       editMode = !editMode;
       localStorage.setItem('editMode', editMode);
       location.reload();
     };
   }
 });
-var editModeToggleBtn = document.getElementById('editModeToggleBtn');
+var lockBtn = document.getElementById('lockBtn');
 var backupBtn = document.getElementById('backupsBtn');
 
 // Initialize edit elements layer visibility based on current edit mode
@@ -576,7 +556,7 @@ function updateLayerVisibility() {
 }
 function updateSaveButtonVisibility() {
   // Toggle the edit mode button icon based on current mode
-  var iconSpan = document.getElementById('editModeIcon');
+  var iconSpan = document.getElementById('lockBtnIcon');
   if (iconSpan) {
     // f33f = lock-open, f33e = lock
     iconSpan.className = 'mdi ' + (editMode ? 'mdi-lock-open' : 'mdi-lock');
