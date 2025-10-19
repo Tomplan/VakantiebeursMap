@@ -27,7 +27,7 @@
     <button id="lockBtn" title="(Un)Lock" class="control-button">
   <span id="lockBtnIcon" class="mdi icon-lg"></span>
     </button>
-    <button id="backupsBtn" title="View Backups" class="control-button">
+    <button id="backupRestoreBtn" title="Backup Restore" class="control-button">
       <span class="mdi mdi-backup-restore icon-lg"></span>
     </button>
   <button id="downloadExcelBtn" class="control-button square-btn" title="Download markers als Excel/CSV">
@@ -544,7 +544,7 @@ document.addEventListener('DOMContentLoaded', function() {
   }
 });
 var lockBtn = document.getElementById('lockBtn');
-var backupBtn = document.getElementById('backupsBtn');
+var backupRestoreBtn = document.getElementById('backupRestoreBtn');
 
 // Initialize edit elements layer visibility based on current edit mode
 function updateLayerVisibility() {
@@ -563,8 +563,8 @@ function updateSaveButtonVisibility() {
     iconSpan.style.fontFamily = 'Material Design Icons';
     iconSpan.style.fontSize = '22px';
   }
-  // Show the backup button only in edit mode
-  backupBtn.style.display = editMode ? '' : 'none';
+  // Show the backup/restore button only in edit mode
+  backupRestoreBtn.style.display = editMode ? '' : 'none';
   // Show the edit legend icon only in edit mode
   var legendIcon = document.getElementById('editLegendIcon');
   if (legendIcon) {
@@ -1313,7 +1313,7 @@ function getRectangleCornersMeters(centerLatLng, width_m, height_m, angleDeg) {
 }
 
 // Backups UI: list available backups and trigger server-side restore
-document.getElementById('backupsBtn').addEventListener('click', async function() {
+document.getElementById('backupRestoreBtn').addEventListener('click', async function() {
   openBackupsModal();
 });
 
