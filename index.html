@@ -22,32 +22,32 @@
 
 <body>
 
-  <!-- === Control Button Column: main buttons for edit, backup, download, upload, legend === -->
+  <!-- === Control Button Column: main buttons for (un)lock, backupRestore, download, upload, info === -->
   <div id="controlButtonColumn" class="control-button-column">
     <button id="lockBtn" title="(Un)Lock" class="control-button">
-  <span id="lockBtnIcon" class="mdi icon-lg"></span>
+      <span id="lockBtnIcon" class="mdi icon-lg"></span>
     </button>
     <button id="backupRestoreBtn" title="Backup Restore" class="control-button">
       <span class="mdi mdi-backup-restore icon-lg"></span>
     </button>
-  <button id="downloadBtn" class="control-button" title="Download Markers">
-  <span class="mdi mdi-download icon-md"></span>
-  </button>
-  <label id="uploadLabel" class="control-button" title="Upload Markers">
-    <input id="uploadInput" type="file" accept=".xlsx,.csv" class="visually-hidden" />
-    <span class="mdi mdi-upload icon-md"></span>
-  </label>
-    <button id="editLegendIcon" class="control-button" title="Edit Mode Guide">
+    <button id="downloadBtn" class="control-button" title="Download Markers">
+     <span class="mdi mdi-download icon-md"></span>
+    </button>
+      <label id="uploadLabel" class="control-button" title="Upload Markers">
+        <input id="uploadInput" type="file" accept=".xlsx,.csv" class="visually-hidden" />
+        <span class="mdi mdi-upload icon-md"></span>
+      </label>
+    <button id="infoBtn" class="control-button" title="Info">
       <span class="mdi mdi-information-outline icon-lg"></span>
     </button>
   <!-- === Layer Control Container: custom Leaflet layer control is placed here === -->
   <div id="layerControlContainer" class="layer-control-container"></div>
   </div>
   
-  <!-- === Edit Mode Legend Popup: explanation of edit functionality, hidden until info button is clicked === -->
-  <div id="editLegendContent" class="edit-legend-content">
-    <button id="editLegendClose" class="edit-legend-close" title="Close">&times;</button>
-    <h4 class="legend-title">📝 Edit Mode Guide</h4>
+  <!-- === Info Popup: explanation of map functionality, hidden until info button is clicked === -->
+  <div id="infoContent" class="info-content">
+    <button id="infoClose" class="info-close" title="Close">&times;</button>
+    <h4 class="info-title">📝 Edit Mode Guide</h4>
     <ul>
       <li>🖱️ <strong>Right-click map:</strong> Add new marker</li>
       <li>👆 <strong>Drag marker:</strong> Move position</li>
@@ -84,43 +84,43 @@ window.addEventListener('DOMContentLoaded', function() {
   // Upload functionaliteit: bestand inlezen en preview tonen
   var uploadInput = document.getElementById('uploadInput');
   uploadInput.addEventListener('change', function(e) {
-    const file = e.target.files[0];
-    if (!file) return;
-    const ext = file.name.split('.').pop().toLowerCase();
-    if (ext === 'xlsx') {
-      const reader = new FileReader();
-      reader.onload = function(evt) {
-        const buffer = evt.target.result;
-        const workbook = new ExcelJS.Workbook();
-        workbook.xlsx.load(buffer).then(function() {
-          const worksheet = workbook.worksheets[0];
-          const previewData = [];
-          worksheet.eachRow({ includeEmpty: false }, function(row, rowNumber) {
-            previewData.push(row.values.slice(1)); // ExcelJS rows zijn 1-based
+      const file = e.target.files[0];
+      if (!file) return;
+      const ext = file.name.split('.').pop().toLowerCase();
+      if (ext === 'xlsx') {
+        const reader = new FileReader();
+  reader.onload = function(evt) {
+          const buffer = evt.target.result;
+          const workbook = new ExcelJS.Workbook();
+          workbook.xlsx.load(buffer).then(function() {
+            const worksheet = workbook.worksheets[0];
+            const previewData = [];
+            worksheet.eachRow({ includeEmpty: false }, function(row, rowNumber) {
+              previewData.push(row.values.slice(1)); // ExcelJS rows zijn 1-based
+            });
+            showPreviewModal(previewData, file.name);
           });
-          showPreviewModal(previewData, file.name);
-        });
-      };
-      reader.readAsArrayBuffer(file);
-    } else if (ext === 'csv') {
-      const reader = new FileReader();
-      reader.onload = function(evt) {
-        const text = evt.target.result;
-        const rows = text.split(/\r?\n/).map(line => line.split(','));
-        showPreviewModal(rows, file.name);
-      };
-      reader.readAsText(file);
-    } else {
-      alert('Bestandstype niet ondersteund. Kies een .xlsx of .csv bestand.');
-    }
-    // Reset input zodat je opnieuw kunt uploaden
-    e.target.value = '';
+        };
+        reader.readAsArrayBuffer(file);
+      } else if (ext === 'csv') {
+        const reader = new FileReader();
+        reader.onload = function(evt) {
+          const text = evt.target.result;
+          const rows = text.split(/\r?\n/).map(line => line.split(','));
+          showPreviewModal(rows, file.name);
+        };
+        reader.readAsText(file);
+      } else {
+        alert('Bestandstype niet ondersteund. Kies een .xlsx of .csv bestand.');
+      }
+      // Reset input zodat je opnieuw kunt uploaden
+      e.target.value = '';
   });
 
   // Preview modal tonen
   function showPreviewModal(data, filename) {
     // Kolomvalidatie: controleer headers
-  var expectedHeaders = ['id','booth','name','icon','img','websitelink','info'];
+    var expectedHeaders = ['id', 'booth', 'name', 'icon', 'img', 'websitelink', 'info'];
     var headerOk = false;
     if (data.length > 0) {
       var actual = data[0].map(function(h){return h.replace(/\s+/g,'').toLowerCase();});
@@ -569,9 +569,9 @@ function updateSaveButtonVisibility() {
   // Show the backup/restore button only in edit mode
   backupRestoreBtn.style.display = editMode ? '' : 'none';
   // Show the edit legend icon only in edit mode
-  var legendIcon = document.getElementById('editLegendIcon');
-  if (legendIcon) {
-    legendIcon.style.display = editMode ? 'flex' : 'none';
+  var infoBtn = document.getElementById('infoBtn');
+  if (infoBtn) {
+    infoBtn.style.display = editMode ? 'flex' : 'none';
   }
   // Control layer control container visibility - only show in edit mode
   document.getElementById('layerControlContainer').style.display = editMode ? 'flex' : 'none';
@@ -1446,8 +1446,8 @@ document.getElementById('restoreSelectedBtn').addEventListener('click', async fu
 });
 
 // Edit legend icon click handler
-document.getElementById('editLegendIcon').addEventListener('click', function() {
-  var content = document.getElementById('editLegendContent');
+document.getElementById('infoBtn').addEventListener('click', function() {
+  var content = document.getElementById('infoContent');
   if (content.style.display === 'none' || content.style.display === '') {
     content.style.display = 'block';
   } else {
@@ -1456,11 +1456,11 @@ document.getElementById('editLegendIcon').addEventListener('click', function() {
 });
 
 // Close button inside legend popup: only hides the popup (does not change editMode)
-var legendCloseBtn = document.getElementById('editLegendClose');
+var legendCloseBtn = document.getElementById('infoClose');
 if (legendCloseBtn) {
   legendCloseBtn.addEventListener('click', function(e) {
     e.stopPropagation();
-    var content = document.getElementById('editLegendContent');
+  var content = document.getElementById('infoContent');
     if (content) content.style.display = 'none';
   });
 }
