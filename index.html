@@ -30,12 +30,12 @@
     <button id="backupRestoreBtn" title="Backup Restore" class="control-button">
       <span class="mdi mdi-backup-restore icon-lg"></span>
     </button>
-  <button id="downloadExcelBtn" class="control-button square-btn" title="Download markers als Excel/CSV">
-    <span class="mdi mdi-download icon-md" title="Download Markers Excel"></span>
+  <button id="downloadBtn" class="control-button" title="Download Markers">
+  <span class="mdi mdi-download icon-md"></span>
   </button>
-  <label id="uploadExcelLabel" class="control-button square-btn" title="Upload markers Excel/CSV">
-    <input id="uploadExcelInput" type="file" accept=".xlsx,.csv" class="visually-hidden" />
-    <span class="mdi mdi-upload icon-md" title="Upload Markers Excel or CSV file"></span>
+  <label id="uploadLabel" class="control-button" title="Upload Markers">
+    <input id="uploadInput" type="file" accept=".xlsx,.csv" class="visually-hidden" />
+    <span class="mdi mdi-upload icon-md"></span>
   </label>
     <button id="editLegendIcon" class="control-button" title="Edit Mode Guide">
       <span class="mdi mdi-information-outline icon-lg"></span>
@@ -82,7 +82,7 @@
 <script>
 window.addEventListener('DOMContentLoaded', function() {
   // Upload functionaliteit: bestand inlezen en preview tonen
-  var uploadInput = document.getElementById('uploadExcelInput');
+  var uploadInput = document.getElementById('uploadInput');
   uploadInput.addEventListener('change', function(e) {
     const file = e.target.files[0];
     if (!file) return;
@@ -313,9 +313,9 @@ window.addEventListener('DOMContentLoaded', function() {
   document.body.appendChild(modal);
   }
   // Download Excel event handler
-  var excelBtn = document.getElementById('downloadExcelBtn');
-  if (excelBtn) {
-    excelBtn.addEventListener('click', async function() {
+  var downloadBtn = document.getElementById('downloadBtn');
+  if (downloadBtn) {
+    downloadBtn.addEventListener('click', async function() {
       await markersToExcel();
     });
   }
@@ -323,7 +323,7 @@ window.addEventListener('DOMContentLoaded', function() {
   // markersToExcel functie verwijderen (dummy)
   // Download-knop alleen tonen in edit mode
   function updateDownloadExcelBtnVisibility() {
-    var btn = document.getElementById('downloadExcelBtn');
+  var btn = document.getElementById('downloadBtn');
     if (btn) {
       btn.style.display = editMode ? 'flex' : 'none';
   // ...existing code...
@@ -555,6 +555,9 @@ function updateLayerVisibility() {
   }
 }
 function updateSaveButtonVisibility() {
+  // Show the download button only in edit mode
+  var downloadBtn = document.getElementById('downloadBtn');
+  if (downloadBtn) downloadBtn.style.display = editMode ? 'flex' : 'none';
   // Toggle the edit mode button icon based on current mode
   var iconSpan = document.getElementById('lockBtnIcon');
   if (iconSpan) {
@@ -583,7 +586,7 @@ function updateSaveButtonVisibility() {
     updateLayerVisibility();
   }
     // Upload-knop alleen zichtbaar in edit mode
-    var uploadLabel = document.getElementById('uploadExcelLabel');
+    var uploadLabel = document.getElementById('uploadLabel');
     if (uploadLabel) {
       uploadLabel.style.display = editMode ? 'flex' : 'none';
     }
