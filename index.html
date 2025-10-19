@@ -20,43 +20,80 @@
  
 </head>
 
-<body>
 
-  <!-- === Control Button Column: main buttons for (un)lock, backupRestore, download, upload, info === -->
+<body>
+  <!--
+    === Control Button Column ===
+    Main vertical toolbar with all primary map controls:
+    - Lock/unlock edit mode
+    - Backup/restore markers
+    - Download markers as Excel/CSV
+    - Upload markers from file
+    - Show info popup
+  -->
   <div id="controlButtonColumn" class="control-button-column">
+    <!-- Lock/unlock edit mode button -->
     <button id="lockBtn" title="(Un)Lock" class="control-button">
       <span id="lockBtnIcon" class="mdi icon-lg"></span>
     </button>
+    <!-- Backup/restore button -->
     <button id="backupRestoreBtn" title="Backup Restore" class="control-button">
-      <span class="mdi mdi-backup-restore icon-lg"></span>
+      <span class="mdi mdi-history icon-lg"></span>
     </button>
+    <!-- Download markers button -->
     <button id="downloadBtn" class="control-button" title="Download Markers">
-     <span class="mdi mdi-download icon-md"></span>
+      <span class="mdi mdi-download icon-lg"></span>
     </button>
-      <label id="uploadLabel" class="control-button" title="Upload Markers">
-        <input id="uploadInput" type="file" accept=".xlsx,.csv" class="visually-hidden" />
-        <span class="mdi mdi-upload icon-md"></span>
-      </label>
+    <!-- Upload markers button (label wraps input for styling) -->
+    <label id="uploadLabel" class="control-button" title="Upload Markers">
+      <input id="uploadInput" type="file" accept=".xlsx,.csv" class="visually-hidden" />
+      <span class="mdi mdi-upload icon-lg"></span>
+    </label>
+    <!-- Info popup button -->
     <button id="infoBtn" class="control-button" title="Info">
-      <span class="mdi mdi-information-outline icon-lg"></span>
+      <span class="mdi mdi-information-variant-circle icon-lg"></span>
     </button>
-  <!-- === Layer Control Container: custom Leaflet layer control is placed here === -->
-  <div id="layerControlContainer" class="layer-control-container"></div>
+    <!-- Custom Leaflet layer control container (populated by JS) -->
+    <div id="layerControlContainer" class="layer-control-container"></div>
   </div>
-  
-  <!-- === Info Popup: explanation of map functionality, hidden until info button is clicked === -->
+
+  <!--
+    === Info Popup ===
+    Provides a quick explanation of all map actions for users.
+    Hidden by default, shown when info button is clicked.
+  -->
   <div id="infoContent" class="info-content">
+    <!-- Close button for info popup -->
     <button id="infoClose" class="info-close" title="Close">&times;</button>
-    <h4 class="info-title">📝 Edit Mode Guide</h4>
+    <!-- Info title with icon -->
+    <h4 class="info-title">
+      <span class="mdi mdi-information-variant-circle"></span>
+      Info
+    </h4>
+    <!-- List of map actions and their icons -->
     <ul>
-      <li>🖱️ <strong>Right-click map:</strong> Add new marker</li>
-      <li>👆 <strong>Drag marker:</strong> Move position</li>
-      <li>🔵 <strong>Drag blue dot:</strong> Rotate rectangle</li>
-      <li>✏️ <strong>Click marker:</strong> Edit details</li>
-      <li>❌ <strong>Right-click marker:</strong> Delete</li>
-      <li>🔍 <strong>Search:</strong> Find markers</li>
+      <li>
+        <span class="mdi mdi-mouse-right-click"></span>
+        <strong>Right-click map:</strong> Add new marker
+      </li>
+      <li>
+        <span class="mdi mdi-mouse-left-click"></span>
+        <strong>Left-click marker:</strong> Edit marker details
+      </li>
+      <li>
+        <span class="mdi mdi-cursor-move"></span>
+        <strong>Drag marker:</strong> Move marker position
+      </li>
+      <li>
+        <span class="mdi mdi-format-rotate-90"></span>
+        <strong>Rotate blue dot:</strong> Rotate rectangle
+      </li>
+      <li>
+        <span class="mdi mdi-delete-forever"></span>
+        <strong>Right-click marker:</strong> Delete
+      </li>
     </ul>
-    </div>
+  </div>
 
   <!-- === Backups Modal: backup/restore functionality, hidden until backup button is clicked === -->
   <div id="backupsModal" class="modal hidden">
