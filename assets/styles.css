@@ -1,0 +1,81 @@
+/* Popup and modal UI classes for marker editing */
+.popup-main-block { min-width: 220px; }
+.popup-img-block { margin-bottom: 6px; }
+.popup-img { width: 96px; height: auto; max-width: 96px; max-height: 64px; object-fit: contain; display: block; }
+.popup-row { display: flex; align-items: center; gap: 6px; margin-bottom: 2px; }
+.popup-label { font-weight: bold; }
+.popup-input { flex: 1 1 0%; min-width: 60px; max-width: 100%; }
+.popup-textarea { flex: 1 1 0%; min-width: 60px; max-width: 100%; height: 60px; resize: vertical; }
+.popup-save-btn { margin-top: 6px; margin-right: 6px; }
+.popup-cancel-btn { margin-top: 6px; }
+.icon-dropdown-row { display: flex; align-items: center; gap: 6px; margin-bottom: 2px; position: relative; }
+.icon-dropdown-label { font-weight: bold; }
+.icon-dropdown-btn { cursor: pointer; border: 2px solid #007bff; border-radius: 6px; padding: 2px; background: #e6f0ff; display: inline-block; }
+.icon-dropdown-img { width: 32px; height: 32px; }
+.icon-dropdown-arrow { margin-left: 4px; vertical-align: middle; }
+.icon-dropdown-menu { display: none; position: absolute; z-index: 10; top: 38px; left: 0; background: #fff; border: 1px solid #ccc; border-radius: 6px; box-shadow: 0 2px 8px rgba(0,0,0,0.12); padding: 6px; min-width: 180px; }
+.icon-dropdown-option { cursor: pointer; display: inline-block; border: 2px solid transparent; border-radius: 6px; padding: 2px; margin: 2px; background: transparent; }
+.icon-dropdown-option.selected { border: 2px solid #007bff; background: #e6f0ff; }
+.popup-marker-row { margin-bottom: 2px; position: relative; height: 28px; display: flex; align-items: flex-start; gap: 8px; text-align: left; }
+.popup-marker-img { width: 28px; height: 28px; display: block; }
+.popup-marker-booth { position: absolute; left: 36px; bottom: 0; display: inline-block; font-size: 1.5em; font-weight: bold; }
+.popup-marker-name { margin-bottom: 2px; text-align: left; width: 100%; font-weight: bold; }
+.popup-marker-link { margin-bottom: 2px; text-align: left; }
+.popup-marker-info { margin-bottom: 2px; text-align: left; white-space: pre-line; }
+/* External stylesheet extracted from index.html */
+/* Basic layout */
+html, body { height: 100%; margin: 0; padding: 0; }
+#map { height: 100%; width: 100vw; position: relative; z-index: 1; }
+
+/* Map marker font helpers */
+.map { width: 600px; height: 400px; margin: 0; }
+.leaflet-marker-icon.sans-serif { font-weight: bold; font-family: Sans Serif; }
+.leaflet-marker-icon.xolonium { font-weight: bold; font-family: Xolonium; }
+.leaflet-map-pane div { box-shadow: none; }
+
+/* Modal styling for backups UI */
+.modal { position: fixed; z-index: 9999; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0,0,0,0.4); display: flex; align-items: center; justify-content: center; }
+.modal .modal-content { background: white; padding: 16px; border-radius: 8px; width: 520px; max-width: 95%; box-shadow: 0 6px 24px rgba(0,0,0,0.2); }
+.modal-close { cursor: pointer; float: right; font-size: 20px; }
+.hidden { display: none !important; }
+
+/* Control buttons container */
+.control-button-column {
+  position: fixed; top: 10px; right: 10px; z-index: 1000;
+  display: flex; flex-direction: column; align-items: center; gap: 10px;
+  background: rgba(255,255,255,0.95); box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+  border-radius: 8px; padding: 8px;
+}
+
+/* Generic control button */
+.control-button {
+  width: 36px; height: 36px; border: 2px solid rgba(0,0,0,0.3); border-radius: 4px;
+  background-color: #fff; cursor: pointer; display:flex; align-items:center; justify-content:center;
+  background-position: center; background-repeat: no-repeat; background-size: 20px 20px;
+}
+.square-btn { width: 36px; height: 36px; }
+
+/* Icon sizes */
+.icon-lg { font-size: 22px; }
+.icon-md { font-size: 20px; }
+
+/* Layer control adjustments */
+.layer-control-container .leaflet-control-layers { min-width: 36px; min-height: 36px; border: 2px solid rgba(0,0,0,0.3); border-radius: 4px; background: #fff; box-shadow: none; display:flex; align-items:center; justify-content:center; margin:0; }
+.layer-control-container .leaflet-control-layers-toggle { width:20px; height:20px; background-size:20px 20px; }
+.layer-control-container { display:flex; align-items:center; justify-content:center; margin-top:8px; }
+
+/* Edit legend popup */
+.edit-legend-content { display: none; position: fixed; top: 10px; right: 80px; z-index: 1000; background: rgba(255,255,255,0.95); padding: 12px; border-radius: 6px; font-size: 12px; line-height: 1.4; box-shadow: 0 2px 8px rgba(0,0,0,0.2); min-width: 250px; border: 2px solid rgba(0,0,0,0.3); }
+.edit-legend-close { position: absolute; top: 6px; right: 8px; border: none; background: transparent; font-size: 18px; line-height: 1; cursor: pointer; }
+.legend-title { margin-top: 4px; }
+
+/* Backups modal small helpers */
+.backups-list-container { max-height: 320px; overflow: auto; margin-bottom: 12px; }
+.backups-list { list-style: none; padding: 0; margin: 0; }
+.backups-actions { display:flex; gap:8px; align-items:center; }
+.backups-status { margin-left:8px; color: green; }
+
+/* Misc helpers used by templates */
+.visually-hidden { display: none; }
+
+/* Keep a small separation before other page styles */

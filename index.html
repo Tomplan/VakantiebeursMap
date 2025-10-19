@@ -1,29 +1,19 @@
     
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-<!-- ExcelJS voor geavanceerde Excel export -->
-<script src="https://cdn.jsdelivr.net/npm/exceljs@4.3.0/dist/exceljs.min.js"></script>
-  <meta charset="utf-8"/>
-  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
-  <link rel="stylesheet" href="https://unpkg.com/leaflet-search/dist/leaflet-search.min.css"/>
-  
+  <title>Vakantiebeurs Map</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
 
-  <link rel="stylesheet" media="screen" href="https://fontlibrary.org/face/xolonium" type="text/css"/>
-  <link href="https://cdn.materialdesignicons.com/1.3.41/css/materialdesignicons.min.css" rel="stylesheet" type="text/css" />
-	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css" integrity="sha512-dTfge/zgoMYpP7QbHy4gWMEGsbsdZeCXz7irItjcC3sPUFtf0kuFbDz/ixG7ArTxmDjLXDmezHubeNikyKGVyQ==" crossorigin="anonymous">
-	<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.1/css/all.css" integrity="sha384-gfdkjb5BdAXd+lj+gudLWI+BXq4IuLW5IT+brZEZsLFm++aCMlF1V92rMkPaX4PP" crossorigin="anonymous">
-	<link rel="stylesheet" href="https://cdn.rawgit.com/olton/Metro-UI-CSS/master/build/css/metro-icons.min.css">
-<!-- 	Octicons (from GitHub) -->
-	<link rel="stylesheet" href="https://cdn.rawgit.com/github/octicons/master/octicons/octicons.css" type="text/css">
-<!-- 	Iconic Open -->
-	<link rel="stylesheet" href="https://cdn.rawgit.com/iconic/open-iconic/master/font/css/open-iconic-bootstrap.css" type="text/css">
-<!-- 	Mapkey Icons -->
-	<link rel="stylesheet" href="https://cdn.rawgit.com/mapshakers/mapkeyicons/master/dist/MapkeyIcons.css" type="text/css">
-
-
-<!-- Xolonium typeface -->
-<link rel="stylesheet" media="screen" href="https://fontlibrary.org/face/xolonium" type="text/css"/>
+  <!-- Leaflet core styles -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+  <!-- Leaflet Search plugin styles -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet-search/dist/leaflet-search.min.css" />
+  <!-- Material Design Icons -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@mdi/font@7.4.47/css/materialdesignicons.min.css" />
+  <!-- Xolonium typeface -->
+  <link rel="stylesheet" media="screen" href="https://fontlibrary.org/face/xolonium" />
 
 	<style>
 	.map {
@@ -44,96 +34,41 @@
 	</style>
 	<style>.leaflet-map-pane div { box-shadow: none; }</style>
 
-  <style>
-    html, body {
-      height: 100%;
-      margin: 0;
-      padding: 0;
-    }
-    #map {
-      height: 100%;
-      width: 100vw;
-      position: relative;
-      z-index: 1;
-    }
-    /* Modal styling for backups UI */
-    .modal { position: fixed; z-index: 9999; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0,0,0,0.4); display: flex; align-items: center; justify-content: center; }
-    .modal-content { background: white; padding: 16px; border-radius: 8px; width: 520px; max-width: 95%; box-shadow: 0 6px 24px rgba(0,0,0,0.2); }
-    .modal-close { cursor: pointer; float: right; font-size: 20px; }
-    /* Control buttons repositioned to top right */
-    #editModeToggle { position: fixed; top: 10px; right: 10px; z-index: 1000; background: rgba(255,255,255,0.9); padding: 4px; border-radius: 6px; display: flex; flex-direction: column; gap: 2px; align-items: center; }
-    /* Style the layer control to match our buttons */
-    #layerControlContainer .leaflet-control-layers { 
-      min-width: 36px; 
-      min-height: 36px; 
-      border: 2px solid rgba(0,0,0,0.3); 
-      border-radius: 4px; 
-      background: #fff;
-      box-shadow: none;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin: 0;
-    }
-    #layerControlContainer .leaflet-control-layers-toggle {
-      width: 20px;
-      height: 20px;
-      background-size: 20px 20px;
-    }
-    /* Legend icon display control */
-    #editLegendIcon {
-      display: none;
-    }
-    #editLegendIcon:not([style*="display: none"]) {
-      display: flex !important;
-    }
-    /* Common button styling */
-    .control-button {
-      width: 36px;
-      height: 36px;
-      border: 2px solid rgba(0,0,0,0.3);
-      border-radius: 4px;
-      background-color: #fff;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      background-position: center;
-      background-repeat: no-repeat;
-      background-size: 20px 20px;
-    }
+  <link rel="stylesheet" href="/assets/styles.css" />
+  <!-- Styles moved to /assets/styles.css -->
   </style>
 </head>
+
 <body>
 
-  <!-- Flexbox container voor alle control knoppen -->
-  <div id="controlButtonColumn" style="position:fixed;top:10px;right:10px;z-index:1000;display:flex;flex-direction:column;align-items:center;gap:10px;background:rgba(255,255,255,0.95);box-shadow:0 2px 8px rgba(0,0,0,0.2);border-radius:8px;padding:8px;">
+  <!-- Flexbox container for all control buttons -->
+  <div id="controlButtonColumn" class="control-button-column">
     <button id="editModeToggleBtn" title="Toggle Edit Mode" class="control-button">
-      <span id="editModeIcon" class="mdi" style="font-size:22px;"></span>
+      <span id="editModeIcon" class="mdi icon-lg"></span>
     </button>
     <button id="backupsBtn" title="View Backups" class="control-button">
-      <span class="mdi mdi-backup-restore" style="font-size:22px;"></span>
+      <span class="mdi mdi-backup-restore icon-lg"></span>
     </button>
-  <button id="downloadExcelBtn" style="width:36px;height:36px;border:2px solid rgba(0,0,0,0.3);border-radius:4px;background-color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;" title="Download markers als Excel/CSV">
-  <span class="mdi mdi-download" style="font-size:20px;" title="Download Markers Excel"></span>
-    </button>
-    <label id="uploadExcelLabel" style="width:36px;height:36px;border:2px solid rgba(0,0,0,0.3);border-radius:4px;background-color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;" title="Upload markers Excel/CSV">
-  <input id="uploadExcelInput" type="file" accept=".xlsx,.csv" style="display:none" />
-  <span class="mdi mdi-upload" style="font-size:20px;" title="Upload Markers Excel or CSV file"></span>
-    </label>
+  <button id="downloadExcelBtn" class="control-button square-btn" title="Download markers als Excel/CSV">
+    <span class="mdi mdi-download icon-md" title="Download Markers Excel"></span>
+  </button>
+  <label id="uploadExcelLabel" class="control-button square-btn" title="Upload markers Excel/CSV">
+    <input id="uploadExcelInput" type="file" accept=".xlsx,.csv" class="visually-hidden" />
+    <span class="mdi mdi-upload icon-md" title="Upload Markers Excel or CSV file"></span>
+  </label>
     <button id="editLegendIcon" class="control-button" title="Edit Mode Guide">
-      <span class="mdi mdi-information-outline" style="font-size:22px;"></span>
+      <span class="mdi mdi-information-outline icon-lg"></span>
     </button>
-  <div id="layerControlContainer" style="display:flex; align-items:center; justify-content:center; margin-top:8px;"></div>
-    <!-- Edit mode legend content (hidden popup) nu in container -->
+  <div id="layerControlContainer" class="layer-control-container"></div>
+    <!-- Edit mode legend content (hidden popup) now in container -->
   </div>
   
   <!-- Layer control positioned under legend button -->
   
   <!-- Edit mode legend content (hidden popup) -->
-  <div id="editLegendContent" style="display:none; position:fixed; top:10px; right:80px; z-index:1000; background:rgba(255,255,255,0.95); padding:12px; border-radius:6px; font-size:12px; line-height:1.4; box-shadow:0 2px 8px rgba(0,0,0,0.2); min-width:250px; border:2px solid rgba(0,0,0,0.3);">
-    <button id="editLegendClose" title="Close" style="position:absolute; top:6px; right:8px; border:none; background:transparent; font-size:18px; line-height:1; cursor:pointer;">&times;</button>
-    <h4 style="margin-top:4px;">📝 Edit Mode Guide</h4>
+  <div id="editLegendContent" class="edit-legend-content">
+    <button id="editLegendClose" class="edit-legend-close" title="Close">&times;</button>
+    <h4 class="legend-title">📝 Edit Mode Guide</h4>
     <ul>
       <li>🖱️ <strong>Right-click map:</strong> Add new marker</li>
       <li>👆 <strong>Drag marker:</strong> Move position</li>
@@ -145,17 +80,17 @@
     </div>
 
   <!-- Backups modal (hidden by default). Will be populated by JS when user opens Backups. -->
-  <div id="backupsModal" class="modal" style="display:none;">
+  <div id="backupsModal" class="modal hidden">
     <div class="modal-content">
       <span id="backupsClose" class="modal-close">&times;</span>
       <h3>Available backups (newest first)</h3>
-      <div id="backupsListContainer" style="max-height:320px;overflow:auto;margin-bottom:12px;">
-        <ul id="backupsList" style="list-style:none;padding:0;margin:0"></ul>
+      <div id="backupsListContainer" class="backups-list-container">
+        <ul id="backupsList" class="backups-list"></ul>
       </div>
-      <div id="backupsActions" style="display:flex;gap:8px;align-items:center;">
+      <div id="backupsActions" class="backups-actions">
         <button id="restoreSelectedBtn" disabled>Restore selected</button>
         <button id="cancelRestoreBtn">Cancel</button>
-        <span id="backupsStatus" style="margin-left:8px;color:green"></span>
+        <span id="backupsStatus" class="backups-status"></span>
       </div>
     </div>
   </div>
@@ -1123,13 +1058,13 @@ function createEditablePopup(markerObj) {
     var websitelink = markerObj.websitelink && markerObj.websitelink.trim() !== "" ? markerObj.websitelink.replace(/\/$/,"") : defaultUrl;
   var info = markerObj.info || "";
   var disabled = editMode ? "" : "disabled";
-  var saveBtn = editMode ? `<button id="save_${id}" style="margin-top:6px; margin-right:6px">Save</button><button id="cancel_${id}" style="margin-top:6px">Cancel</button>` : "";
+  var saveBtn = editMode ? `<button id="save_${id}" class="popup-save-btn">Save</button><button id="cancel_${id}" class="popup-cancel-btn">Cancel</button>` : "";
   var idLatLngBlock = editMode ?
     `<div><b>ID:</b> <span>${id}</span></div>
      <div><b>Lat:</b> <span>${lat}</span></div>
      <div><b>Lng:</b> <span>${lng}</span></div>`
     : "";
-  var imgHtml = img ? `<div style='margin-bottom:6px;'><img src='${img}' alt='afbeelding' style='width:96px;height:auto;max-width:96px;max-height:64px;object-fit:contain;display:block;'/></div>` : "";
+  var imgHtml = img ? `<div class="popup-img-block"><img src='${img}' alt='afbeelding' class='popup-img'/></div>` : "";
     // Marker icon kleur opties
     const markerIcons = [
       'glyph-marker-icon-blue.svg',
@@ -1156,43 +1091,43 @@ function createEditablePopup(markerObj) {
       // Custom dropdown met alleen iconen
   // let iconDropdownHtml = ... (verwijderd, zie nieuwe variant hieronder)
       // Custom dropdown die opent/sluit als menu met alleen iconen
-      let iconDropdownHtml = `<div style="display:flex;align-items:center;gap:6px;margin-bottom:2px;position:relative;"><b style="min-width:${labelWidth};">Marker icon:</b>`;
-      iconDropdownHtml += `<div id="iconDropdownBtn_${id}" style="cursor:pointer;border:2px solid #007bff;border-radius:6px;padding:2px;background:#e6f0ff;display:inline-block;">
-        <img src="icons/svg/${currentFile}" style="width:32px;height:32px;" alt="icon"/>
-        <span style="margin-left:4px;vertical-align:middle;">&#9660;</span>
+      let iconDropdownHtml = `<div class="icon-dropdown-row"><b class="icon-dropdown-label" style="min-width:${labelWidth};">Marker icon:</b>`;
+      iconDropdownHtml += `<div id="iconDropdownBtn_${id}" class="icon-dropdown-btn">
+        <img src="icons/svg/${currentFile}" class="icon-dropdown-img" alt="icon"/>
+        <span class="icon-dropdown-arrow">&#9660;</span>
       </div>`;
-      iconDropdownHtml += `<div id="iconDropdownMenu_${id}" style="display:none;position:absolute;z-index:10;top:38px;left:0;background:#fff;border:1px solid #ccc;border-radius:6px;box-shadow:0 2px 8px rgba(0,0,0,0.12);padding:6px;min-width:180px;">`;
+      iconDropdownHtml += `<div id="iconDropdownMenu_${id}" class="icon-dropdown-menu">`;
       markerIcons.forEach(file => {
-        iconDropdownHtml += `<div style="cursor:pointer;display:inline-block;border:${file===currentFile?'2px solid #007bff':'2px solid transparent'};border-radius:6px;padding:2px;margin:2px;background:${file===currentFile?'#e6f0ff':'transparent'};">
-          <img src="icons/svg/${file}" style="width:32px;height:32px;" alt="icon"/>
+        iconDropdownHtml += `<div class="icon-dropdown-option${file===currentFile?' selected':''}">
+          <img src="icons/svg/${file}" class="icon-dropdown-img" alt="icon"/>
         </div>`;
       });
       iconDropdownHtml += `</div><input type="hidden" id="iconHidden_${id}" value="${currentFile}"></div>`;
       return `
-        <div style="min-width:220px">
+  <div class="popup-main-block">
           ${imgHtml}
           ${idLatLngBlock}
           ${iconDropdownHtml}
-          <div style="display:flex;align-items:center;gap:6px;margin-bottom:2px;"><b style="min-width:${labelWidth};">Afbeelding:</b><input type="text" id="img_${id}" value="${img}" style="flex:1 1 0%;min-width:60px;max-width:100%;" placeholder="URL" ${disabled}/></div>
-          <div style="display:flex;align-items:center;gap:6px;margin-bottom:2px;"><b style="min-width:${labelWidth};">Naam:</b><input type="text" id="name_${id}" value="${name}" style="flex:1 1 0%;min-width:60px;max-width:100%;" ${disabled}/></div>
-          <div style="display:flex;align-items:center;gap:6px;margin-bottom:2px;"><b style="min-width:${labelWidth};">Booth:</b><input type="number" id="booth_${id}" value="${booth}" style="flex:1 1 0%;min-width:40px;max-width:100%;" ${disabled}/></div>
-          <div style="display:flex;align-items:center;gap:6px;margin-bottom:2px;"><b style="min-width:${labelWidth};">Website:</b><input type="text" id="web_${id}" value="${websitelink}" style="flex:1 1 0%;min-width:60px;max-width:100%;" placeholder="https://..." ${disabled}/></div>
-          <div style="display:flex;align-items:flex-start;gap:6px;margin-bottom:2px;"><b style="min-width:${labelWidth};">Info:</b><textarea id="info_${id}" style="flex:1 1 0%;min-width:60px;max-width:100%;height:60px;resize:vertical;" ${disabled}>${info}</textarea></div>
+          <div class="popup-row"><b class="popup-label" style="min-width:${labelWidth};">Afbeelding:</b><input type="text" id="img_${id}" value="${img}" class="popup-input" placeholder="URL" ${disabled}/></div>
+          <div class="popup-row"><b class="popup-label" style="min-width:${labelWidth};">Naam:</b><input type="text" id="name_${id}" value="${name}" class="popup-input" ${disabled}/></div>
+          <div class="popup-row"><b class="popup-label" style="min-width:${labelWidth};">Booth:</b><input type="number" id="booth_${id}" value="${booth}" class="popup-input" ${disabled}/></div>
+          <div class="popup-row"><b class="popup-label" style="min-width:${labelWidth};">Website:</b><input type="text" id="web_${id}" value="${websitelink}" class="popup-input" placeholder="https://..." ${disabled}/></div>
+          <div class="popup-row"><b class="popup-label" style="min-width:${labelWidth};">Info:</b><textarea id="info_${id}" class="popup-textarea" ${disabled}>${info}</textarea></div>
         </div>
         ${saveBtn}
       `;
     } else {
-        // Toon het marker icon naast het standnummer
+        // Show marker icon next to booth number
         return `
-          <div style="min-width:220px">
+          <div class="popup-main-block">
             ${imgHtml}
-            <div style="margin-bottom:2px;position:relative;height:28px;display:flex;align-items:flex-start;gap:8px;text-align:left;">
-              <img src="icons/svg/${currentFile}" style="width:28px;height:28px;display:block;" alt="icon"/>
-                <span style="position:absolute;left:36px;bottom:0;display:inline-block;font-size:1.5em;font-weight:bold;">Booth ${booth}</span>
+            <div class="popup-marker-row">
+              <img src="icons/svg/${currentFile}" class="popup-marker-img" alt="icon"/>
+                <span class="popup-marker-booth">Booth ${booth}</span>
             </div>
-              <div style="margin-bottom:2px;text-align:left;width:100%;font-weight:bold;">${name}</div>
-            <div style="margin-bottom:2px;text-align:left;"><a href="${websitelink}" target="_blank" rel="noopener noreferrer">${websitelink}</a></div>
-            <div style="margin-bottom:2px;text-align:left;white-space:pre-line;">${info}</div>
+              <div class="popup-marker-name">${name}</div>
+            <div class="popup-marker-link"><a href="${websitelink}" target="_blank" rel="noopener noreferrer">${websitelink}</a></div>
+            <div class="popup-marker-info">${info}</div>
           </div>
         `;
       }
@@ -1410,6 +1345,7 @@ async function openBackupsModal() {
   listEl.innerHTML = '';
   statusEl.textContent = '';
   restoreBtn.disabled = true;
+  modal.classList.remove('hidden');
   modal.style.display = 'flex';
   try {
   const res = await fetch('/list-backups');
@@ -1488,10 +1424,14 @@ async function openBackupsModal() {
 }
 
 document.getElementById('backupsClose').addEventListener('click', function() {
-  document.getElementById('backupsModal').style.display = 'none';
+  const modal = document.getElementById('backupsModal');
+  modal.style.display = 'none';
+  modal.classList.add('hidden');
 });
 document.getElementById('cancelRestoreBtn').addEventListener('click', function() {
-  document.getElementById('backupsModal').style.display = 'none';
+  const modal = document.getElementById('backupsModal');
+  modal.style.display = 'none';
+  modal.classList.add('hidden');
 });
 document.getElementById('restoreSelectedBtn').addEventListener('click', async function() {
   const chosen = document.querySelector('input[name="backup_choice"]:checked');
@@ -1546,4 +1486,6 @@ if (legendCloseBtn) {
 </script>
 </script>
 </body>
+<!-- ExcelJS for advanced Excel export -->
+<script src="https://cdn.jsdelivr.net/npm/exceljs@4.3.0/dist/exceljs.min.js"></script>
 </html>
