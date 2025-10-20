@@ -1,3 +1,4 @@
+
     
 <!DOCTYPE html>
 <html lang="en">
@@ -118,6 +119,30 @@
 <script src="https://unpkg.com/leaflet-search/dist/leaflet-search.min.js"></script>
 <script>
 window.addEventListener('DOMContentLoaded', function() {
+  // Add Home button above zoom controls, styled like search tool
+  var homeControl = L.Control.extend({
+    options: { position: 'topleft' },
+    onAdd: function(map) {
+  var container = L.DomUtil.create('a', 'leaflet-bar leaflet-control home-control');
+    container.title = 'Home: zoom naar standaard';
+    container.href = '#';
+    container.innerHTML = '<span class="mdi mdi-home-map-marker"></span>';
+      container.onclick = function(e) {
+        e.preventDefault();
+        map.setView([51.898819375615844, 5.7732504428013165], 18);
+      };
+      L.DomEvent.disableClickPropagation(container);
+      return container;
+    }
+  });
+  // Add zoom control first, then insert Home button above it
+  setTimeout(function() {
+    var zoomControl = document.querySelector('.leaflet-control-zoom');
+    var homeBtn = (new homeControl()).onAdd(map);
+    if (zoomControl && zoomControl.parentNode) {
+      zoomControl.parentNode.insertBefore(homeBtn, zoomControl);
+    }
+  }, 200);
   // Upload functionaliteit: bestand inlezen en preview tonen
   var uploadInput = document.getElementById('uploadInput');
   uploadInput.addEventListener('change', function(e) {
@@ -1070,6 +1095,21 @@ fetch('markers.json')
       
       // Add the search control to the map UI (defaults to top right)
       map.addControl(searchControl);
+      // Add unique class for styling
+      setTimeout(function() {
+        var searchEl = document.querySelector('.leaflet-control-search');
+        if (searchEl) {
+          var btn = searchEl.querySelector('.search-button');
+          if (btn) {
+            // Set mdi-magnify icon, remove default background, set size/color, center icon, and remove border/outline
+            btn.innerHTML = '<span class="mdi mdi-magnify" style="font-size:22px;color:#444;display:flex;align-items:center;justify-content:center;width:100%;height:100%;"></span>';
+            btn.style.backgroundImage = 'none';
+            btn.style.border = 'none';
+            btn.style.outline = 'none';
+            btn.style.boxShadow = 'none';
+          }
+        }
+      }, 100);
       
       // Initialize layer visibility after all markers are loaded
       updateLayerVisibility();
