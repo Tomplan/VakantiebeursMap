@@ -4,3 +4,6 @@ node_modules/
 
 # Ignore automatic marker backups directory (kept locally, not committed by default)
 markers-backups/
+
+.DS_Store
+icons/.DS_Store
