@@ -1,6 +1,8 @@
 // Node.js/Express backend with GitHub push (octokit)
 // Save as server.js
 require('dotenv').config();
+const GITHUB_TOKEN = process.env.GITHUB_TOKEN; // Set your PAT in env
+console.log('Loaded GITHUB_TOKEN:', GITHUB_TOKEN ? 'Exists' : 'Missing');
 const express = require('express');
 const fs = require('fs');
 const path = require('path');
@@ -12,7 +14,6 @@ const PORT = process.env.PORT || 3000;
 // GITHUB_TOKEN (required): an OAuth personal access token (PAT) with repo permissions set in the environment.
 // GITHUB_OWNER / GITHUB_REPO: repository owner and name where markers.json will be pushed.
 // GITHUB_FILEPATH / GITHUB_BRANCH: file path inside the repo and branch where we write markers.
-const GITHUB_TOKEN = process.env.GITHUB_TOKEN; // Set your PAT in env
 const GITHUB_OWNER = "Tomplan";
 const GITHUB_REPO = "VakantiebeursMap";
 const GITHUB_FILEPATH = "markers.json";
@@ -20,7 +21,7 @@ const GITHUB_BRANCH = "development";
 
 // Middleware: accept JSON and serve the client static files from repo root
 app.use(express.json());
-app.use(express.static(__dirname)); // Serve index.html and markers.json
+app.use(express.static(path.join(__dirname, '..'))); // Serve index.html and assets from project root
 
 // GET /list-backups - Return list of available backup files
 app.get('/list-backups', (req, res) => {
@@ -139,7 +140,7 @@ app.post('/save-markers', async (req, res) => {
     });
   }
 
-  const jsonPath = path.join(__dirname, 'markers.json');
+  const jsonPath = path.join(__dirname, '../data/markers.json');
   // Create a timestamped backup inside markers-backups before overwriting the canonical markers.json
   const now = new Date();
   const ts = now.toISOString().replace(/[-:T]/g, '').slice(0, 15); // YYYYMMDDHHMMSS
@@ -204,7 +205,7 @@ app.post('/restore-backup', async (req, res) => {
     const src = path.join(backupsDir, filename);
     if (!fs.existsSync(src)) return res.status(404).json({ status: 'error', error: 'backup not found' });
 
-    const jsonPath = path.join(__dirname, 'markers.json');
+    const jsonPath = path.join(__dirname, '../data/markers.json');
     // create a timestamped backup of current markers.json
     const now = new Date();
     const ts = now.toISOString().replace(/[-:T]/g, '').slice(0, 15);
